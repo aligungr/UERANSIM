@@ -9,7 +9,7 @@
 #include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nts.hpp>
 
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
@@ -65,7 +65,7 @@ void UeRrcLayer::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationT
     OctetString nasPdu =
         asn::GetOctetString(*msg.criticalExtensions.choice.dlInformationTransfer->dedicatedNAS_Message);
 
-    m_base->l3Task->nas().handleNasDelivery(nasPdu);
+    m_base->l23Task->nas().handleNasDelivery(nasPdu);
 }
 
 } // namespace nr::ue

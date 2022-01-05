@@ -9,8 +9,7 @@
 #include "ue.hpp"
 
 #include "app/task.hpp"
-#include "l3/task.hpp"
-#include "rls/task.hpp"
+#include "l23/task.hpp"
 
 namespace nr::ue
 {
@@ -26,9 +25,8 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
     base->nodeListener = nodeListener;
     base->cliCallbackTask = cliCallbackTask;
 
-    base->l3Task = new UeL3Task(base);
+    base->l23Task = new UeL23Task(base);
     base->appTask = new UeAppTask(base);
-    base->rlsTask = new UeRlsTask(base);
     base->tunLayer = new TunLayer(base);
 
     taskBase = base;
@@ -36,12 +34,10 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
 
 UserEquipment::~UserEquipment()
 {
-    taskBase->l3Task->quit();
-    taskBase->rlsTask->quit();
+    taskBase->l23Task->quit();
     taskBase->appTask->quit();
 
-    delete taskBase->l3Task;
-    delete taskBase->rlsTask;
+    delete taskBase->l23Task;
     delete taskBase->appTask;
 
     delete taskBase->logBase;
@@ -51,8 +47,7 @@ UserEquipment::~UserEquipment()
 
 void UserEquipment::start()
 {
-    taskBase->l3Task->start();
-    taskBase->rlsTask->start();
+    taskBase->l23Task->start();
     taskBase->appTask->start();
 }
 

@@ -9,7 +9,7 @@
 #include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 
 namespace nr::ue
 {
@@ -70,7 +70,7 @@ void UeRrcLayer::notifyCellLost(int cellId)
             declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
         else
         {
-            m_base->l3Task->nas().handleActiveCellChange(Tai{lastActiveCell.plmn, lastActiveCell.tac});
+            m_base->l23Task->nas().handleActiveCellChange(Tai{lastActiveCell.plmn, lastActiveCell.tac});
         }
     }
 

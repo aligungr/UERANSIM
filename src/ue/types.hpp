@@ -32,7 +32,7 @@ namespace nr::ue
 {
 
 class UeAppTask;
-class UeL3Task;
+class UeL23Task;
 class UeRlsTask;
 class UserEquipment;
 class TunLayer;
@@ -200,8 +200,7 @@ struct TaskBase
     UeSharedContext shCtx{};
 
     UeAppTask *appTask{};
-    UeL3Task *l3Task{};
-    UeRlsTask *rlsTask{};
+    UeL23Task *l23Task{};
     TunLayer* tunLayer{};
 };
 

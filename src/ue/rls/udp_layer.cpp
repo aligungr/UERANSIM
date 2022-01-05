@@ -3,9 +3,8 @@
 #include <cstdint>
 #include <set>
 
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nts.hpp>
-#include <ue/rls/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -16,7 +15,7 @@ static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE
 namespace nr::ue
 {
 
-RlsUdpLayer::RlsUdpLayer(TaskBase *base, NtsTask *rlsTask)
+RlsUdpLayer::RlsUdpLayer(TaskBase *base, NtsTask *mainTask)
     : m_base{base}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{},
       m_lastLoop{}, m_cellIdCounter{}
 {
@@ -27,7 +26,7 @@ RlsUdpLayer::RlsUdpLayer(TaskBase *base, NtsTask *rlsTask)
 
     m_simPos = Vector3{};
 
-    m_server = std::make_unique<udp::UdpServerTask>(rlsTask);
+    m_server = std::make_unique<udp::UdpServerTask>(mainTask);
     m_server->start();
 }
 
@@ -92,7 +91,7 @@ void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rl
         return;
     }
 
-    m_base->rlsTask->ctl().handleRlsMessage(m_cells[msg->sti].cellId, *msg);
+    m_base->l23Task->rlsCtl().handleRlsMessage(m_cells[msg->sti].cellId, *msg);
 }
 
 void RlsUdpLayer::onSignalChangeOrLost(int cellId)
@@ -107,7 +106,7 @@ void RlsUdpLayer::onSignalChangeOrLost(int cellId)
     auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::SIGNAL_CHANGED);
     m->cellId = cellId;
     m->dbm = dbm;
-    m_base->l3Task->push(std::move(m));
+    m_base->l23Task->push(std::move(m));
 }
 
 void RlsUdpLayer::heartbeatCycle(uint64_t time, const Vector3 &simPos)

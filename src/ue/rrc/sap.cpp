@@ -9,9 +9,8 @@
 #include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nts.hpp>
-#include <ue/rls/task.hpp>
 
 namespace nr::ue
 {

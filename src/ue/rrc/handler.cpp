@@ -10,7 +10,7 @@
 
 #include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nts.hpp>
 #include <utils/common.hpp>
 
@@ -52,7 +52,7 @@ void UeRrcLayer::receivePaging(const ASN_RRC_Paging &msg)
         }
     });
 
-    m_base->l3Task->nas().handlePaging(tmsiIds);
+    m_base->l23Task->nas().handlePaging(tmsiIds);
 }
 
 } // namespace nr::ue

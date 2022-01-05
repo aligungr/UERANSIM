@@ -12,7 +12,7 @@
 
 #include <lib/nas/utils.hpp>
 #include <ue/app/task.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nas/sm/sm.hpp>
 #include <utils/common.hpp>
 
@@ -272,7 +272,7 @@ void NasMm::localReleaseConnection(bool treatBarred)
     if (m_cmState != ECmState::CM_IDLE)
         m_logger->info("Performing local release of NAS connection");
 
-    m_base->l3Task->rrc().performLocalRelease(treatBarred);
+    m_base->l23Task->rrc().performLocalRelease(treatBarred);
 }
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)

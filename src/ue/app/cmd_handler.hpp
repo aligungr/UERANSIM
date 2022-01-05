@@ -10,6 +10,7 @@
 
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
+#include "ue/l23/task.hpp"
 
 namespace nr::ue
 {

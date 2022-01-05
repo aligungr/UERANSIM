@@ -11,8 +11,7 @@
 #include <algorithm>
 
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
-#include <ue/rls/task.hpp>
+#include <ue/l23/task.hpp>
 
 namespace nr::ue
 {
@@ -102,9 +101,9 @@ void UeRrcLayer::performCellSelection()
     {
         auto w1 = std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::ASSIGN_CURRENT_CELL);
         w1->cellId = selectedCell;
-        m_base->rlsTask->push(std::move(w1));
+        m_base->l23Task->push(std::move(w1));
 
-        m_base->l3Task->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
+        m_base->l23Task->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
     }
 }
 

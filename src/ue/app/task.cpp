@@ -8,7 +8,6 @@
 
 #include "task.hpp"
 #include "cmd_handler.hpp"
-#include <ue/rls/task.hpp>
 #include <ue/tun/config.hpp>
 
 static constexpr const int SWITCH_OFF_TIMER_ID = 1;

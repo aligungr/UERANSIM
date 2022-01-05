@@ -9,7 +9,7 @@
 #include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nts.hpp>
 
 namespace nr::ue
@@ -23,7 +23,7 @@ void UeRrcLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 void UeRrcLayer::handleRadioLinkFailure(rls::ERlfCause cause)
 {
     m_state = ERrcState::RRC_IDLE;
-    m_base->l3Task->nas().handleRadioLinkFailure();
+    m_base->l23Task->nas().handleRadioLinkFailure();
 }
 
 } // namespace nr::ue

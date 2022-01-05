@@ -1,7 +1,6 @@
 #include "ctl_layer.hpp"
 
-#include <ue/l3/task.hpp>
-#include <ue/rls/task.hpp>
+#include <ue/l23/task.hpp>
 
 static constexpr const size_t MAX_PDU_COUNT = 128;
 static constexpr const int MAX_PDU_TTL = 3000;
@@ -41,7 +40,7 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
             auto w = std::make_unique<NmUeRlsToNas>(NmUeRlsToNas::DATA_PDU_DELIVERY);
             w->psi = static_cast<int>(m.payload);
             w->pdu = std::move(m.pdu);
-            m_base->l3Task->push(std::move(w));
+            m_base->l23Task->push(std::move(w));
         }
         else if (m.pduType == rls::EPduType::RRC)
         {
@@ -49,7 +48,7 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
             w->cellId = cellId;
             w->channel = static_cast<rrc::RrcChannel>(m.payload);
             w->pdu = std::move(m.pdu);
-            m_base->l3Task->push(std::move(w));
+            m_base->l23Task->push(std::move(w));
         }
         else
         {
@@ -93,7 +92,7 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
     msg.payload = static_cast<uint32_t>(channel);
     msg.pduId = pduId;
 
-    m_base->rlsTask->udp().send(cellId, msg);
+    m_base->l23Task->rlsUdp().send(cellId, msg);
 }
 
 void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
@@ -104,7 +103,7 @@ void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
     msg.payload = static_cast<uint32_t>(psi);
     msg.pduId = 0;
 
-    m_base->rlsTask->udp().send(m_servingCell, msg);
+    m_base->l23Task->rlsUdp().send(m_servingCell, msg);
 }
 
 void RlsCtlLayer::onAckControlTimerExpired()
@@ -144,7 +143,7 @@ void RlsCtlLayer::onAckSendTimerExpired()
         rls::RlsPduTransmissionAck msg{m_base->shCtx.sti};
         msg.pduIds = std::move(item.second);
 
-        m_base->rlsTask->udp().send(item.first, msg);
+        m_base->l23Task->rlsUdp().send(item.first, msg);
     }
 }
 
@@ -157,7 +156,7 @@ void RlsCtlLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 {
     auto m = std::make_unique<NmUeRlsToRrc>(NmUeRlsToRrc::RADIO_LINK_FAILURE);
     m->rlfCause = cause;
-    m_base->l3Task->push(std::move(m));
+    m_base->l23Task->push(std::move(m));
 }
 
 } // namespace nr::ue

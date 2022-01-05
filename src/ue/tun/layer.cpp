@@ -12,7 +12,7 @@
 #include <cstring>
 #include <unistd.h>
 
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nts.hpp>
 #include <utils/libc_error.hpp>
 
@@ -44,7 +44,7 @@ static void ReceiverThread(void *args)
             auto m = std::make_unique<nr::ue::NmUeTunToApp>(nr::ue::NmUeTunToApp::DATA_PDU_DELIVERY);
             m->psi = psi;
             m->data = OctetString::FromArray(buffer, s);
-            base->l3Task->push(std::move(m));
+            base->l23Task->push(std::move(m));
         }
     }
 }

@@ -11,7 +11,7 @@
 #include <sstream>
 
 #include <lib/nas/utils.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nas/sm/sm.hpp>
 
 #include <asn/rrc/ASN_RRC_EstablishmentCause.h>
@@ -260,7 +260,7 @@ EUacResult NasMm::performUac()
         return ASN_RRC_EstablishmentCause_mt_Access;
     }();
 
-    auto res = m_base->l3Task->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
+    auto res = m_base->l23Task->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
 
     switch (res)
     {

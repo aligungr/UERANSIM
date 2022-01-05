@@ -11,14 +11,14 @@
 #include <lib/asn/rrc.hpp>
 #include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 
 namespace nr::ue
 {
 
 void UeRrcLayer::triggerCycle()
 {
-    m_base->l3Task->push(std::make_unique<NmCycleRequired>());
+    m_base->l23Task->push(std::make_unique<NmCycleRequired>());
 }
 
 void UeRrcLayer::performCycle()

@@ -9,9 +9,8 @@
 #include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nts.hpp>
-#include <ue/rls/task.hpp>
 #include <utils/random.hpp>
 
 #include <asn/rrc/ASN_RRC_RRCSetup-IEs.h>
@@ -131,7 +130,7 @@ void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 
     m_logger->info("RRC connection established");
     switchState(ERrcState::RRC_CONNECTED);
-    m_base->l3Task->nas().handleRrcConnectionSetup();
+    m_base->l23Task->nas().handleRrcConnectionSetup();
 }
 
 void UeRrcLayer::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
@@ -149,12 +148,12 @@ void UeRrcLayer::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
 
-    m_base->l3Task->nas().handleRrcConnectionRelease();
+    m_base->l23Task->nas().handleRrcConnectionRelease();
 }
 
 void UeRrcLayer::handleEstablishmentFailure()
 {
-    m_base->l3Task->nas().handleRrcEstablishmentFailure();
+    m_base->l23Task->nas().handleRrcEstablishmentFailure();
 }
 
 void UeRrcLayer::performLocalRelease(bool treatBarred)
@@ -163,8 +162,8 @@ void UeRrcLayer::performLocalRelease(bool treatBarred)
     (void)treatBarred;
 
     switchState(ERrcState::RRC_IDLE);
-    m_base->rlsTask->push(std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RESET_STI));
-    m_base->l3Task->nas().handleRrcConnectionRelease();
+    m_base->l23Task->push(std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RESET_STI));
+    m_base->l23Task->nas().handleRrcConnectionRelease();
 }
 
 } // namespace nr::ue

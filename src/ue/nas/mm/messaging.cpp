@@ -9,7 +9,7 @@
 #include "mm.hpp"
 
 #include <lib/nas/utils.hpp>
-#include <ue/l3/task.hpp>
+#include <ue/l23/task.hpp>
 #include <ue/nas/enc.hpp>
 #include <ue/nas/sm/sm.hpp>
 
@@ -182,7 +182,7 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
     }
 
-    m_base->l3Task->rrc().deliverUplinkNas(0, std::move(pdu));
+    m_base->l23Task->rrc().deliverUplinkNas(0, std::move(pdu));
     return EProcRc::OK;
 }
 
