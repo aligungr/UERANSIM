@@ -93,11 +93,7 @@ void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH_Message *msg)
         return;
     }
 
-    auto m = std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RRC_PDU_DELIVERY);
-    m->cellId = cellId;
-    m->channel = rrc::RrcChannel::UL_CCCH;
-    m->pdu = std::move(pdu);
-    m_base->l23Task->push(std::move(m));
+    m_base->l23Task->rlsCtl().handleUplinkRrcDelivery(cellId, 0, rrc::RrcChannel::UL_CCCH, std::move(pdu));
 }
 
 void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
@@ -109,11 +105,7 @@ void UeRrcLayer::sendRrcMessage(int cellId, ASN_RRC_UL_CCCH1_Message *msg)
         return;
     }
 
-    auto m = std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RRC_PDU_DELIVERY);
-    m->cellId = cellId;
-    m->channel = rrc::RrcChannel::UL_CCCH1;
-    m->pdu = std::move(pdu);
-    m_base->l23Task->push(std::move(m));
+    m_base->l23Task->rlsCtl().handleUplinkRrcDelivery(cellId, 0, rrc::RrcChannel::UL_CCCH1, std::move(pdu));
 }
 
 void UeRrcLayer::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
@@ -125,11 +117,9 @@ void UeRrcLayer::sendRrcMessage(ASN_RRC_UL_DCCH_Message *msg)
         return;
     }
 
-    auto m = std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RRC_PDU_DELIVERY);
-    m->cellId = m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; });
-    m->channel = rrc::RrcChannel::UL_DCCH;
-    m->pdu = std::move(pdu);
-    m_base->l23Task->push(std::move(m));
+    m_base->l23Task->rlsCtl().handleUplinkRrcDelivery(
+        m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }), 0, rrc::RrcChannel::UL_DCCH,
+        std::move(pdu));
 }
 
 void UeRrcLayer::receiveRrcMessage(int cellId, ASN_RRC_BCCH_BCH_Message *msg)

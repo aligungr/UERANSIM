@@ -46,7 +46,6 @@ enum class NtsMessageType
     GNB_SCTP,
 
     UE_TUN_TO_APP,
-    UE_RRC_TO_RLS,
     UE_RLS_TO_NAS,
     UE_NAS_TO_APP,
 

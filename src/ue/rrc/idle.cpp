@@ -99,10 +99,7 @@ void UeRrcLayer::performCellSelection()
 
     if (selectedCell != lastCell.cellId)
     {
-        auto w1 = std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::ASSIGN_CURRENT_CELL);
-        w1->cellId = selectedCell;
-        m_base->l23Task->push(std::move(w1));
-
+        m_base->l23Task->rlsCtl().assignCurrentCell(selectedCell);
         m_base->l23Task->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
     }
 }

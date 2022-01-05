@@ -40,28 +40,6 @@ struct NmUeTunToApp : NtsMessage
     }
 };
 
-struct NmUeRrcToRls : NtsMessage
-{
-    enum PR
-    {
-        ASSIGN_CURRENT_CELL,
-        RRC_PDU_DELIVERY,
-        RESET_STI,
-    } present;
-
-    // ASSIGN_CURRENT_CELL
-    int cellId{};
-
-    // RRC_PDU_DELIVERY
-    rrc::RrcChannel channel{};
-    uint32_t pduId{};
-    OctetString pdu{};
-
-    explicit NmUeRrcToRls(PR present) : NtsMessage(NtsMessageType::UE_RRC_TO_RLS), present(present)
-    {
-    }
-};
-
 struct NmUeNasToApp : NtsMessage
 {
     enum PR

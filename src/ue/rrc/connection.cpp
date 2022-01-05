@@ -162,7 +162,8 @@ void UeRrcLayer::performLocalRelease(bool treatBarred)
     (void)treatBarred;
 
     switchState(ERrcState::RRC_IDLE);
-    m_base->l23Task->push(std::make_unique<NmUeRrcToRls>(NmUeRrcToRls::RESET_STI));
+
+    m_base->shCtx.sti = Random::Mixed(m_base->config->getNodeName()).nextL();
     m_base->l23Task->nas().handleRrcConnectionRelease();
 }
 

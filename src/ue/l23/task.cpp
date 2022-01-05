@@ -96,25 +96,6 @@ void UeL23Task::onLoop()
     {
         m_nas->handleSapMessage(std::move(msg));
     }
-    else if (msg->msgType == NtsMessageType::UE_RRC_TO_RLS)
-    {
-        auto &w = dynamic_cast<NmUeRrcToRls &>(*msg);
-        switch (w.present)
-        {
-        case NmUeRrcToRls::ASSIGN_CURRENT_CELL: {
-            m_rlsCtl->assignCurrentCell(w.cellId);
-            break;
-        }
-        case NmUeRrcToRls::RRC_PDU_DELIVERY: {
-            m_rlsCtl->handleUplinkRrcDelivery(w.cellId, w.pduId, w.channel, std::move(w.pdu));
-            break;
-        }
-        case NmUeRrcToRls::RESET_STI: {
-            m_base->shCtx.sti = Random::Mixed(m_base->config->getNodeName()).nextL();
-            break;
-        }
-        }
-    }
     else if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
     {
         auto &w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
