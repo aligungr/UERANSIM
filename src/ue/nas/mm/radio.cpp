@@ -11,8 +11,8 @@
 #include <algorithm>
 
 #include <lib/nas/utils.hpp>
-#include <ue/l23/task.hpp>
 #include <ue/nas/sm/sm.hpp>
+#include <ue/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue

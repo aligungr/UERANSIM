@@ -8,10 +8,9 @@
 
 #include "layer.hpp"
 
-#include <lib/asn/rrc.hpp>
 #include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
-#include <ue/l23/task.hpp>
+#include <ue/task.hpp>
 
 namespace nr::ue
 {

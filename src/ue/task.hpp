@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "types.hpp"
+
 #include <memory>
 #include <optional>
 #include <thread>
@@ -22,7 +24,6 @@
 #include <ue/rls/udp_layer.hpp>
 #include <ue/rrc/layer.hpp>
 #include <ue/tun/layer.hpp>
-#include <ue/types.hpp>
 #include <utils/common_types.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>

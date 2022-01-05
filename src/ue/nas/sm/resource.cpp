@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <lib/nas/proto_conf.hpp>
 #include <lib/nas/utils.hpp>
-#include <ue/l23/task.hpp>
 #include <ue/nas/mm/mm.hpp>
+#include <ue/task.hpp>
 
 namespace nr::ue
 {
