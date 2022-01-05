@@ -50,7 +50,7 @@ void UeRrcLayer::notifyCellLost(int cellId)
 
     bool isActiveCell = false;
     ActiveCellInfo lastActiveCell;
-    m_base->shCtx.currentCell.mutate([&isActiveCell, &lastActiveCell, cellId](auto &value) {
+    m_ue->shCtx.currentCell.mutate([&isActiveCell, &lastActiveCell, cellId](auto &value) {
         if (value.cellId == cellId)
         {
             lastActiveCell = value;
@@ -70,7 +70,7 @@ void UeRrcLayer::notifyCellLost(int cellId)
             declareRadioLinkFailure(rls::ERlfCause::SIGNAL_LOST_TO_CONNECTED_CELL);
         else
         {
-            m_base->task->nas().handleActiveCellChange(Tai{lastActiveCell.plmn, lastActiveCell.tac});
+            m_ue->nas().handleActiveCellChange(Tai{lastActiveCell.plmn, lastActiveCell.tac});
         }
     }
 
@@ -84,12 +84,12 @@ bool UeRrcLayer::hasSignalToCell(int cellId)
 
 bool UeRrcLayer::isActiveCell(int cellId)
 {
-    return m_base->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }) == cellId;
+    return m_ue->shCtx.currentCell.get<int>([](auto &value) { return value.cellId; }) == cellId;
 }
 
 void UeRrcLayer::updateAvailablePlmns()
 {
-    m_base->shCtx.availablePlmns.mutate([this](std::unordered_set<Plmn> &value) {
+    m_ue->shCtx.availablePlmns.mutate([this](std::unordered_set<Plmn> &value) {
         value.clear();
         for (auto &cellDesc : m_cellDesc)
             if (cellDesc.second.sib1.hasSib1)

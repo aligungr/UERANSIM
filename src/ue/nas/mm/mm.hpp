@@ -13,6 +13,7 @@
 #include <ue/nas/storage.hpp>
 #include <ue/nas/usim/usim.hpp>
 #include <ue/nts.hpp>
+#include <ue/task.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
@@ -25,7 +26,7 @@ class NasSm;
 class NasMm
 {
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
     NasTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasSm *m_sm;
@@ -71,7 +72,7 @@ class NasMm
     friend class NasLayer;
 
   public:
-    NasMm(TaskBase *base, NasTimers *timers);
+    NasMm(UeTask *base, NasTimers *timers);
 
   private: /* Base */
     void onStart(NasSm *sm, Usim *usim);

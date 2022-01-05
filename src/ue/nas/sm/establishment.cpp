@@ -113,7 +113,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     auto req = std::make_unique<nas::PduSessionEstablishmentRequest>();
     req->pti = pti;
     req->pduSessionId = psi;
-    req->integrityProtectionMaximumDataRate = MakeIntegrityMaxRate(m_base->config->integrityMaxRate);
+    req->integrityProtectionMaximumDataRate = MakeIntegrityMaxRate(m_ue->config->integrityMaxRate);
     req->pduSessionType = nas::IEPduSessionType{};
     req->pduSessionType->pduSessionType = nas::EPduSessionType::IPV4;
     req->sscMode = nas::IESscMode{};

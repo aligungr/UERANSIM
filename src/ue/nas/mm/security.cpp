@@ -243,11 +243,11 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     // Append IMEISV if requested
     if (msg.imeiSvRequest.has_value() && msg.imeiSvRequest->imeiSvRequest == nas::EImeiSvRequest::REQUESTED)
     {
-        if (m_base->config->imeiSv.has_value())
+        if (m_ue->config->imeiSv.has_value())
         {
             resp.imeiSv = nas::IE5gsMobileIdentity{};
             resp.imeiSv->type = nas::EIdentityType::IMEISV;
-            resp.imeiSv->value = *m_base->config->imeiSv;
+            resp.imeiSv->value = *m_ue->config->imeiSv;
         }
     }
 
@@ -273,7 +273,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
 nas::IEUeSecurityCapability NasMm::createSecurityCapabilityIe()
 {
-    auto &algs = m_base->config->supportedAlgs;
+    auto &algs = m_ue->config->supportedAlgs;
     auto supported = ~0;
 
     nas::IEUeSecurityCapability res{};

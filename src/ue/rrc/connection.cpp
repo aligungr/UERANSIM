@@ -50,7 +50,7 @@ void UeRrcLayer::startConnectionEstablishment(OctetString &&nasPdu)
     }
 
     /* Check the current cell */
-    int activeCell = m_base->shCtx.currentCell.get<int>([](auto &item) { return item.cellId; });
+    int activeCell = m_ue->shCtx.currentCell.get<int>([](auto &item) { return item.cellId; });
     if (activeCell == 0)
     {
         m_logger->err("RRC establishment could not start, no active cell");
@@ -59,9 +59,9 @@ void UeRrcLayer::startConnectionEstablishment(OctetString &&nasPdu)
     }
 
     /* Handle Initial UE Identity (S-TMSI or 39-bit random value) */
-    std::optional<GutiMobileIdentity> gutiOrTmsi = m_base->shCtx.providedGuti.get();
+    std::optional<GutiMobileIdentity> gutiOrTmsi = m_ue->shCtx.providedGuti.get();
     if (!gutiOrTmsi)
-        gutiOrTmsi = m_base->shCtx.providedTmsi.get();
+        gutiOrTmsi = m_ue->shCtx.providedTmsi.get();
 
     if (gutiOrTmsi)
     {
@@ -73,7 +73,7 @@ void UeRrcLayer::startConnectionEstablishment(OctetString &&nasPdu)
     else
     {
         m_initialId.present = ASN_RRC_InitialUE_Identity_PR_randomValue;
-        asn::SetBitStringLong<39>(Random::Mixed(m_base->config->getNodeName()).nextL(), m_initialId.choice.randomValue);
+        asn::SetBitStringLong<39>(Random::Mixed(m_ue->config->getNodeName()).nextL(), m_initialId.choice.randomValue);
     }
 
     /* Set the Initial NAS PDU */
@@ -113,9 +113,9 @@ void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
     asn::SetOctetString(ies->dedicatedNAS_Message, m_initialNasPdu);
 
     /* Send S-TMSI if available */
-    std::optional<GutiMobileIdentity> gutiOrTmsi = m_base->shCtx.providedGuti.get();
+    std::optional<GutiMobileIdentity> gutiOrTmsi = m_ue->shCtx.providedGuti.get();
     if (!gutiOrTmsi)
-        gutiOrTmsi = m_base->shCtx.providedTmsi.get();
+        gutiOrTmsi = m_ue->shCtx.providedTmsi.get();
     if (gutiOrTmsi)
     {
         auto &sTmsi = setupComplete->criticalExtensions.choice.rrcSetupComplete->ng_5G_S_TMSI_Value =
@@ -130,7 +130,7 @@ void UeRrcLayer::receiveRrcSetup(int cellId, const ASN_RRC_RRCSetup &msg)
 
     m_logger->info("RRC connection established");
     switchState(ERrcState::RRC_CONNECTED);
-    m_base->task->nas().handleRrcConnectionSetup();
+    m_ue->nas().handleRrcConnectionSetup();
 }
 
 void UeRrcLayer::receiveRrcReject(int cellId, const ASN_RRC_RRCReject &msg)
@@ -148,12 +148,12 @@ void UeRrcLayer::receiveRrcRelease(const ASN_RRC_RRCRelease &msg)
     m_logger->debug("RRC Release received");
     m_state = ERrcState::RRC_IDLE;
 
-    m_base->task->nas().handleRrcConnectionRelease();
+    m_ue->nas().handleRrcConnectionRelease();
 }
 
 void UeRrcLayer::handleEstablishmentFailure()
 {
-    m_base->task->nas().handleRrcEstablishmentFailure();
+    m_ue->nas().handleRrcEstablishmentFailure();
 }
 
 void UeRrcLayer::performLocalRelease(bool treatBarred)
@@ -163,8 +163,8 @@ void UeRrcLayer::performLocalRelease(bool treatBarred)
 
     switchState(ERrcState::RRC_IDLE);
 
-    m_base->shCtx.sti = Random::Mixed(m_base->config->getNodeName()).nextL();
-    m_base->task->nas().handleRrcConnectionRelease();
+    m_ue->shCtx.sti = Random::Mixed(m_ue->config->getNodeName()).nextL();
+    m_ue->nas().handleRrcConnectionRelease();
 }
 
 } // namespace nr::ue

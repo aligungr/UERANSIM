@@ -15,36 +15,23 @@ namespace nr::ue
 UserEquipment::UserEquipment(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
                              app::INodeListener *nodeListener, NtsTask *cliCallbackTask)
 {
-    auto *base = new TaskBase();
-    base->ue = this;
-    base->config = std::move(config);
-    base->logBase = std::make_unique<LogBase>("logs/ue-" + base->config->getNodeName() + ".log");
-    base->ueController = ueController;
-    base->nodeListener = nodeListener;
-    base->cliCallbackTask = cliCallbackTask;
-
-    base->task = new UeTask(base);
-
-    taskBase = base;
+    ue = new UeTask(std::move(config), ueController, nodeListener, cliCallbackTask);
 }
 
 UserEquipment::~UserEquipment()
 {
-    taskBase->task->quit();
-
-    delete taskBase->task;
-
-    delete taskBase;
+    ue->quit();
+    delete ue;
 }
 
 void UserEquipment::start()
 {
-    taskBase->task->start();
+    ue->start();
 }
 
 void UserEquipment::pushCommand(std::unique_ptr<app::UeCliCommand> cmd, const InetAddress &address)
 {
-    taskBase->task->push(std::make_unique<NmUeCliCommand>(std::move(cmd), address));
+    ue->push(std::make_unique<NmUeCliCommand>(std::move(cmd), address));
 }
 
 } // namespace nr::ue

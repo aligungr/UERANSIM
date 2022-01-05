@@ -52,9 +52,9 @@ void NasMm::performPlmnSelection()
         logFailures = false;
     }
 
-    Plmn lastSelectedPlmn = m_base->shCtx.selectedPlmn.get();
+    Plmn lastSelectedPlmn = m_ue->shCtx.selectedPlmn.get();
 
-    std::unordered_set<Plmn> plmns = m_base->shCtx.availablePlmns.get();
+    std::unordered_set<Plmn> plmns = m_ue->shCtx.availablePlmns.get();
 
     if (!m_usim->isValid() || plmns.empty())
     {
@@ -67,7 +67,7 @@ void NasMm::performPlmnSelection()
             m_lastTimePlmnSearchFailureLogged = currentTime;
         }
 
-        m_base->shCtx.selectedPlmn.set({});
+        m_ue->shCtx.selectedPlmn.set({});
         return;
     }
 
@@ -76,13 +76,13 @@ void NasMm::performPlmnSelection()
 
     // Highest priority is for HPLMN, so just look for HPLMN first.
     for (auto &plmn : plmns)
-        if (plmn == m_base->config->hplmn)
+        if (plmn == m_ue->config->hplmn)
             candidates.push_back(plmn);
 
     // Then again look for the all PLMNS
     for (auto &plmn : plmns)
     {
-        if (plmn == m_base->config->hplmn)
+        if (plmn == m_ue->config->hplmn)
             continue; // If it's the HPLMN, it's already added above
         if (m_storage->forbiddenPlmnList->contains(plmn))
             continue;
@@ -109,7 +109,7 @@ void NasMm::performPlmnSelection()
         resetRegAttemptCounter();
     }
 
-    m_base->shCtx.selectedPlmn.set(selected);
+    m_ue->shCtx.selectedPlmn.set(selected);
 }
 
 void NasMm::handleActiveCellChange(const Tai &prevTai)
@@ -121,7 +121,7 @@ void NasMm::handleActiveCellChange(const Tai &prevTai)
         return;
     }
 
-    auto currentCell = m_base->shCtx.currentCell.get();
+    auto currentCell = m_ue->shCtx.currentCell.get();
     Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
 
     if (currentCell.hasValue() && !m_storage->equivalentPlmnList->contains(currentCell.plmn))
@@ -271,7 +271,7 @@ void NasMm::localReleaseConnection(bool treatBarred)
     if (m_cmState != ECmState::CM_IDLE)
         m_logger->info("Performing local release of NAS connection");
 
-    m_base->task->rrc().performLocalRelease(treatBarred);
+    m_ue->rrc().performLocalRelease(treatBarred);
 }
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)
@@ -329,21 +329,21 @@ void NasMm::updateProvidedGuti(bool provide)
     auto &guti = m_storage->storedGuti->get();
     if (!provide || guti.type == nas::EIdentityType::NO_IDENTITY)
     {
-        m_base->shCtx.providedGuti.set({});
-        m_base->shCtx.providedTmsi.set({});
+        m_ue->shCtx.providedGuti.set({});
+        m_ue->shCtx.providedTmsi.set({});
     }
     else
     {
-        auto tai = m_base->shCtx.getCurrentTai();
+        auto tai = m_ue->shCtx.getCurrentTai();
         if (tai.hasValue() && nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{tai}))
         {
-            m_base->shCtx.providedGuti.set({});
-            m_base->shCtx.providedTmsi.set(guti.gutiOrTmsi);
+            m_ue->shCtx.providedGuti.set({});
+            m_ue->shCtx.providedTmsi.set(guti.gutiOrTmsi);
         }
         else
         {
-            m_base->shCtx.providedGuti.set(guti.gutiOrTmsi);
-            m_base->shCtx.providedTmsi.set({});
+            m_ue->shCtx.providedGuti.set(guti.gutiOrTmsi);
+            m_ue->shCtx.providedTmsi.set({});
         }
     }
 }

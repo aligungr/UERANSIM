@@ -14,12 +14,13 @@
 #include <asn/rrc/ASN_RRC_ULInformationTransfer.h>
 
 #include <lib/rrc/encode.hpp>
+#include <ue/task.hpp>
 #include <utils/common.hpp>
 
 namespace nr::ue
 {
 
-UeRrcLayer::UeRrcLayer(TaskBase *base) : m_base{base}, m_timers{}
+UeRrcLayer::UeRrcLayer(UeTask *base) : m_ue{base}, m_timers{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rrc");
 

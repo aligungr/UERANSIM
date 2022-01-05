@@ -11,7 +11,7 @@
 namespace nr::ue
 {
 
-NasLayer::NasLayer(TaskBase *base) : m_base{base}, m_timers{}
+NasLayer::NasLayer(UeTask *base) : m_ue{base}, m_timers{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 
@@ -22,7 +22,7 @@ NasLayer::NasLayer(TaskBase *base) : m_base{base}, m_timers{}
 
 void NasLayer::onStart()
 {
-    m_usim->initialize(m_base->config->supi.has_value());
+    m_usim->initialize(m_ue->config->supi.has_value());
 
     m_sm->onStart(m_mm);
     m_mm->onStart(m_sm, m_usim);

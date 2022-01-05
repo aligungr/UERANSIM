@@ -111,7 +111,7 @@ void NasMm::serviceRequestRequiredForData()
 
 void NasMm::invokeProcedures()
 {
-    auto activeCell = m_base->shCtx.currentCell.get();
+    auto activeCell = m_ue->shCtx.currentCell.get();
     bool hasActiveCell = activeCell.hasValue();
 
     if (hasActiveCell && m_procCtl.deregistration)

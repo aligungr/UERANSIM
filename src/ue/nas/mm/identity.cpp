@@ -24,12 +24,12 @@ void NasMm::receiveIdentityRequest(const nas::IdentityRequest &msg)
     else if (msg.identityType.value == nas::EIdentityType::IMEI)
     {
         resp.mobileIdentity.type = nas::EIdentityType::IMEI;
-        resp.mobileIdentity.value = *m_base->config->imei;
+        resp.mobileIdentity.value = *m_ue->config->imei;
     }
     else if (msg.identityType.value == nas::EIdentityType::IMEISV)
     {
         resp.mobileIdentity.type = nas::EIdentityType::IMEISV;
-        resp.mobileIdentity.value = *m_base->config->imeiSv;
+        resp.mobileIdentity.value = *m_ue->config->imeiSv;
     }
     else if (msg.identityType.value == nas::EIdentityType::GUTI)
     {
@@ -71,8 +71,8 @@ nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()
 
 nas::IE5gsMobileIdentity NasMm::generateSuci()
 {
-    auto &supi = m_base->config->supi;
-    auto &plmn = m_base->config->hplmn;
+    auto &supi = m_ue->config->supi;
+    auto &plmn = m_ue->config->hplmn;
 
     if (!supi.has_value())
         return {};
@@ -108,18 +108,18 @@ nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()
     {
         return suci;
     }
-    else if (m_base->config->imei.has_value())
+    else if (m_ue->config->imei.has_value())
     {
         nas::IE5gsMobileIdentity res{};
         res.type = nas::EIdentityType::IMEI;
-        res.value = *m_base->config->imei;
+        res.value = *m_ue->config->imei;
         return res;
     }
-    else if (m_base->config->imeiSv.has_value())
+    else if (m_ue->config->imeiSv.has_value())
     {
         nas::IE5gsMobileIdentity res{};
         res.type = nas::EIdentityType::IMEISV;
-        res.value = *m_base->config->imeiSv;
+        res.value = *m_ue->config->imeiSv;
         return res;
     }
     else

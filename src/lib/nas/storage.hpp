@@ -6,6 +6,8 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
+#pragma once
+
 #include <array>
 #include <functional>
 #include <optional>

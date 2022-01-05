@@ -45,7 +45,7 @@ namespace nr::ue
 class UeRrcLayer
 {
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
     std::unique_ptr<Logger> m_logger;
 
     int64_t m_startedTime;
@@ -67,7 +67,7 @@ class UeRrcLayer
     friend class UeCmdHandler;
 
   public:
-    explicit UeRrcLayer(TaskBase *base);
+    explicit UeRrcLayer(UeTask *base);
     ~UeRrcLayer() = default;
 
   public:

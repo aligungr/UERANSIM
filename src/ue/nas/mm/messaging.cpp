@@ -105,7 +105,7 @@ static void RemoveCleartextIEs(nas::PlainMmMessage &msg, OctetString &&nasMsgCon
 
 EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
 {
-    if (!m_base->shCtx.hasActiveCell())
+    if (!m_ue->shCtx.hasActiveCell())
     {
         m_logger->debug("NAS Transport aborted, no active cell");
         return EProcRc::STAY;
@@ -182,7 +182,7 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
     }
 
-    m_base->task->rrc().deliverUplinkNas(0, std::move(pdu));
+    m_ue->rrc().deliverUplinkNas(0, std::move(pdu));
     return EProcRc::OK;
 }
 

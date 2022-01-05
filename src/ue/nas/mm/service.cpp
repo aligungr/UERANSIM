@@ -32,7 +32,7 @@ EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
         m_logger->err("Service Request canceled, UE not in 5U1 UPDATED state");
         return EProcRc::STAY;
     }
-    Tai currentTai = m_base->shCtx.getCurrentTai();
+    Tai currentTai = m_ue->shCtx.getCurrentTai();
     if (!currentTai.hasValue())
     {
         m_logger->err("Service Request canceled, no active cell exists");
@@ -352,14 +352,14 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        Plmn plmn = m_base->shCtx.getCurrentPlmn();
+        Plmn plmn = m_ue->shCtx.getCurrentPlmn();
         if (plmn.hasValue())
             m_storage->forbiddenPlmnList->add(plmn);
     }
 
     if (cause == nas::EMmCause::TA_NOT_ALLOWED)
     {
-        Tai tai = m_base->shCtx.getCurrentTai();
+        Tai tai = m_ue->shCtx.getCurrentTai();
         if (tai.hasValue())
         {
             m_storage->forbiddenTaiListRps->add(tai);
@@ -370,7 +370,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        Tai tai = m_base->shCtx.getCurrentTai();
+        Tai tai = m_ue->shCtx.getCurrentTai();
         if (tai.hasValue())
         {
             m_storage->forbiddenTaiListRoaming->add(tai);

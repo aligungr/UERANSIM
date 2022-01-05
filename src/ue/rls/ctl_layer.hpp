@@ -22,14 +22,14 @@ namespace nr::ue
 class RlsCtlLayer
 {
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
     std::unique_ptr<Logger> m_logger;
     int m_servingCell;
     std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
 
   public:
-    explicit RlsCtlLayer(TaskBase *base);
+    explicit RlsCtlLayer(UeTask *base);
     ~RlsCtlLayer() = default;
 
   private:

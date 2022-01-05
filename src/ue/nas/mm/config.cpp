@@ -64,7 +64,7 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
             m_storage->taiList->set(*msg.taiList);
             updateForbiddenTaiListsForAllowedIndications();
 
-            Tai currentTai = m_base->shCtx.getCurrentTai();
+            Tai currentTai = m_ue->shCtx.getCurrentTai();
             if (currentTai.hasValue() &&
                 nas::utils::TaiListContains(*msg.taiList, nas::VTrackingAreaIdentity{currentTai}))
                 m_storage->lastVisitedRegisteredTai->set(currentTai);

@@ -25,10 +25,10 @@ void UeRrcLayer::performCellSelection()
 
     if (currentTime - m_startedTime <= 1000LL && m_cellDesc.empty())
         return;
-    if (currentTime - m_startedTime <= 4000LL && !m_base->shCtx.selectedPlmn.get().hasValue())
+    if (currentTime - m_startedTime <= 4000LL && !m_ue->shCtx.selectedPlmn.get().hasValue())
         return;
 
-    auto lastCell = m_base->shCtx.currentCell.get();
+    auto lastCell = m_ue->shCtx.currentCell.get();
 
     bool shouldLogErrors = lastCell.cellId != 0 || (currentTime - m_lastTimePlmnSearchFailureLogged >= 30'000LL);
 
@@ -36,7 +36,7 @@ void UeRrcLayer::performCellSelection()
     CellSelectionReport report;
 
     bool cellFound = false;
-    if (m_base->shCtx.selectedPlmn.get().hasValue())
+    if (m_ue->shCtx.selectedPlmn.get().hasValue())
     {
         cellFound = lookForSuitableCell(cellInfo, report);
         if (!cellFound)
@@ -91,7 +91,7 @@ void UeRrcLayer::performCellSelection()
     }
 
     int selectedCell = cellInfo.cellId;
-    m_base->shCtx.currentCell.set(cellInfo);
+    m_ue->shCtx.currentCell.set(cellInfo);
 
     if (selectedCell != 0 && selectedCell != lastCell.cellId)
         m_logger->info("Selected cell plmn[%s] tac[%d] category[%s]", ToJson(cellInfo.plmn).str().c_str(), cellInfo.tac,
@@ -99,14 +99,14 @@ void UeRrcLayer::performCellSelection()
 
     if (selectedCell != lastCell.cellId)
     {
-        m_base->task->rlsCtl().assignCurrentCell(selectedCell);
-        m_base->task->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
+        m_ue->rlsCtl().assignCurrentCell(selectedCell);
+        m_ue->nas().handleActiveCellChange(Tai{lastCell.plmn, lastCell.tac});
     }
 }
 
 bool UeRrcLayer::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionReport &report)
 {
-    Plmn selectedPlmn = m_base->shCtx.selectedPlmn.get();
+    Plmn selectedPlmn = m_ue->shCtx.selectedPlmn.get();
     if (!selectedPlmn.hasValue())
         return false;
 
@@ -148,7 +148,7 @@ bool UeRrcLayer::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionRepo
 
         Tai tai{cell.sib1.plmn, cell.sib1.tac};
 
-        if (m_base->shCtx.forbiddenTaiRoaming.get<bool>([&tai](auto &item) {
+        if (m_ue->shCtx.forbiddenTaiRoaming.get<bool>([&tai](auto &item) {
                 return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
             }))
         {
@@ -156,7 +156,7 @@ bool UeRrcLayer::lookForSuitableCell(ActiveCellInfo &cellInfo, CellSelectionRepo
             continue;
         }
 
-        if (m_base->shCtx.forbiddenTaiRps.get<bool>([&tai](auto &item) {
+        if (m_ue->shCtx.forbiddenTaiRps.get<bool>([&tai](auto &item) {
                 return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
             }))
         {
@@ -224,7 +224,7 @@ bool UeRrcLayer::lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionRe
 
         Tai tai{cell.sib1.plmn, cell.sib1.tac};
 
-        if (m_base->shCtx.forbiddenTaiRoaming.get<bool>([&tai](auto &item) {
+        if (m_ue->shCtx.forbiddenTaiRoaming.get<bool>([&tai](auto &item) {
                 return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
             }))
         {
@@ -232,7 +232,7 @@ bool UeRrcLayer::lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionRe
             continue;
         }
 
-        if (m_base->shCtx.forbiddenTaiRps.get<bool>([&tai](auto &item) {
+        if (m_ue->shCtx.forbiddenTaiRps.get<bool>([&tai](auto &item) {
                 return std::any_of(item.begin(), item.end(), [&tai](auto &element) { return element == tai; });
             }))
         {
@@ -255,7 +255,7 @@ bool UeRrcLayer::lookForAcceptableCell(ActiveCellInfo &cellInfo, CellSelectionRe
     });
 
     // Then order candidates by PLMN priority if we have a selected PLMN
-    Plmn selectedPlmn = m_base->shCtx.selectedPlmn.get();
+    Plmn selectedPlmn = m_ue->shCtx.selectedPlmn.get();
     if (selectedPlmn.hasValue())
     {
         // Using stable-sort here

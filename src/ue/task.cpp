@@ -32,16 +32,23 @@ struct TimerPeriod
 namespace nr::ue
 {
 
-ue::UeTask::UeTask(TaskBase *base) : m_base{base}
+ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
+                   app::INodeListener *nodeListener, NtsTask *cliCallbackTask)
 {
-    m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "main");
-    base->shCtx.sti = Random::Mixed(base->config->getNodeName()).nextL();
+    this->logBase = std::make_unique<LogBase>("logs/ue-" + config->getNodeName() + ".log");
+    this->config = std::move(config);
+    this->ueController = ueController;
+    this->nodeListener = nodeListener;
+    this->cliCallbackTask = cliCallbackTask;
 
-    m_rlsUdp = std::make_unique<RlsUdpLayer>(base, this);
-    m_rlsCtl = std::make_unique<RlsCtlLayer>(base);
-    m_rrc = std::make_unique<UeRrcLayer>(base);
-    m_nas = std::make_unique<NasLayer>(base);
-    m_tun = std::make_unique<TunLayer>(base);
+    this->m_logger = logBase->makeUniqueLogger(this->config->getLoggerPrefix() + "main");
+    this->shCtx.sti = Random::Mixed(this->config->getNodeName()).nextL();
+
+    this->m_rlsUdp = std::make_unique<RlsUdpLayer>(this);
+    this->m_rlsCtl = std::make_unique<RlsCtlLayer>(this);
+    this->m_rrc = std::make_unique<UeRrcLayer>(this);
+    this->m_nas = std::make_unique<NasLayer>(this);
+    this->m_tun = std::make_unique<TunLayer>(this);
 }
 
 UeTask::~UeTask() = default;
@@ -97,7 +104,7 @@ void UeTask::onLoop()
         }
         else if (w.timerId == TimerId::SWITCH_OFF)
         {
-            m_base->ueController->performSwitchOff(m_base->ue);
+            ueController->performSwitchOff(ue);
         }
     }
     else if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)
@@ -121,7 +128,7 @@ void UeTask::onLoop()
     else if (msg->msgType == NtsMessageType::UE_CLI_COMMAND)
     {
         auto &w = dynamic_cast<NmUeCliCommand &>(*msg);
-        UeCmdHandler handler{m_base};
+        UeCmdHandler handler{this};
         handler.handleCmd(w);
     }
     else

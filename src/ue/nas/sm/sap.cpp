@@ -54,7 +54,7 @@ void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
             handleUplinkStatusChange(psi, false);
         }
 
-        m_base->task->rlsCtl().handleUplinkDataDelivery(psi, std::move(data));
+        m_ue->rlsCtl().handleUplinkDataDelivery(psi, std::move(data));
     }
     else
     {
@@ -78,7 +78,7 @@ void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
         state != EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS)
         return;
 
-    m_base->task->tun().write(psi, data.data(), static_cast<size_t>(data.length()));
+    m_ue->tun().write(psi, data.data(), static_cast<size_t>(data.length()));
 }
 
 } // namespace nr::ue

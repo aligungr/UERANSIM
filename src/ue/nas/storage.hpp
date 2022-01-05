@@ -6,6 +6,8 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
+#pragma once
+
 #include <lib/nas/msg.hpp>
 #include <lib/nas/storage.hpp>
 #include <ue/types.hpp>
@@ -16,7 +18,7 @@ namespace nr::ue
 class MmStorage
 {
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
 
   public:
     std::unique_ptr<nas::NasSlot<E5UState>> uState;
@@ -47,7 +49,7 @@ class MmStorage
     std::unique_ptr<nas::NasSlot<std::optional<nas::IEDaylightSavingTime>>> networkDaylightSavingTime;
 
   public:
-    explicit MmStorage(TaskBase *base);
+    explicit MmStorage(UeTask *base);
 };
 
 } // namespace nr::ue

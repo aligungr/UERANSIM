@@ -31,21 +31,38 @@
 namespace nr::ue
 {
 
+class RlsUdpLayer;
+class RlsCtlLayer;
+class UeRrcLayer;
+class NasLayer;
+class TunLayer;
+
 class UeTask : public NtsTask
 {
   private:
-    TaskBase *m_base;
     std::unique_ptr<Logger> m_logger;
+
+  private:
     std::unique_ptr<RlsUdpLayer> m_rlsUdp;
     std::unique_ptr<RlsCtlLayer> m_rlsCtl;
     std::unique_ptr<UeRrcLayer> m_rrc;
     std::unique_ptr<NasLayer> m_nas;
     std::unique_ptr<TunLayer> m_tun;
 
+  public:
+    UserEquipment *ue{};
+    std::unique_ptr<UeConfig> config{};
+    std::unique_ptr<LogBase> logBase{};
+    app::IUeController *ueController{};
+    app::INodeListener *nodeListener{};
+    NtsTask *cliCallbackTask{};
+    UeSharedContext shCtx{};
+
     friend class UeCmdHandler;
 
   public:
-    explicit UeTask(TaskBase *base);
+    explicit UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
+                    app::INodeListener *nodeListener, NtsTask *cliCallbackTask);
     ~UeTask() override;
 
   protected:

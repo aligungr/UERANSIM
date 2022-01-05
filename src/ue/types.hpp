@@ -185,20 +185,6 @@ struct UeSharedContext
     bool hasActiveCell();
 };
 
-struct TaskBase
-{
-    UserEquipment *ue{};
-    std::unique_ptr<UeConfig> config{};
-    std::unique_ptr<LogBase> logBase{};
-    app::IUeController *ueController{};
-    app::INodeListener *nodeListener{};
-    NtsTask *cliCallbackTask{};
-
-    UeSharedContext shCtx{};
-
-    UeTask *task{};
-};
-
 struct RrcTimers
 {
     UeTimer t300;

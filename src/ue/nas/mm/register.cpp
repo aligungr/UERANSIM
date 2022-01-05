@@ -290,7 +290,7 @@ void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 
 void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 {
-    Tai currentTai = m_base->shCtx.getCurrentTai();
+    Tai currentTai = m_ue->shCtx.getCurrentTai();
     Plmn currentPlmn = currentTai.plmn;
 
     if (!currentTai.hasValue())
@@ -437,7 +437,7 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 
 void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg)
 {
-    Tai currentTai = m_base->shCtx.getCurrentTai();
+    Tai currentTai = m_ue->shCtx.getCurrentTai();
     Plmn currentPlmn = currentTai.plmn;
 
     if (!currentTai.hasValue())
@@ -705,7 +705,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
-            Tai tai = m_base->shCtx.getCurrentTai();
+            Tai tai = m_ue->shCtx.getCurrentTai();
             if (tai.hasValue())
             {
                 m_storage->forbiddenTaiListRoaming->add(tai);
@@ -717,9 +717,9 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
         {
-            Plmn plmn = m_base->shCtx.getCurrentPlmn();
+            Plmn plmn = m_ue->shCtx.getCurrentPlmn();
             if (plmn.hasValue())
-                m_storage->forbiddenPlmnList->add(m_base->shCtx.getCurrentPlmn());
+                m_storage->forbiddenPlmnList->add(m_ue->shCtx.getCurrentPlmn());
         }
 
         if (cause == nas::EMmCause::CONGESTION)
@@ -872,7 +872,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
     {
-        Tai tai = m_base->shCtx.getCurrentTai();
+        Tai tai = m_ue->shCtx.getCurrentTai();
         if (tai.hasValue())
         {
             m_storage->forbiddenTaiListRoaming->add(tai);
@@ -883,7 +883,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
 
     if (cause == nas::EMmCause::PLMN_NOT_ALLOWED || cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
     {
-        Plmn plmn = m_base->shCtx.getCurrentPlmn();
+        Plmn plmn = m_ue->shCtx.getCurrentPlmn();
         if (plmn.hasValue())
             m_storage->forbiddenPlmnList->add(plmn);
     }
@@ -985,7 +985,7 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
     // "If the registration attempt counter is less than 5:"
     if (m_regCounter < 5)
     {
-        auto tai = m_base->shCtx.getCurrentTai();
+        auto tai = m_ue->shCtx.getCurrentTai();
         bool includedInTaiList =
             tai.hasValue() && nas::utils::TaiListContains(m_storage->taiList->get(), nas::VTrackingAreaIdentity{tai});
 

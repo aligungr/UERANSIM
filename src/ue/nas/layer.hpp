@@ -22,7 +22,7 @@ namespace nr::ue
 
 class NasLayer
 {
-    TaskBase *m_base;
+    UeTask *m_ue;
     std::unique_ptr<Logger> m_logger;
 
     NasTimers m_timers;
@@ -33,7 +33,7 @@ class NasLayer
     friend class UeCmdHandler;
 
   public:
-    explicit NasLayer(TaskBase *base);
+    explicit NasLayer(UeTask *base);
     ~NasLayer() = default;
 
   public:

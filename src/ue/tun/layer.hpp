@@ -23,13 +23,13 @@ namespace nr::ue
 class TunLayer
 {
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
     std::array<int, 16> m_fd;
     std::unique_ptr<ScopedThread> m_receiverThread;
     int m_dice;
 
   public:
-    explicit TunLayer(TaskBase *base);
+    explicit TunLayer(UeTask *base);
     ~TunLayer();
 
   public:

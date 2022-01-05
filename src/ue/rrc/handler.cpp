@@ -52,7 +52,7 @@ void UeRrcLayer::receivePaging(const ASN_RRC_Paging &msg)
         }
     });
 
-    m_base->task->nas().handlePaging(tmsiIds);
+    m_ue->nas().handlePaging(tmsiIds);
 }
 
 } // namespace nr::ue

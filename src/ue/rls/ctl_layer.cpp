@@ -8,7 +8,7 @@ static constexpr const int MAX_PDU_TTL = 3000;
 namespace nr::ue
 {
 
-RlsCtlLayer::RlsCtlLayer(TaskBase *base) : m_base{base}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
+RlsCtlLayer::RlsCtlLayer(UeTask *base) : m_ue{base}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -36,10 +36,10 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
                 return;
             }
 
-            m_base->task->nas().handleDownlinkDataRequest(static_cast<int>(m.payload), std::move(m.pdu));
+            m_ue->nas().handleDownlinkDataRequest(static_cast<int>(m.payload), std::move(m.pdu));
         }
         else if (m.pduType == rls::EPduType::RRC)
-            m_base->task->rrc().handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(m.payload), m.pdu);
+            m_ue->rrc().handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(m.payload), m.pdu);
         else
             m_logger->err("Unhandled RLS PDU type");
     }
@@ -74,24 +74,24 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
         m_pduMap[pduId].sentTime = utils::CurrentTimeMillis();
     }
 
-    rls::RlsPduTransmission msg{m_base->shCtx.sti};
+    rls::RlsPduTransmission msg{m_ue->shCtx.sti};
     msg.pduType = rls::EPduType::RRC;
     msg.pdu = std::move(data);
     msg.payload = static_cast<uint32_t>(channel);
     msg.pduId = pduId;
 
-    m_base->task->rlsUdp().send(cellId, msg);
+    m_ue->rlsUdp().send(cellId, msg);
 }
 
 void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
 {
-    rls::RlsPduTransmission msg{m_base->shCtx.sti};
+    rls::RlsPduTransmission msg{m_ue->shCtx.sti};
     msg.pduType = rls::EPduType::DATA;
     msg.pdu = std::move(data);
     msg.payload = static_cast<uint32_t>(psi);
     msg.pduId = 0;
 
-    m_base->task->rlsUdp().send(m_servingCell, msg);
+    m_ue->rlsUdp().send(m_servingCell, msg);
 }
 
 void RlsCtlLayer::onAckControlTimerExpired()
@@ -128,10 +128,10 @@ void RlsCtlLayer::onAckSendTimerExpired()
         if (!item.second.empty())
             continue;
 
-        rls::RlsPduTransmissionAck msg{m_base->shCtx.sti};
+        rls::RlsPduTransmissionAck msg{m_ue->shCtx.sti};
         msg.pduIds = std::move(item.second);
 
-        m_base->task->rlsUdp().send(item.first, msg);
+        m_ue->rlsUdp().send(item.first, msg);
     }
 }
 
@@ -142,7 +142,7 @@ void RlsCtlLayer::assignCurrentCell(int cellId)
 
 void RlsCtlLayer::declareRadioLinkFailure(rls::ERlfCause cause)
 {
-    m_base->task->rrc().handleRadioLinkFailure(cause);
+    m_ue->rrc().handleRadioLinkFailure(cause);
 }
 
 } // namespace nr::ue

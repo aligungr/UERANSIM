@@ -95,7 +95,7 @@ bool NasMm::hasEmergency()
 
 bool NasMm::isHighPriority()
 {
-    auto &acc = m_base->config->uacAcc;
+    auto &acc = m_ue->config->uacAcc;
     return acc.cls11 || acc.cls12 || acc.cls13 || acc.cls14 || acc.cls15;
 }
 
@@ -106,7 +106,7 @@ void NasMm::setN1Capability(bool enabled)
 
 bool NasMm::isInNonAllowedArea()
 {
-    auto currentCell = m_base->shCtx.currentCell.get();
+    auto currentCell = m_ue->shCtx.currentCell.get();
     if (!currentCell.hasValue())
         return false;
 
@@ -128,19 +128,19 @@ EUacResult NasMm::performUac()
     auto accessIdentities = [this]() {
         std::bitset<16> ais;
 
-        auto currentPlmn = m_base->shCtx.getCurrentPlmn();
+        auto currentPlmn = m_ue->shCtx.getCurrentPlmn();
 
-        if (m_base->config->uacAic.mps && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
+        if (m_ue->config->uacAic.mps && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
         {
-            if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
-                currentPlmn.mcc == m_base->config->hplmn.mcc)
+            if (currentPlmn == m_ue->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
+                currentPlmn.mcc == m_ue->config->hplmn.mcc)
                 ais[1] = true;
         }
 
-        if (m_base->config->uacAic.mcs && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
+        if (m_ue->config->uacAic.mcs && m_rmState == ERmState::RM_REGISTERED && currentPlmn.hasValue())
         {
-            if (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
-                currentPlmn.mcc == m_base->config->hplmn.mcc)
+            if (currentPlmn == m_ue->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn) ||
+                currentPlmn.mcc == m_ue->config->hplmn.mcc)
                 ais[2] = true;
         }
 
@@ -153,22 +153,22 @@ EUacResult NasMm::performUac()
         }
 
         if (currentPlmn.hasValue() &&
-            (currentPlmn == m_base->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn)))
+            (currentPlmn == m_ue->config->hplmn || m_storage->equivalentPlmnList->contains(currentPlmn)))
         {
-            if (m_base->config->uacAcc.cls11)
+            if (m_ue->config->uacAcc.cls11)
                 ais[11] = true;
-            if (m_base->config->uacAcc.cls15)
+            if (m_ue->config->uacAcc.cls15)
                 ais[15] = true;
         }
 
         if (currentPlmn.hasValue() &&
-            (currentPlmn == m_base->config->hplmn || currentPlmn.mcc == m_base->config->hplmn.mcc))
+            (currentPlmn == m_ue->config->hplmn || currentPlmn.mcc == m_ue->config->hplmn.mcc))
         {
-            if (m_base->config->uacAcc.cls12)
+            if (m_ue->config->uacAcc.cls12)
                 ais[12] = true;
-            if (m_base->config->uacAcc.cls13)
+            if (m_ue->config->uacAcc.cls13)
                 ais[13] = true;
-            if (m_base->config->uacAcc.cls14)
+            if (m_ue->config->uacAcc.cls14)
                 ais[14] = true;
         }
 
@@ -260,8 +260,7 @@ EUacResult NasMm::performUac()
         return ASN_RRC_EstablishmentCause_mt_Access;
     }();
 
-    auto res =
-        m_base->task->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
+    auto res = m_ue->rrc().performUac(accessIdentities, accessCategory, static_cast<int>(establishmentCause));
 
     switch (res)
     {

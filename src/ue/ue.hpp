@@ -20,7 +20,7 @@ namespace nr::ue
 class UserEquipment
 {
   private:
-    TaskBase *taskBase;
+    UeTask *ue;
 
   public:
     UserEquipment(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,

@@ -52,7 +52,7 @@ static EMmState GetMmStateFromSubState(EMmSubState subState)
     std::terminate();
 }
 
-NasMm::NasMm(TaskBase *base, NasTimers *timers) : m_base{base}, m_timers{timers}, m_sm{}, m_usim{}, m_procCtl{}
+NasMm::NasMm(UeTask *base, NasTimers *timers) : m_ue{base}, m_timers{timers}, m_sm{}, m_usim{}, m_procCtl{}
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "nas");
 
@@ -61,7 +61,7 @@ NasMm::NasMm(TaskBase *base, NasTimers *timers) : m_base{base}, m_timers{timers}
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_PS;
 
-    m_storage = new MmStorage(m_base);
+    m_storage = new MmStorage(m_ue);
 }
 
 void NasMm::onStart(NasSm *sm, Usim *usim)
@@ -79,7 +79,7 @@ void NasMm::onQuit()
 
 void NasMm::triggerMmCycle()
 {
-    m_base->task->push(std::make_unique<NmCycleRequired>());
+    m_ue->push(std::make_unique<NmCycleRequired>());
 }
 
 void NasMm::performMmCycle()
@@ -88,7 +88,7 @@ void NasMm::performMmCycle()
     if (m_mmState == EMmState::MM_NULL)
         return;
 
-    auto currentCell = m_base->shCtx.currentCell.get();
+    auto currentCell = m_ue->shCtx.currentCell.get();
     Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
 
     /* Perform substate selection in case of primary substate */
@@ -119,7 +119,7 @@ void NasMm::performMmCycle()
 
     if (m_mmSubState == EMmSubState::MM_REGISTERED_PS)
     {
-        auto cell = m_base->shCtx.currentCell.get();
+        auto cell = m_ue->shCtx.currentCell.get();
         if (cell.hasValue())
         {
             if (isInNonAllowedArea())
@@ -225,9 +225,9 @@ void NasMm::switchMmState(EMmSubState subState)
 
     onSwitchRmState(oldRmState, m_rmState);
 
-    if (m_base->nodeListener)
+    if (m_ue->nodeListener)
     {
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::RM,
+        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::RM,
                                        ToJson(oldRmState).str(), ToJson(m_rmState).str());
     }
 
@@ -241,11 +241,11 @@ void NasMm::switchMmState(EMmSubState subState)
 
     onSwitchMmState(oldState, m_mmState, oldSubState, m_mmSubState);
 
-    if (m_base->nodeListener)
+    if (m_ue->nodeListener)
     {
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM,
+        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::MM,
                                        ToJson(oldSubState).str(), ToJson(subState).str());
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM_SUB,
+        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::MM_SUB,
                                        ToJson(oldState).str(), ToJson(state).str());
     }
 
@@ -265,9 +265,9 @@ void NasMm::switchCmState(ECmState state)
 
     onSwitchCmState(oldState, m_cmState);
 
-    if (m_base->nodeListener)
+    if (m_ue->nodeListener)
     {
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::CM,
+        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::CM,
                                        ToJson(oldState).str(), ToJson(m_cmState).str());
     }
 
@@ -281,9 +281,9 @@ void NasMm::switchUState(E5UState state)
 
     onSwitchUState(oldState, state);
 
-    if (m_base->nodeListener)
+    if (m_ue->nodeListener)
     {
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::U5,
+        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::U5,
                                        ToJson(oldState).str(), ToJson(state).str());
     }
 

@@ -17,10 +17,10 @@ namespace nr::ue
 class UeCmdHandler
 {
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
 
   public:
-    explicit UeCmdHandler(TaskBase *base) : m_base(base)
+    explicit UeCmdHandler(UeTask *base) : m_ue(base)
     {
     }
 

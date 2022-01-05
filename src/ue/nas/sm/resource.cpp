@@ -38,7 +38,7 @@ void NasSm::localReleaseSession(int psi)
     freePduSessionId(psi);
 
     if (isEstablished)
-        m_base->task->tun().release(psi);
+        m_ue->tun().release(psi);
 }
 
 void NasSm::localReleaseAllSessions()
@@ -121,7 +121,7 @@ void NasSm::establishRequiredSessions()
         return;
     }
 
-    for (auto &config : m_base->config->defaultSessions)
+    for (auto &config : m_ue->config->defaultSessions)
     {
         if (!anySessionMatches(config))
             sendEstablishmentRequest(config);

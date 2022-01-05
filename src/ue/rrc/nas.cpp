@@ -22,7 +22,7 @@ namespace nr::ue
 
 void UeRrcLayer::deliverUplinkNas(uint32_t pduId, OctetString &&nasPdu)
 {
-    if (!m_base->shCtx.currentCell.get<bool>([](auto &value) { return value.hasValue(); }))
+    if (!m_ue->shCtx.currentCell.get<bool>([](auto &value) { return value.hasValue(); }))
     {
         m_logger->err("Uplink NAS delivery failed. No active cell");
         return;
@@ -65,7 +65,7 @@ void UeRrcLayer::receiveDownlinkInformationTransfer(const ASN_RRC_DLInformationT
     OctetString nasPdu =
         asn::GetOctetString(*msg.criticalExtensions.choice.dlInformationTransfer->dedicatedNAS_Message);
 
-    m_base->task->nas().handleNasDelivery(nasPdu);
+    m_ue->nas().handleNasDelivery(nasPdu);
 }
 
 } // namespace nr::ue

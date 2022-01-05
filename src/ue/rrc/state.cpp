@@ -17,7 +17,7 @@ namespace nr::ue
 
 void UeRrcLayer::triggerCycle()
 {
-    m_base->task->push(std::make_unique<NmCycleRequired>());
+    m_ue->push(std::make_unique<NmCycleRequired>());
 }
 
 void UeRrcLayer::performCycle()
@@ -42,9 +42,9 @@ void UeRrcLayer::switchState(ERrcState state)
 
     m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
 
-    if (m_base->nodeListener)
+    if (m_ue->nodeListener)
     {
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::RRC,
+        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::RRC,
                                        ToJson(oldState).str(), ToJson(state).str());
     }
 

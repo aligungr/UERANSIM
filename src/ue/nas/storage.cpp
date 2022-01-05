@@ -7,6 +7,7 @@
 //
 
 #include "storage.hpp"
+#include <ue/task.hpp>
 
 static void BackupTaiListInSharedCtx(const std::vector<Tai> &buffer, size_t count, Locked<std::vector<Tai>> &target)
 {
@@ -20,7 +21,7 @@ static void BackupTaiListInSharedCtx(const std::vector<Tai> &buffer, size_t coun
 namespace nr::ue
 {
 
-MmStorage::MmStorage(TaskBase *base) : m_base{base}
+MmStorage::MmStorage(UeTask *base) : m_ue{base}
 {
     uState = std::make_unique<nas::NasSlot<E5UState>>(0, std::nullopt);
 
@@ -32,12 +33,12 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
 
     forbiddenTaiListRoaming = std::make_unique<nas::NasList<Tai>>(
         40, (1000ll * 60ll * 60ll * 12ll), [this](const std::vector<Tai> &buffer, size_t count) {
-            BackupTaiListInSharedCtx(buffer, count, m_base->shCtx.forbiddenTaiRoaming);
+            BackupTaiListInSharedCtx(buffer, count, m_ue->shCtx.forbiddenTaiRoaming);
         });
 
     forbiddenTaiListRps = std::make_unique<nas::NasList<Tai>>(
         40, (1000ll * 60ll * 60ll * 12ll), [this](const std::vector<Tai> &buffer, size_t count) {
-            BackupTaiListInSharedCtx(buffer, count, m_base->shCtx.forbiddenTaiRps);
+            BackupTaiListInSharedCtx(buffer, count, m_ue->shCtx.forbiddenTaiRps);
         });
 
     serviceAreaList = std::make_unique<nas::NasSlot<nas::IEServiceAreaList>>(0, std::nullopt);
@@ -72,8 +73,8 @@ MmStorage::MmStorage(TaskBase *base) : m_base{base}
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    defConfiguredNssai->set(m_base->config->defaultConfiguredNssai);
-    configuredNssai->set(m_base->config->configuredNssai);
+    defConfiguredNssai->set(m_ue->config->defaultConfiguredNssai);
+    configuredNssai->set(m_ue->config->configuredNssai);
 }
 
 } // namespace nr::ue

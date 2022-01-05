@@ -33,7 +33,7 @@ class RlsUdpLayer
     };
 
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
     std::unique_ptr<Logger> m_logger;
     std::unique_ptr<uint8_t[]> m_sendBuffer;
     std::unique_ptr<udp::UdpServerTask> m_server;
@@ -47,7 +47,7 @@ class RlsUdpLayer
     friend class UeCmdHandler;
 
   public:
-    explicit RlsUdpLayer(TaskBase *base, NtsTask *mainTask);
+    explicit RlsUdpLayer(UeTask *base);
     ~RlsUdpLayer();
 
   private:

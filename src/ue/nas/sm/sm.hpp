@@ -12,6 +12,7 @@
 #include <bitset>
 #include <lib/nas/nas.hpp>
 #include <ue/nts.hpp>
+#include <ue/task.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
 
@@ -23,7 +24,7 @@ class NasMm;
 class NasSm
 {
   private:
-    TaskBase *m_base;
+    UeTask *m_ue;
     NasTimers *m_timers;
     std::unique_ptr<Logger> m_logger;
     NasMm *m_mm;
@@ -36,7 +37,7 @@ class NasSm
     friend class NasLayer;
 
   public:
-    NasSm(TaskBase *base, NasTimers *timers);
+    NasSm(UeTask *base, NasTimers *timers);
 
   private: /* Base */
     void onStart(NasMm *mm);

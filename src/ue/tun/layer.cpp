@@ -30,21 +30,21 @@ static std::string GetErrorMessage(const std::string &cause)
 
 static void ReceiverThread(void *args)
 {
-    auto *base = reinterpret_cast<nr::ue::TaskBase *>(args);
+    auto *base = reinterpret_cast<nr::ue::UeTask *>(args);
 
     auto *buffer = new uint8_t[RECEIVER_BUFFER_SIZE];
 
     while (true)
     {
         int psi;
-        size_t s = base->task->tun().read(buffer, RECEIVER_BUFFER_SIZE, psi);
+        size_t s = base->tun().read(buffer, RECEIVER_BUFFER_SIZE, psi);
 
         if (s > 0)
         {
             auto m = std::make_unique<nr::ue::NmUeTunToApp>();
             m->psi = psi;
             m->data = OctetString::FromArray(buffer, s);
-            base->task->push(std::move(m));
+            base->push(std::move(m));
         }
     }
 }
@@ -52,7 +52,7 @@ static void ReceiverThread(void *args)
 namespace nr::ue
 {
 
-TunLayer::TunLayer(TaskBase *base) : m_base{base}, m_fd{}, m_dice{}
+TunLayer::TunLayer(UeTask *base) : m_ue{base}, m_fd{}, m_dice{}
 {
     for (auto &fd : m_fd)
         fd = -1;

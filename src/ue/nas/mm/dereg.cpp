@@ -28,7 +28,7 @@ static nas::IEDeRegistrationType MakeDeRegistrationType(EDeregCause deregCause)
 
 EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
 {
-    auto currentTai = m_base->shCtx.getCurrentTai();
+    auto currentTai = m_ue->shCtx.getCurrentTai();
     if (!currentTai.hasValue())
         return EProcRc::STAY;
 
@@ -104,7 +104,7 @@ EProcRc NasMm::sendDeregistration(EDeregCause deregCause)
     if (deregCause == EDeregCause::SWITCH_OFF)
     {
         onSwitchOff();
-        m_base->task->push(std::make_unique<NmSwitchOff>());
+        m_ue->push(std::make_unique<NmSwitchOff>());
     }
     else if (deregCause == EDeregCause::USIM_REMOVAL)
     {
@@ -271,14 +271,14 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
         if (cause == nas::EMmCause::PLMN_NOT_ALLOWED)
         {
-            Plmn plmn = m_base->shCtx.getCurrentPlmn();
+            Plmn plmn = m_ue->shCtx.getCurrentPlmn();
             if (plmn.hasValue())
                 m_storage->forbiddenPlmnList->add(plmn);
         }
 
         if (cause == nas::EMmCause::TA_NOT_ALLOWED)
         {
-            Tai tai = m_base->shCtx.getCurrentTai();
+            Tai tai = m_ue->shCtx.getCurrentTai();
             if (tai.hasValue())
             {
                 m_storage->forbiddenTaiListRps->add(tai);
@@ -290,7 +290,7 @@ void NasMm::receiveDeregistrationRequest(const nas::DeRegistrationRequestUeTermi
 
         if (cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA || cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA)
         {
-            Tai tai = m_base->shCtx.getCurrentTai();
+            Tai tai = m_ue->shCtx.getCurrentTai();
             if (tai.hasValue())
             {
                 m_storage->forbiddenTaiListRoaming->add(tai);
