@@ -40,6 +40,7 @@ struct InetAddress
 
     [[nodiscard]] int getIpVersion() const;
     [[nodiscard]] uint16_t getPort() const;
+    [[nodiscard]] bool hasValue() const;
 };
 
 class Socket
@@ -58,6 +59,7 @@ class Socket
     void send(const InetAddress &address, const uint8_t *buffer, size_t size) const;
     void close();
     [[nodiscard]] bool hasFd() const;
+    [[nodiscard]] int getFd() const;
     [[nodiscard]] InetAddress getAddress() const;
     [[nodiscard]] int getIpVersion() const;
 

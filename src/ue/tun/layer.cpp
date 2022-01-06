@@ -58,7 +58,7 @@ std::string TunLayer::allocate(int psi, const std::string &ipAddress, bool confi
         return {};
     }
 
-    m_ue->fdBase->allocate(FdBase::PS_START + psi, fd);
+    m_ue->fdBase->allocate(FdBase::PS_START + psi, fd, false);
 
     return allocatedName;
 }

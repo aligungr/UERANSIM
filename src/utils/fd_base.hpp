@@ -11,6 +11,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <utils/network.hpp>
 
 class FdBase
 {
@@ -25,6 +26,7 @@ class FdBase
   private:
     std::array<int, SIZE> m_ids;
     std::array<int, SIZE> m_fds;
+    std::array<bool, SIZE> m_isSocket;
     size_t m_dice;
 
   public:
@@ -32,10 +34,10 @@ class FdBase
     ~FdBase();
 
   public:
-    void allocate(int id, int fd);
+    void allocate(int id, int fd, bool isSocket);
     void release(int id);
     [[nodiscard]] bool contains(int id) const;
-    size_t read(uint8_t *buffer, size_t size, int timeout, int &outId);
+    size_t read(uint8_t *buffer, size_t size, int timeout, int &outId, InetAddress& outAddress);
     void write(int id, uint8_t *buffer, size_t size);
 
   private:

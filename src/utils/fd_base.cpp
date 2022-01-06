@@ -8,9 +8,10 @@
 
 #include "fd_base.hpp"
 
+#include <algorithm>
 #include <cstring>
 #include <stdexcept>
-#include <algorithm>
+#include <sys/socket.h>
 #include <unistd.h>
 
 static std::string GetErrorMessage(const std::string &cause)
@@ -22,9 +23,9 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-FdBase::FdBase() : m_ids{}, m_fds{}, m_dice{}
+FdBase::FdBase() : m_ids{}, m_fds{}, m_isSocket(), m_dice{}
 {
-    for (auto& fd : m_fds)
+    for (auto &fd : m_fds)
         fd = -1;
 }
 
@@ -35,7 +36,7 @@ FdBase::~FdBase()
             ::close(fd);
 }
 
-void FdBase::allocate(int id, int fd)
+void FdBase::allocate(int id, int fd, bool isSocket)
 {
     if (id < 0)
         throw std::runtime_error{"FdBase bad id"};
@@ -46,6 +47,7 @@ void FdBase::allocate(int id, int fd)
         {
             m_ids[i] = id;
             m_fds[i] = fd;
+            m_isSocket[i] = isSocket;
             return;
         }
     }
@@ -62,6 +64,7 @@ void FdBase::release(int id)
             ::close(m_fds[i]);
             m_ids[i] = -1;
             m_fds[i] = -1;
+            m_isSocket[i] = false;
         }
     }
 }
@@ -78,18 +81,34 @@ void FdBase::write(int id, uint8_t *buffer, size_t size)
     }
 }
 
-size_t FdBase::read(uint8_t *buffer, size_t size, int timeout, int &outId)
+size_t FdBase::read(uint8_t *buffer, size_t size, int timeout, int &outId, InetAddress &outAddress)
 {
     int index = performSelect(timeout);
     if (index < 0)
         return 0;
 
-    ssize_t n = ::read(m_fds[index], buffer, size);
-    if (n < 0)
-        throw std::runtime_error(GetErrorMessage("FD could not read"));
-
     outId = m_ids[index];
-    return static_cast<size_t>(n);
+
+    if (m_isSocket[index])
+    {
+        sockaddr_storage peerAddr{};
+        socklen_t peerAddrLen = sizeof(struct sockaddr_storage);
+
+        auto n = ::recvfrom(m_fds[index], buffer, size, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
+        if (n < 0)
+            throw std::runtime_error(GetErrorMessage("FD could not receive"));
+
+        outAddress = InetAddress{peerAddr, peerAddrLen};
+        return static_cast<size_t>(n);
+    }
+    else
+    {
+        outAddress = {};
+        auto n = ::read(m_fds[index], buffer, size);
+        if (n < 0)
+            throw std::runtime_error(GetErrorMessage("FD could not read"));
+        return static_cast<size_t>(n);
+    }
 }
 
 bool FdBase::contains(int id) const

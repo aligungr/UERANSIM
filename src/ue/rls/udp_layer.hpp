@@ -36,7 +36,6 @@ class RlsUdpLayer
     UeTask *m_ue;
     std::unique_ptr<Logger> m_logger;
     std::unique_ptr<uint8_t[]> m_sendBuffer;
-    std::unique_ptr<udp::UdpServerTask> m_server;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;
     std::unordered_map<int, uint64_t> m_cellIdToSti;
@@ -56,8 +55,6 @@ class RlsUdpLayer
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
-    void onStart();
-    void onQuit();
     void checkHeartbeat();
     void send(int cellId, const rls::RlsMessage &msg);
     void receiveRlsPdu(const InetAddress &address, const OctetString& pdu);

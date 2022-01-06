@@ -112,6 +112,11 @@ uint16_t InetAddress::getPort() const
     return 0;
 }
 
+bool InetAddress::hasValue() const
+{
+    return getSockLen() > static_cast<socklen_t>(0);
+}
+
 Socket::Socket(int domain, int type, int protocol)
 {
     int sd = socket(domain, type, protocol);
@@ -194,6 +199,11 @@ void Socket::send(const InetAddress &address, const uint8_t *buffer, size_t size
 bool Socket::hasFd() const
 {
     return fd >= 0;
+}
+
+int Socket::getFd() const
+{
+    return fd;
 }
 
 Socket Socket::CreateAndBindUdp(const InetAddress &address)

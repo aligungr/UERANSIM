@@ -1,9 +1,8 @@
 #include "udp_layer.hpp"
 
 #include <cstdint>
-#include <set>
+#include <stdexcept>
 
-#include <ue/nts.hpp>
 #include <ue/task.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
@@ -16,8 +15,8 @@ namespace nr::ue
 {
 
 RlsUdpLayer::RlsUdpLayer(UeTask *ue)
-    : m_ue{ue}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_server{}, m_searchSpace{}, m_cells{}, m_cellIdToSti{},
-      m_lastLoop{}, m_cellIdCounter{}
+    : m_ue{ue}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
+      m_cellIdCounter{}
 {
     m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "rls-udp");
 
@@ -25,17 +24,9 @@ RlsUdpLayer::RlsUdpLayer(UeTask *ue)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
 
     m_simPos = Vector3{};
-}
 
-void RlsUdpLayer::onStart()
-{
-    m_server = std::make_unique<udp::UdpServerTask>(m_ue);
-    m_server->start();
-}
-
-void RlsUdpLayer::onQuit()
-{
-    m_server->quit();
+    m_ue->fdBase->allocate(FdBase::RLS_IP4, Socket::CreateUdp4().getFd(), true);
+    m_ue->fdBase->allocate(FdBase::RLS_IP6, Socket::CreateUdp6().getFd(), true);
 }
 
 RlsUdpLayer::~RlsUdpLayer() = default;
@@ -53,7 +44,12 @@ void RlsUdpLayer::checkHeartbeat()
 void RlsUdpLayer::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg)
 {
     int n = rls::EncodeRlsMessage(msg, m_sendBuffer.get());
-    m_server->send(address, m_sendBuffer.get(), static_cast<size_t>(n));
+
+    int version = address.getIpVersion();
+    if (version != 4 && version != 6)
+        throw std::runtime_error{"UdpServer::Send failure: Invalid IP version"};
+
+    m_ue->fdBase->write(version == 4 ? FdBase::RLS_IP4 : FdBase::RLS_IP6, m_sendBuffer.get(), static_cast<size_t>(n));
 }
 
 void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)
@@ -65,7 +61,7 @@ void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)
     }
 }
 
-void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, const OctetString& pdu)
+void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, const OctetString &pdu)
 {
     auto msg = rls::DecodeRlsMessage(OctetView{pdu});
     if (msg == nullptr)
