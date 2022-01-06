@@ -31,7 +31,7 @@ void NasSm::onTimerTick()
     }
 }
 
-void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
+void NasSm::handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size)
 {
     auto state = m_mm->m_mmSubState;
     if (state != EMmSubState::MM_REGISTERED_INITIATED_PS && state != EMmSubState::MM_REGISTERED_NORMAL_SERVICE &&
@@ -54,7 +54,7 @@ void NasSm::handleUplinkDataRequest(int psi, OctetString &&data)
             handleUplinkStatusChange(psi, false);
         }
 
-        m_ue->rlsCtl->handleUplinkDataDelivery(psi, std::move(data));
+        m_ue->rlsCtl->handleUplinkDataDelivery(psi, buffer, size);
     }
     else
     {

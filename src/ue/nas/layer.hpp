@@ -50,7 +50,7 @@ class NasLayer
     void handleRrcEstablishmentFailure();
     void handleActiveCellChange(const Tai &prevTai);
     void handleNasDelivery(const OctetString& data);
-    void handleUplinkDataRequest(int psi, OctetString &&data);
+    void handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size);
     void handleDownlinkDataRequest(int psi, OctetString &&data);
 };
 

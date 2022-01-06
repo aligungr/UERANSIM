@@ -89,7 +89,7 @@ void UeTask::onLoop()
         if (fdId >= FdBase::PS_START && fdId <= FdBase::PS_END)
         {
             size_t n = fdBase->read(fdId, m_buffer.get(), BUFFER_SIZE);
-            nas->handleUplinkDataRequest(fdId - FdBase::PS_START, OctetString::FromArray(m_buffer.get(), n));
+            nas->handleUplinkDataRequest(fdId - FdBase::PS_START, m_buffer.get(), n);
         }
         else if (fdId == FdBase::RLS_IP4 || fdId == FdBase::RLS_IP6)
         {

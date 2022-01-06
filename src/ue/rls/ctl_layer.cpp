@@ -83,11 +83,11 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
     m_ue->rlsUdp->send(cellId, msg);
 }
 
-void RlsCtlLayer::handleUplinkDataDelivery(int psi, OctetString &&data)
+void RlsCtlLayer::handleUplinkDataDelivery(int psi, uint8_t *buffer, size_t size)
 {
     rls::RlsPduTransmission msg{m_ue->shCtx.sti};
     msg.pduType = rls::EPduType::DATA;
-    msg.pdu = std::move(data);
+    msg.pdu = OctetString::FromArray(buffer, size);
     msg.payload = static_cast<uint32_t>(psi);
     msg.pduId = 0;
 
