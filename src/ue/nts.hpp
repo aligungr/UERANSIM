@@ -35,14 +35,4 @@ struct NmUeCliCommand : NtsMessage
     }
 };
 
-struct NmUeTunToApp : NtsMessage
-{
-    int psi{};
-    OctetString data{};
-
-    NmUeTunToApp() : NtsMessage(NtsMessageType::UE_TUN_TO_APP)
-    {
-    }
-};
-
 } // namespace nr::ue

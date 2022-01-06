@@ -44,8 +44,6 @@ enum class NtsMessageType
     GNB_RRC_TO_NGAP,
     GNB_NGAP_TO_GTP,
     GNB_SCTP,
-
-    UE_TUN_TO_APP,
 };
 
 struct NtsMessage
