@@ -37,7 +37,7 @@ std::string TunLayer::allocate(int psi, const std::string &ipAddress, bool confi
         return {};
     }
 
-    if (m_ue->fdBase->contains(psi))
+    if (m_ue->fdBase->contains(FdBase::PS_START + psi))
     {
         outError = "Connection could not setup. PSI already exists in TUN layer";
         return {};
@@ -58,14 +58,14 @@ std::string TunLayer::allocate(int psi, const std::string &ipAddress, bool confi
         return {};
     }
 
-    m_ue->fdBase->allocate(psi, fd);
+    m_ue->fdBase->allocate(FdBase::PS_START + psi, fd);
 
     return allocatedName;
 }
 
 void TunLayer::release(int psi)
 {
-    m_ue->fdBase->release(psi);
+    m_ue->fdBase->release(FdBase::PS_START + psi);
 }
 
 } // namespace nr::ue

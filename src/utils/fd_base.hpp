@@ -14,9 +14,17 @@
 
 class FdBase
 {
+  public:
+    static constexpr const int PS_START = 0;
+    static constexpr const int PS_END = 15;
+    static constexpr const int RLS_IP4 = 16;
+    static constexpr const int RLS_IP6 = 17;
+
+    static constexpr const int SIZE = 18;
+
   private:
-    std::array<int, 32> m_ids;
-    std::array<int, 32> m_fds;
+    std::array<int, SIZE> m_ids;
+    std::array<int, SIZE> m_fds;
     size_t m_dice;
 
   public:
