@@ -24,9 +24,7 @@ class FdBase
     static constexpr const int SIZE = 18;
 
   private:
-    std::array<int, SIZE> m_ids;
-    std::array<int, SIZE> m_fds;
-    std::array<bool, SIZE> m_isSocket;
+    std::array<int, SIZE> m_entries;
     size_t m_dice;
 
   public:
@@ -34,12 +32,15 @@ class FdBase
     ~FdBase();
 
   public:
-    void allocate(int id, int fd, bool isSocket);
+    void allocate(int id, int fd);
     void release(int id);
     [[nodiscard]] bool contains(int id) const;
-    size_t read(uint8_t *buffer, size_t size, int timeout, int &outId, InetAddress& outAddress);
+
+    int performSelect(int timeout);
+
+    size_t read(int id, uint8_t *buffer, size_t size);
     void write(int id, uint8_t *buffer, size_t size);
 
-  private:
-    int performSelect(int timeout);
+    size_t receive(int id, uint8_t *buffer, size_t size, InetAddress &outAddress);
+    void sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &address);
 };

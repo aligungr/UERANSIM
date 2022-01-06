@@ -25,8 +25,8 @@ RlsUdpLayer::RlsUdpLayer(UeTask *ue)
 
     m_simPos = Vector3{};
 
-    m_ue->fdBase->allocate(FdBase::RLS_IP4, Socket::CreateUdp4().getFd(), true);
-    m_ue->fdBase->allocate(FdBase::RLS_IP6, Socket::CreateUdp6().getFd(), true);
+    m_ue->fdBase->allocate(FdBase::RLS_IP4, Socket::CreateUdp4().getFd());
+    m_ue->fdBase->allocate(FdBase::RLS_IP6, Socket::CreateUdp6().getFd());
 }
 
 RlsUdpLayer::~RlsUdpLayer() = default;
@@ -49,7 +49,8 @@ void RlsUdpLayer::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &
     if (version != 4 && version != 6)
         throw std::runtime_error{"UdpServer::Send failure: Invalid IP version"};
 
-    m_ue->fdBase->write(version == 4 ? FdBase::RLS_IP4 : FdBase::RLS_IP6, m_sendBuffer.get(), static_cast<size_t>(n));
+    m_ue->fdBase->sendTo(version == 4 ? FdBase::RLS_IP4 : FdBase::RLS_IP6, m_sendBuffer.get(), static_cast<size_t>(n),
+                         address);
 }
 
 void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)

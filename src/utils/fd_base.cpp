@@ -23,100 +23,86 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-FdBase::FdBase() : m_ids{}, m_fds{}, m_isSocket(), m_dice{}
+FdBase::FdBase() : m_entries{}, m_dice{}
 {
-    for (auto &fd : m_fds)
+    for (auto &fd : m_entries)
         fd = -1;
 }
 
 FdBase::~FdBase()
 {
-    for (int fd : m_fds)
+    for (auto &fd : m_entries)
+    {
         if (fd >= 0)
             ::close(fd);
+        fd = -1;
+    }
 }
 
-void FdBase::allocate(int id, int fd, bool isSocket)
+void FdBase::allocate(int id, int fd)
 {
     if (id < 0)
         throw std::runtime_error{"FdBase bad id"};
 
-    for (size_t i = 0; i < m_ids.size(); i++)
-    {
-        if (m_fds[i] < 0)
-        {
-            m_ids[i] = id;
-            m_fds[i] = fd;
-            m_isSocket[i] = isSocket;
-            return;
-        }
-    }
+    if (m_entries[id] >= 0)
+        throw std::runtime_error{"FdBase existing id"};
 
-    throw std::runtime_error{"FdBase allocation failure"};
+    m_entries[id] = fd;
 }
 
 void FdBase::release(int id)
 {
-    for (size_t i = 0; i < m_ids.size(); i++)
-    {
-        if (m_ids[i] == id)
-        {
-            ::close(m_fds[i]);
-            m_ids[i] = -1;
-            m_fds[i] = -1;
-            m_isSocket[i] = false;
-        }
-    }
+    if (m_entries[id] >= 0)
+        ::close(m_entries[id]);
+    m_entries[id] = -1;
 }
 
 void FdBase::write(int id, uint8_t *buffer, size_t size)
 {
-    for (size_t i = 0; i < m_ids.size(); i++)
+    ssize_t rc = ::write(m_entries[id], buffer, size);
+    if (rc == -1)
     {
-        if (m_ids[i] == id)
-        {
-            ::write(m_fds[i], buffer, size);
-            break;
-        }
+        int err = errno;
+        if (err != EAGAIN)
+            throw std::runtime_error(GetErrorMessage("FD could not send"));
     }
 }
 
-size_t FdBase::read(uint8_t *buffer, size_t size, int timeout, int &outId, InetAddress &outAddress)
+void FdBase::sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &address)
 {
-    int index = performSelect(timeout);
-    if (index < 0)
-        return 0;
-
-    outId = m_ids[index];
-
-    if (m_isSocket[index])
+    ssize_t rc = sendto(m_entries[id], buffer, size, MSG_DONTWAIT, address.getSockAddr(), address.getSockLen());
+    if (rc == -1)
     {
-        sockaddr_storage peerAddr{};
-        socklen_t peerAddrLen = sizeof(struct sockaddr_storage);
-
-        auto n = ::recvfrom(m_fds[index], buffer, size, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
-        if (n < 0)
-            throw std::runtime_error(GetErrorMessage("FD could not receive"));
-
-        outAddress = InetAddress{peerAddr, peerAddrLen};
-        return static_cast<size_t>(n);
+        int err = errno;
+        if (err != EAGAIN)
+            throw std::runtime_error(GetErrorMessage("FD could not send"));
     }
-    else
-    {
-        outAddress = {};
-        auto n = ::read(m_fds[index], buffer, size);
-        if (n < 0)
-            throw std::runtime_error(GetErrorMessage("FD could not read"));
-        return static_cast<size_t>(n);
-    }
+}
+
+size_t FdBase::read(int id, uint8_t *buffer, size_t size)
+{
+    auto n = ::read(m_entries[id], buffer, size);
+    if (n < 0)
+        throw std::runtime_error(GetErrorMessage("FD could not read"));
+    return static_cast<size_t>(n);
+}
+
+size_t FdBase::receive(int id, uint8_t *buffer, size_t size, InetAddress &outAddress)
+{
+    sockaddr_storage peerAddr{};
+    socklen_t peerAddrLen = sizeof(struct sockaddr_storage);
+
+    auto n = ::recvfrom(m_entries[id], buffer, size, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
+    if (n < 0)
+        throw std::runtime_error(GetErrorMessage("FD could not receive"));
+
+    outAddress = InetAddress{peerAddr, peerAddrLen};
+    return static_cast<size_t>(n);
 }
 
 bool FdBase::contains(int id) const
 {
-    for (int m_id : m_ids)
-        if (m_id == id)
-            return true;
-    return false;
+    return m_entries[id] >= 0;
 }
 
 int FdBase::performSelect(int timeout)
@@ -128,9 +114,9 @@ int FdBase::performSelect(int timeout)
     fd_set fdSet;
     FD_ZERO(&fdSet);
 
-    for (size_t i = 0; i < m_ids.size(); i++)
+    for (size_t i = 0; i < SIZE; i++)
     {
-        int fd = m_fds[i];
+        int fd = m_entries[i];
         if (fd >= 0)
         {
             FD_SET(fd, &fdSet);
@@ -146,10 +132,10 @@ int FdBase::performSelect(int timeout)
     if (ret < 0)
         return -1;
 
-    for (size_t i = 0; i < m_ids.size(); i++)
+    for (size_t i = 0; i < SIZE; i++)
     {
-        size_t j = (dice + i) % m_ids.size();
-        int fd = m_fds[j];
+        size_t j = (dice + i) % SIZE;
+        int fd = m_entries[j];
         if (fd >= 0 && FD_ISSET(fd, &fdSet))
             return static_cast<int>(j);
     }

@@ -83,18 +83,18 @@ void UeTask::onLoop()
         return;
     }
 
-    int fdId;
-    InetAddress peer;
-
-    size_t n = fdBase->read(m_buffer.get(), BUFFER_SIZE, RECEIVE_TIMEOUT, fdId, peer);
-    if (n > 0)
+    int fdId = fdBase->performSelect(RECEIVE_TIMEOUT);
+    if (fdId >= 0)
     {
         if (fdId >= FdBase::PS_START && fdId <= FdBase::PS_END)
         {
+            size_t n = fdBase->read(fdId, m_buffer.get(), BUFFER_SIZE);
             nas->handleUplinkDataRequest(fdId - FdBase::PS_START, OctetString::FromArray(m_buffer.get(), n));
         }
         else if (fdId == FdBase::RLS_IP4 || fdId == FdBase::RLS_IP6)
         {
+            InetAddress peer;
+            size_t n = fdBase->receive(fdId, m_buffer.get(), BUFFER_SIZE, peer);
             rlsUdp->receiveRlsPdu(peer, OctetString::FromArray(m_buffer.get(), n));
         }
     }
