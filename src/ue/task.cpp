@@ -20,6 +20,9 @@ struct TimerPeriod
     static constexpr const int SWITCH_OFF = 500;
 };
 
+#define BUFFER_SIZE 65535
+#define RECEIVE_TIMEOUT 500
+
 namespace nr::ue
 {
 
@@ -28,9 +31,11 @@ ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueCon
 {
     this->logBase = std::make_unique<LogBase>("logs/ue-" + config->getNodeName() + ".log");
     this->config = std::move(config);
+    this->fdBase = std::make_unique<FdBase>();
     this->ueController = ueController;
     this->nodeListener = nodeListener;
     this->cliCallbackTask = cliCallbackTask;
+    this->m_buffer = std::unique_ptr<uint8_t[]>(new uint8_t[BUFFER_SIZE]);
 
     this->m_logger = logBase->makeUniqueLogger(this->config->getLoggerPrefix() + "main");
     this->shCtx.sti = Random::Mixed(this->config->getNodeName()).nextL();
@@ -54,7 +59,6 @@ UeTask::~UeTask() = default;
 
 void UeTask::onStart()
 {
-    rlsUdp->onStart();
     rrc->onStart();
     nas->onStart();
 
@@ -79,21 +83,27 @@ void UeTask::onLoop()
         return;
     }
 
-    auto msg = take();
+    int fdId;
+    InetAddress peer;
+
+    size_t n = fdBase->read(m_buffer.get(), BUFFER_SIZE, RECEIVE_TIMEOUT, fdId, peer);
+    if (n > 0)
+    {
+        if (fdId >= FdBase::PS_START && fdId <= FdBase::PS_END)
+        {
+            nas->handleUplinkDataRequest(fdId - FdBase::PS_START, OctetString::FromArray(m_buffer.get(), n));
+        }
+        else if (fdId == FdBase::RLS_IP4 || fdId == FdBase::RLS_IP6)
+        {
+            rlsUdp->receiveRlsPdu(peer, OctetString::FromArray(m_buffer.get(), n));
+        }
+    }
+
+    auto msg = poll();
     if (!msg)
         return;
 
-    if (msg->msgType == NtsMessageType::UE_TUN_TO_APP)
-    {
-        auto &w = dynamic_cast<NmUeTunToApp &>(*msg);
-        nas->handleUplinkDataRequest(w.psi, std::move(w.data));
-    }
-    else if (msg->msgType == NtsMessageType::UDP_SERVER_RECEIVE)
-    {
-        auto &w = dynamic_cast<udp::NwUdpServerReceive &>(*msg);
-        rlsUdp->receiveRlsPdu(w.fromAddress, w.packet);
-    }
-    else if (msg->msgType == NtsMessageType::UE_CLI_COMMAND)
+    if (msg->msgType == NtsMessageType::UE_CLI_COMMAND)
     {
         auto &w = dynamic_cast<NmUeCliCommand &>(*msg);
         UeCmdHandler handler{this};
@@ -107,7 +117,6 @@ void UeTask::onLoop()
 
 void UeTask::onQuit()
 {
-    rlsUdp->onQuit();
     rrc->onQuit();
     nas->onQuit();
 }

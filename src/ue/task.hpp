@@ -25,6 +25,7 @@
 #include <ue/rrc/layer.hpp>
 #include <ue/tun/layer.hpp>
 #include <utils/common_types.hpp>
+#include <utils/fd_base.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 
@@ -51,10 +52,12 @@ class UeTask : public NtsTask
 
   private:
     bool m_immediateCycle;
+    std::unique_ptr<uint8_t[]> m_buffer;
 
   public:
     std::unique_ptr<UeConfig> config;
     std::unique_ptr<LogBase> logBase;
+    std::unique_ptr<FdBase> fdBase;
     app::IUeController *ueController;
     app::INodeListener *nodeListener;
     NtsTask *cliCallbackTask;
