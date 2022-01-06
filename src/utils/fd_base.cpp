@@ -10,6 +10,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <algorithm>
 #include <unistd.h>
 
 static std::string GetErrorMessage(const std::string &cause)
@@ -23,6 +24,8 @@ static std::string GetErrorMessage(const std::string &cause)
 
 FdBase::FdBase() : m_ids{}, m_fds{}, m_dice{}
 {
+    for (auto& fd : m_fds)
+        fd = -1;
 }
 
 FdBase::~FdBase()
@@ -89,6 +92,14 @@ size_t FdBase::read(uint8_t *buffer, size_t size, int timeout, int &outId)
     return static_cast<size_t>(n);
 }
 
+bool FdBase::contains(int id) const
+{
+    for (int m_id : m_ids)
+        if (m_id == id)
+            return true;
+    return false;
+}
+
 int FdBase::performSelect(int timeout)
 {
     size_t dice = m_dice++;
@@ -121,7 +132,7 @@ int FdBase::performSelect(int timeout)
         size_t j = (dice + i) % m_ids.size();
         int fd = m_fds[j];
         if (fd >= 0 && FD_ISSET(fd, &fdSet))
-            return static_cast<int>(i);
+            return static_cast<int>(j);
     }
 
     return -1;

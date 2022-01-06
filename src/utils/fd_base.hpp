@@ -26,6 +26,7 @@ class FdBase
   public:
     void allocate(int id, int fd);
     void release(int id);
+    [[nodiscard]] bool contains(int id) const;
     size_t read(uint8_t *buffer, size_t size, int timeout, int &outId);
     void write(int id, uint8_t *buffer, size_t size);
 
