@@ -23,15 +23,15 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-FdBase::FdBase() : m_entries{}, m_dice{}
+FdBase::FdBase() : m_fd{}, m_dice{}
 {
-    for (auto &fd : m_entries)
+    for (auto &fd : m_fd)
         fd = -1;
 }
 
 FdBase::~FdBase()
 {
-    for (auto &fd : m_entries)
+    for (auto &fd : m_fd)
     {
         if (fd >= 0)
             ::close(fd);
@@ -44,22 +44,22 @@ void FdBase::allocate(int id, int fd)
     if (id < 0)
         throw std::runtime_error{"FdBase bad id"};
 
-    if (m_entries[id] >= 0)
+    if (m_fd[id] >= 0)
         throw std::runtime_error{"FdBase existing id"};
 
-    m_entries[id] = fd;
+    m_fd[id] = fd;
 }
 
 void FdBase::release(int id)
 {
-    if (m_entries[id] >= 0)
-        ::close(m_entries[id]);
-    m_entries[id] = -1;
+    if (m_fd[id] >= 0)
+        ::close(m_fd[id]);
+    m_fd[id] = -1;
 }
 
 void FdBase::write(int id, uint8_t *buffer, size_t size)
 {
-    ssize_t rc = ::write(m_entries[id], buffer, size);
+    ssize_t rc = ::write(m_fd[id], buffer, size);
     if (rc == -1)
     {
         int err = errno;
@@ -70,7 +70,7 @@ void FdBase::write(int id, uint8_t *buffer, size_t size)
 
 void FdBase::sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &address)
 {
-    ssize_t rc = sendto(m_entries[id], buffer, size, MSG_DONTWAIT, address.getSockAddr(), address.getSockLen());
+    ssize_t rc = sendto(m_fd[id], buffer, size, MSG_DONTWAIT, address.getSockAddr(), address.getSockLen());
     if (rc == -1)
     {
         int err = errno;
@@ -81,7 +81,7 @@ void FdBase::sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &add
 
 size_t FdBase::read(int id, uint8_t *buffer, size_t size)
 {
-    auto n = ::read(m_entries[id], buffer, size);
+    auto n = ::read(m_fd[id], buffer, size);
     if (n < 0)
         throw std::runtime_error(GetErrorMessage("FD could not read"));
     return static_cast<size_t>(n);
@@ -92,7 +92,7 @@ size_t FdBase::receive(int id, uint8_t *buffer, size_t size, InetAddress &outAdd
     sockaddr_storage peerAddr{};
     socklen_t peerAddrLen = sizeof(struct sockaddr_storage);
 
-    auto n = ::recvfrom(m_entries[id], buffer, size, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
+    auto n = ::recvfrom(m_fd[id], buffer, size, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
     if (n < 0)
         throw std::runtime_error(GetErrorMessage("FD could not receive"));
 
@@ -102,7 +102,7 @@ size_t FdBase::receive(int id, uint8_t *buffer, size_t size, InetAddress &outAdd
 
 bool FdBase::contains(int id) const
 {
-    return m_entries[id] >= 0;
+    return m_fd[id] >= 0;
 }
 
 int FdBase::performSelect(int timeout)
@@ -116,7 +116,7 @@ int FdBase::performSelect(int timeout)
 
     for (size_t i = 0; i < SIZE; i++)
     {
-        int fd = m_entries[i];
+        int fd = m_fd[i];
         if (fd >= 0)
         {
             FD_SET(fd, &fdSet);
@@ -135,7 +135,7 @@ int FdBase::performSelect(int timeout)
     for (size_t i = 0; i < SIZE; i++)
     {
         size_t j = (dice + i) % SIZE;
-        int fd = m_entries[j];
+        int fd = m_fd[j];
         if (fd >= 0 && FD_ISSET(fd, &fdSet))
             return static_cast<int>(j);
     }

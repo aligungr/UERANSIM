@@ -24,7 +24,7 @@ class FdBase
     static constexpr const int SIZE = 18;
 
   private:
-    std::array<int, SIZE> m_entries;
+    std::array<int, SIZE> m_fd;
     size_t m_dice;
 
   public:
