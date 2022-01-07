@@ -41,9 +41,6 @@ class TunLayer;
 class UeTask : public NtsTask
 {
   private:
-    std::unique_ptr<Logger> m_logger;
-
-  private:
     int64_t m_timerL3MachineCycle;
     int64_t m_timerL3Timer;
     int64_t m_timerRlsAckControl;

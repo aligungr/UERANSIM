@@ -37,7 +37,6 @@ ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueCon
     this->cliCallbackTask = cliCallbackTask;
     this->m_buffer = std::unique_ptr<uint8_t[]>(new uint8_t[BUFFER_SIZE]);
 
-    this->m_logger = logBase->makeUniqueLogger(this->config->getLoggerPrefix() + "main");
     this->shCtx.sti = Random::Mixed(this->config->getNodeName()).nextL();
 
     this->rlsUdp = std::make_unique<RlsUdpLayer>(this);
