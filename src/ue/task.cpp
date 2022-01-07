@@ -109,10 +109,6 @@ void UeTask::onLoop()
         UeCmdHandler handler{this};
         handler.handleCmd(w);
     }
-    else
-    {
-        m_logger->unhandledNts(*msg);
-    }
 }
 
 void UeTask::onQuit()
