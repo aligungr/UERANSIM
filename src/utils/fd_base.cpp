@@ -89,14 +89,13 @@ size_t FdBase::read(int id, uint8_t *buffer, size_t size)
 
 size_t FdBase::receive(int id, uint8_t *buffer, size_t size, InetAddress &outAddress)
 {
-    sockaddr_storage peerAddr{};
-    socklen_t peerAddrLen = sizeof(struct sockaddr_storage);
+    (*outAddress.getSockLenAddr()) = sizeof(struct sockaddr_storage);
 
-    auto n = ::recvfrom(m_fd[id], buffer, size, 0, (struct sockaddr *)&peerAddr, &peerAddrLen);
+    auto n = ::recvfrom(m_fd[id], buffer, size, 0, (struct sockaddr *)outAddress.getStorageAddr(),
+                        outAddress.getSockLenAddr());
     if (n < 0)
         throw std::runtime_error(GetErrorMessage("FD could not receive"));
 
-    outAddress = InetAddress{peerAddr, peerAddrLen};
     return static_cast<size_t>(n);
 }
 

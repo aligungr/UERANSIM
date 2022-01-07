@@ -33,9 +33,24 @@ struct InetAddress
         return reinterpret_cast<const sockaddr *>(&storage);
     }
 
+    [[nodiscard]] inline sockaddr_storage *getStorageAddr()
+    {
+        return &storage;
+    }
+
+    [[nodiscard]] inline socklen_t *getSockLenAddr()
+    {
+        return &len;
+    }
+
     [[nodiscard]] inline socklen_t getSockLen() const
     {
         return len;
+    }
+
+    inline void setSockLen(socklen_t length)
+    {
+        len = length;
     }
 
     [[nodiscard]] int getIpVersion() const;
