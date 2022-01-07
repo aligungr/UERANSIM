@@ -57,7 +57,7 @@ class RlsUdpLayer
   public:
     void checkHeartbeat();
     void send(int cellId, const rls::RlsMessage &msg);
-    void receiveRlsPdu(const InetAddress &address, const OctetString& pdu);
+    void receiveRlsPdu(const InetAddress &address, uint8_t* buffer, size_t size);
 };
 
 } // namespace nr::ue

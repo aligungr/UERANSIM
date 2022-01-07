@@ -62,9 +62,9 @@ void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)
     }
 }
 
-void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, const OctetString &pdu)
+void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, uint8_t *buffer, size_t size)
 {
-    auto msg = rls::DecodeRlsMessage(OctetView{pdu});
+    auto msg = rls::DecodeRlsMessage(OctetView{buffer, size});
     if (msg == nullptr)
     {
         m_logger->err("Unable to decode RLS message");

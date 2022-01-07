@@ -95,7 +95,7 @@ void UeTask::onLoop()
         {
             InetAddress peer;
             size_t n = fdBase->receive(fdId, m_buffer.get(), BUFFER_SIZE, peer);
-            rlsUdp->receiveRlsPdu(peer, OctetString::FromArray(m_buffer.get(), n));
+            rlsUdp->receiveRlsPdu(peer, m_buffer.get(), n);
         }
     }
 
