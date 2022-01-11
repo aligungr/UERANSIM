@@ -118,8 +118,6 @@ bool FdBase::contains(int id) const
 
 int FdBase::performSelect(int timeout)
 {
-    size_t dice = m_dice++;
-
     int max = 0;
 
     fd_set fdSet;
@@ -143,6 +141,7 @@ int FdBase::performSelect(int timeout)
     if (ret < 0)
         return -1;
 
+    size_t dice = m_dice++;
     for (size_t i = 0; i < SIZE; i++)
     {
         size_t j = (dice + i) % SIZE;
