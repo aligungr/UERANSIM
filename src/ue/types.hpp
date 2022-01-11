@@ -122,6 +122,7 @@ struct UeConfig
     /* Assigned by program */
     bool configureRouting{};
     bool prefixLogger{};
+    bool disableCmd{};
 
     [[nodiscard]] std::string getNodeName() const
     {

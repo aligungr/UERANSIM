@@ -38,4 +38,7 @@ struct cons
     static constexpr const char *PROC_TABLE_DIR = "/tmp/UERANSIM.proc-table/";
     static constexpr const char *PROCESS_DIR = "/proc/";
     static constexpr const char DIR_SEPARATOR = '/';
+    static constexpr const char *UE_DOMAIN_SOCKET_PREFIX = "/tmp/UERANSIM.ue.";
+    static constexpr const char *UE_DOMAIN_SOCKET_POSTFIX = ".socket";
+
 };

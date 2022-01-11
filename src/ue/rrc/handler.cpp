@@ -10,7 +10,6 @@
 
 #include <lib/asn/utils.hpp>
 #include <lib/rrc/encode.hpp>
-#include <ue/nts.hpp>
 #include <ue/task.hpp>
 #include <utils/common.hpp>
 

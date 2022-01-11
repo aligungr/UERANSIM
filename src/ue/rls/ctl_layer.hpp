@@ -12,7 +12,7 @@
 #include <vector>
 
 #include <lib/rrc/rrc.hpp>
-#include <ue/nts.hpp>
+#include <lib/rls/rls_base.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
 
@@ -41,8 +41,7 @@ class RlsCtlLayer
     void handleRlsMessage(int cellId, rls::RlsMessage &msg);
     void assignCurrentCell(int cellId);
     void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
-    void handleUplinkDataDelivery(int psi, uint8_t* buffer, size_t size);
-
+    void handleUplinkDataDelivery(int psi, uint8_t *buffer, size_t size);
 };
 
 } // namespace nr::ue

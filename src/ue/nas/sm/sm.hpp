@@ -11,7 +11,6 @@
 #include <array>
 #include <bitset>
 #include <lib/nas/nas.hpp>
-#include <ue/nts.hpp>
 #include <ue/task.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>

@@ -12,7 +12,6 @@
 #include <lib/nas/nas.hpp>
 #include <ue/nas/storage.hpp>
 #include <ue/nas/usim/usim.hpp>
-#include <ue/nts.hpp>
 #include <ue/task.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>

@@ -9,7 +9,6 @@
 #include "layer.hpp"
 
 #include <lib/rrc/encode.hpp>
-#include <ue/nts.hpp>
 #include <ue/task.hpp>
 
 #include <asn/rrc/ASN_RRC_DLInformationTransfer-IEs.h>
