@@ -51,3 +51,10 @@ target_link_libraries(nr-cli pthread)
 target_compile_options(nr-cli PRIVATE -Wall -Wextra -pedantic)
 
 target_link_libraries(nr-cli common-lib)
+
+
+add_executable(nr-cli2 src/cli2.cpp)
+target_link_libraries(nr-cli2 pthread)
+target_compile_options(nr-cli2 PRIVATE -Wall -Wextra -pedantic)
+
+target_link_libraries(nr-cli2 common-lib)

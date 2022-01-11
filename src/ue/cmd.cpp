@@ -146,12 +146,20 @@ void UeCmdHandler::receiveCmd(const InetAddress &address, const uint8_t *buffer,
 
 void UeCmdHandler::sendResult(const InetAddress &address, const std::string &output)
 {
-    m_ue->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, false));
+    sendMessage(app::CliMessage::Result(address, output, ""));
 }
 
 void UeCmdHandler::sendError(const InetAddress &address, const std::string &output)
 {
-    m_ue->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, true));
+    sendMessage(app::CliMessage::Error(address, output, ""));
+}
+
+void UeCmdHandler::sendMessage(const app::CliMessage &msg)
+{
+    OctetString stream;
+    app::CliMessage::Encode(msg, stream);
+
+    m_ue->fdBase->sendTo(FdBase::CLI, stream.data(), static_cast<size_t>(stream.length()), msg.clientAddr);
 }
 
 void UeCmdHandler::handleCmd(const InetAddress &address, std::unique_ptr<app::UeCliCommand> &&cmd)
@@ -322,10 +330,6 @@ void UeCmdHandler::handleCmd(const InetAddress &address, std::unique_ptr<app::Ue
         break;
     }
     }
-}
-
-void UeCmdHandler::sendMessage(const app::CliMessage &msg)
-{
 }
 
 } // namespace nr::ue

@@ -74,6 +74,8 @@ struct CliMessage
         m.clientAddr = addr;
         return m;
     }
+
+    static void Encode(const CliMessage& msg, OctetString& stream);
 };
 
 // todo remove
@@ -110,6 +112,7 @@ struct NwCliSendResponse : NtsMessage
     }
 };
 
+// TODO: remove
 class CliResponseTask : public NtsTask
 {
   private:

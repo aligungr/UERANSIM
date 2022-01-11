@@ -53,6 +53,13 @@ CliMessage CliServer::receiveMessage()
 void CliServer::sendMessage(const CliMessage &msg)
 {
     OctetString stream{};
+    CliMessage::Encode(msg, stream);
+
+    m_socket.send(msg.clientAddr, stream.data(), static_cast<size_t>(stream.length()));
+}
+
+void CliMessage::Encode(const CliMessage &msg, OctetString &stream)
+{
     stream.appendOctet(cons::Major);
     stream.appendOctet(cons::Minor);
     stream.appendOctet(cons::Patch);
@@ -63,8 +70,5 @@ void CliServer::sendMessage(const CliMessage &msg)
     stream.appendOctet4(static_cast<int>(msg.value.size()));
     for (char c : msg.value)
         stream.appendOctet(static_cast<uint8_t>(c));
-
-    m_socket.send(msg.clientAddr, stream.data(), static_cast<size_t>(stream.length()));
 }
-
 } // namespace app
