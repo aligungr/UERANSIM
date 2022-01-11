@@ -213,7 +213,7 @@ int main(int argc, char **argv)
         g_cliRespTask = new app::CliResponseTask(g_cliServer);
     }
 
-    auto *gnb = new nr::gnb::GNodeB(g_refConfig, nullptr, g_cliRespTask);
+    auto *gnb = new nr::gnb::GNodeB(g_refConfig, g_cliRespTask);
     g_gnbMap[g_refConfig->name] = gnb;
 
     if (!g_options.disableCmd)

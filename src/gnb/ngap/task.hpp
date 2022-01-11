@@ -13,7 +13,6 @@
 
 #include <gnb/nts.hpp>
 #include <gnb/types.hpp>
-#include <lib/app/monitor.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
 

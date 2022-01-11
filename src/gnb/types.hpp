@@ -10,7 +10,6 @@
 
 #include <set>
 
-#include <lib/app/monitor.hpp>
 #include <lib/asn/utils.hpp>
 #include <utils/common_types.hpp>
 #include <utils/logger.hpp>
@@ -335,7 +334,6 @@ struct TaskBase
 {
     GnbConfig *config{};
     LogBase *logBase{};
-    app::INodeListener *nodeListener{};
     NtsTask *cliCallbackTask{};
 
     GnbAppTask *appTask{};

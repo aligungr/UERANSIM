@@ -42,12 +42,6 @@ void UeRrcLayer::switchState(ERrcState state)
 
     m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());
 
-    if (m_ue->nodeListener)
-    {
-        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::RRC,
-                                       ToJson(oldState).str(), ToJson(state).str());
-    }
-
     onSwitchState(oldState, state);
 }
 

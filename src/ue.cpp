@@ -15,7 +15,6 @@
 #include <lib/app/base_app.hpp>
 #include <lib/app/cli_base.hpp>
 #include <lib/app/cli_cmd.hpp>
-#include <lib/app/proc_table.hpp>
 #include <lib/app/ue_ctl.hpp>
 #include <ue/task.hpp>
 #include <ue/types.hpp>
@@ -28,7 +27,6 @@
 
 static nr::ue::UeConfig *g_refConfig = nullptr;
 static ConcurrentMap<std::string, nr::ue::UeTask *> g_ueMap{};
-static app::CliResponseTask *g_cliRespTask = nullptr;
 
 static struct Options
 {
@@ -398,7 +396,7 @@ int main(int argc, char **argv)
     {
         auto config = GetConfigByUe(i);
         auto nodeName = config->getNodeName();
-        auto *ue = new nr::ue::UeTask(std::move(config), &g_ueController, nullptr, g_cliRespTask);
+        auto *ue = new nr::ue::UeTask(std::move(config), &g_ueController);
         g_ueMap.put(nodeName, ue);
     }
 

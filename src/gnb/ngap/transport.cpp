@@ -114,16 +114,6 @@ void NgapTask::sendNgapNonUe(int associatedAmf, ASN_NGAP_NGAP_PDU *pdu)
         msg->stream = 0;
         msg->buffer = UniqueBuffer{buffer, static_cast<size_t>(encoded)};
         m_base->sctpTask->push(std::move(msg));
-
-        if (m_base->nodeListener)
-        {
-            std::string xer = ngap_encode::EncodeXer(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
-            if (xer.length() > 0)
-            {
-                m_base->nodeListener->onSend(app::NodeType::GNB, m_base->config->name, app::NodeType::AMF, amf->amfName,
-                                             app::ConnectionType::NGAP, xer);
-            }
-        }
     }
 
     asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
@@ -205,16 +195,6 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
         msg->stream = ue->uplinkStream;
         msg->buffer = UniqueBuffer{buffer, static_cast<size_t>(encoded)};
         m_base->sctpTask->push(std::move(msg));
-
-        if (m_base->nodeListener)
-        {
-            std::string xer = ngap_encode::EncodeXer(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
-            if (xer.length() > 0)
-            {
-                m_base->nodeListener->onSend(app::NodeType::GNB, m_base->config->name, app::NodeType::AMF, amf->amfName,
-                                             app::ConnectionType::NGAP, xer);
-            }
-        }
     }
 
     asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
@@ -233,16 +213,6 @@ void NgapTask::handleSctpMessage(int amfId, uint16_t stream, const UniqueBuffer 
         asn::Free(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
         sendErrorIndication(amfId, NgapCause::Protocol_transfer_syntax_error);
         return;
-    }
-
-    if (m_base->nodeListener)
-    {
-        std::string xer = ngap_encode::EncodeXer(asn_DEF_ASN_NGAP_NGAP_PDU, pdu);
-        if (xer.length() > 0)
-        {
-            m_base->nodeListener->onReceive(app::NodeType::GNB, m_base->config->name, app::NodeType::AMF, amf->amfName,
-                                            app::ConnectionType::NGAP, xer);
-        }
     }
 
     if (!handleSctpStreamId(amf->ctxId, stream, *pdu))

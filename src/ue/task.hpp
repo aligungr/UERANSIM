@@ -58,8 +58,6 @@ class UeTask : public NtsTask
     std::unique_ptr<LogBase> logBase;
     std::unique_ptr<FdBase> fdBase;
     app::IUeController *ueController;
-    app::INodeListener *nodeListener;
-    NtsTask *cliCallbackTask;
     UeSharedContext shCtx;
 
   public:
@@ -70,8 +68,7 @@ class UeTask : public NtsTask
     std::unique_ptr<TunLayer> tun;
 
   public:
-    explicit UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
-                    app::INodeListener *nodeListener, NtsTask *cliCallbackTask);
+    explicit UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController);
     ~UeTask() override;
 
   protected:

@@ -19,12 +19,11 @@
 namespace nr::gnb
 {
 
-GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener, NtsTask *cliCallbackTask)
+GNodeB::GNodeB(GnbConfig *config, NtsTask *cliCallbackTask)
 {
     auto *base = new TaskBase();
     base->config = config;
     base->logBase = new LogBase("logs/" + config->name + ".log");
-    base->nodeListener = nodeListener;
     base->cliCallbackTask = cliCallbackTask;
 
     base->appTask = new GnbAppTask(base);

@@ -225,12 +225,6 @@ void NasMm::switchMmState(EMmSubState subState)
 
     onSwitchRmState(oldRmState, m_rmState);
 
-    if (m_ue->nodeListener)
-    {
-        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::RM,
-                                       ToJson(oldRmState).str(), ToJson(m_rmState).str());
-    }
-
     EMmState oldState = m_mmState;
     EMmSubState oldSubState = m_mmSubState;
 
@@ -240,14 +234,6 @@ void NasMm::switchMmState(EMmSubState subState)
     m_lastTimeMmStateChange = utils::CurrentTimeMillis();
 
     onSwitchMmState(oldState, m_mmState, oldSubState, m_mmSubState);
-
-    if (m_ue->nodeListener)
-    {
-        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::MM,
-                                       ToJson(oldSubState).str(), ToJson(subState).str());
-        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::MM_SUB,
-                                       ToJson(oldState).str(), ToJson(state).str());
-    }
 
     if (state != oldState || subState != oldSubState)
         m_logger->info("UE switches to state [%s]", ToJson(subState).str().c_str());
@@ -265,12 +251,6 @@ void NasMm::switchCmState(ECmState state)
 
     onSwitchCmState(oldState, m_cmState);
 
-    if (m_ue->nodeListener)
-    {
-        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::CM,
-                                       ToJson(oldState).str(), ToJson(m_cmState).str());
-    }
-
     triggerMmCycle();
 }
 
@@ -280,12 +260,6 @@ void NasMm::switchUState(E5UState state)
     m_storage->uState->set(state);
 
     onSwitchUState(oldState, state);
-
-    if (m_ue->nodeListener)
-    {
-        m_ue->nodeListener->onSwitch(app::NodeType::UE, m_ue->config->getNodeName(), app::StateType::U5,
-                                       ToJson(oldState).str(), ToJson(state).str());
-    }
 
     if (state != oldState)
         m_logger->info("UE switches to state [%s]", ToJson(state).str().c_str());

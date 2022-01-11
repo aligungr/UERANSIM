@@ -11,7 +11,6 @@
 #include "types.hpp"
 
 #include <lib/app/cli_cmd.hpp>
-#include <lib/app/monitor.hpp>
 #include <utils/logger.hpp>
 #include <utils/network.hpp>
 #include <utils/nts.hpp>
@@ -25,7 +24,7 @@ class GNodeB
     TaskBase *taskBase;
 
   public:
-    GNodeB(GnbConfig *config, app::INodeListener *nodeListener, NtsTask *cliCallbackTask);
+    GNodeB(GnbConfig *config, NtsTask *cliCallbackTask);
     virtual ~GNodeB();
 
   public:

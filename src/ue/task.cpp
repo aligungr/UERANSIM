@@ -26,15 +26,12 @@ struct TimerPeriod
 namespace nr::ue
 {
 
-ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController,
-                   app::INodeListener *nodeListener, NtsTask *cliCallbackTask)
+ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController)
 {
     this->logBase = std::make_unique<LogBase>("logs/ue-" + config->getNodeName() + ".log");
     this->config = std::move(config);
     this->fdBase = std::make_unique<FdBase>();
     this->ueController = ueController;
-    this->nodeListener = nodeListener;
-    this->cliCallbackTask = cliCallbackTask;
     this->m_buffer = std::unique_ptr<uint8_t[]>(new uint8_t[BUFFER_SIZE]);
     this->m_cmdHandler = std::make_unique<UeCmdHandler>(this);
 
