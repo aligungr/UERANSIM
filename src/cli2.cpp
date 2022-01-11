@@ -281,6 +281,8 @@ int main(int argc, char **argv)
     if (bind(fd, (struct sockaddr *)&myAddress, sizeof(myAddress)) < 0)
         throw LibError("Socket bind failure");
 
+    io::RelaxPermissions(mySocketName);
+
     SendCommands(opt, fd, &remoteAddress);
     return 0;
 }

@@ -59,6 +59,8 @@ void UeCmdHandler::onStart()
         if (ret < 0)
             throw LibError("Could not bind domain socket");
 
+        io::RelaxPermissions(socketName);
+
         m_ue->fdBase->allocate(FdBase::CLI, fd);
     }
 }
