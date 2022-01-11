@@ -59,6 +59,9 @@ void FdBase::release(int id)
 
 void FdBase::write(int id, uint8_t *buffer, size_t size)
 {
+    if (m_fd[id] < 0)
+        return;
+
     ssize_t rc = ::write(m_fd[id], buffer, size);
     if (rc == -1)
     {
@@ -70,6 +73,9 @@ void FdBase::write(int id, uint8_t *buffer, size_t size)
 
 void FdBase::sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &address)
 {
+    if (m_fd[id] < 0)
+        return;
+
     ssize_t rc = sendto(m_fd[id], buffer, size, MSG_DONTWAIT, address.getSockAddr(), address.getSockLen());
     if (rc == -1)
     {
@@ -81,6 +87,9 @@ void FdBase::sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &add
 
 size_t FdBase::read(int id, uint8_t *buffer, size_t size)
 {
+    if (m_fd[id] < 0)
+        return 0;
+
     auto n = ::read(m_fd[id], buffer, size);
     if (n < 0)
         throw std::runtime_error(GetErrorMessage("FD could not read"));
@@ -89,6 +98,9 @@ size_t FdBase::read(int id, uint8_t *buffer, size_t size)
 
 size_t FdBase::receive(int id, uint8_t *buffer, size_t size, InetAddress &outAddress)
 {
+    if (m_fd[id] < 0)
+        return 0;
+
     (*outAddress.getSockLenAddr()) = sizeof(struct sockaddr_storage);
 
     auto n = ::recvfrom(m_fd[id], buffer, size, 0, (struct sockaddr *)outAddress.getStorageAddr(),
