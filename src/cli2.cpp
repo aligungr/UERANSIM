@@ -142,7 +142,6 @@ static void ReceiveResponse(int fd, bool isOneShot)
 {
     InetAddress outAddress;
 
-    // todo: tiemout
     auto size = recvfrom(fd, g_receiveBuffer, sizeof(g_receiveBuffer), 0,
                          (struct sockaddr *)outAddress.getStorageAddr(), outAddress.getSockLenAddr());
 
