@@ -18,7 +18,6 @@
 #include <set>
 #include <unordered_set>
 
-#include <lib/app/ue_ctl.hpp>
 #include <lib/nas/nas.hpp>
 #include <utils/common_types.hpp>
 #include <utils/json.hpp>

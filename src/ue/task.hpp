@@ -39,7 +39,7 @@ class NasLayer;
 class TunLayer;
 class UeCmdHandler;
 
-class UeTask : public NtsTask
+class UeTask
 {
   private:
     int64_t m_timerL3MachineCycle;
@@ -57,7 +57,6 @@ class UeTask : public NtsTask
     std::unique_ptr<UeConfig> config;
     std::unique_ptr<LogBase> logBase;
     std::unique_ptr<FdBase> fdBase;
-    app::IUeController *ueController;
     UeSharedContext shCtx;
 
   public:
@@ -68,20 +67,20 @@ class UeTask : public NtsTask
     std::unique_ptr<TunLayer> tun;
 
   public:
-    explicit UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController);
-    ~UeTask() override;
+    explicit UeTask(std::unique_ptr<UeConfig> &&config);
+    ~UeTask();
 
-  protected:
-    void onStart() override;
-    void onLoop() override;
-    void onQuit() override;
+  public:
+    void onStart();
+    bool onLoop();
+    void onQuit();
 
   public:
     void triggerCycle();
     void triggerSwitchOff();
 
   private:
-    void checkTimers();
+    bool checkTimers();
 };
 
 } // namespace nr::ue

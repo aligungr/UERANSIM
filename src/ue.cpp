@@ -15,7 +15,6 @@
 #include <lib/app/base_app.hpp>
 #include <lib/app/cli_base.hpp>
 #include <lib/app/cli_cmd.hpp>
-#include <lib/app/ue_ctl.hpp>
 #include <ue/task.hpp>
 #include <ue/types.hpp>
 #include <utils/common.hpp>
@@ -298,27 +297,29 @@ static std::unique_ptr<nr::ue::UeConfig> GetConfigByUe(int ueIndex)
     return c;
 }
 
-static class UeController : public app::IUeController
+static void ExecuteUeTask(std::unique_ptr<nr::ue::UeTask> &ue)
 {
-  public:
-    void performSwitchOff(nr::ue::UeTask *ue) override
-    {
-        /*std::string key{}; todo ==??
-        g_ueMap.invokeForeach([&key, ue](auto &item) {
-            if (item.second == ue)
-                key = item.first;
-        });
-        if (key.empty())
-            return;
-        if (g_ueMap.removeAndGetSize(key) <= 0)
-            exit(0);*/
-    }
-} g_ueController;
-
-static void ExecuteUeTasks(std::vector<nr::ue::UeTask *> &v)
-{
+    ue->onStart();
     while (true)
-        ::pause(); // todo: optimize if single UE
+    {
+        if (ue->onLoop())
+            break;
+    }
+    ue->onQuit();
+    ue = nullptr;
+}
+
+static void ExecuteUeTasks(std::vector<std::unique_ptr<nr::ue::UeTask>> &v)
+{
+    std::vector<std::thread> threads;
+
+    for (size_t i = 1; i < v.size(); i++)
+        threads.emplace_back([&v, i]() { ExecuteUeTask(v[i]); });
+
+    ExecuteUeTask(v[0]);
+
+    for (auto &thread : threads)
+        thread.join();
 }
 
 int main(int argc, char **argv)
@@ -340,13 +341,13 @@ int main(int argc, char **argv)
 
     std::cout << utils::CopyrightDeclarationUe() << std::endl;
 
-    std::vector<nr::ue::UeTask *> ueTasks;
+    std::vector<std::unique_ptr<nr::ue::UeTask>> ueTasks;
 
     for (int i = 0; i < g_options.count; i++)
     {
         auto config = GetConfigByUe(i);
         auto nodeName = config->getNodeName();
-        ueTasks.push_back(new nr::ue::UeTask(std::move(config), &g_ueController));
+        ueTasks.push_back(std::make_unique<nr::ue::UeTask>(std::move(config)));
     }
 
     ExecuteUeTasks(ueTasks);

@@ -26,12 +26,11 @@ struct TimerPeriod
 namespace nr::ue
 {
 
-ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueController)
+ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config)
 {
     this->logBase = std::make_unique<LogBase>("logs/ue-" + config->getNodeName() + ".log");
     this->config = std::move(config);
     this->fdBase = std::make_unique<FdBase>();
-    this->ueController = ueController;
     this->m_buffer = std::unique_ptr<uint8_t[]>(new uint8_t[BUFFER_SIZE]);
     this->m_cmdHandler = std::make_unique<UeCmdHandler>(this);
 
@@ -67,18 +66,19 @@ void UeTask::onStart()
     m_timerRlsAckSend = current + TimerPeriod::RLS_ACK_SEND;
 }
 
-void UeTask::onLoop()
+bool UeTask::onLoop()
 {
     rlsUdp->checkHeartbeat();
 
-    checkTimers();
+    if (checkTimers())
+        return true;
 
     if (m_immediateCycle)
     {
         m_immediateCycle = false;
         rrc->performCycle();
         nas->performCycle();
-        return;
+        return false;
     }
 
     int fdId = fdBase->performSelect(RECEIVE_TIMEOUT);
@@ -101,7 +101,10 @@ void UeTask::onLoop()
             size_t n = fdBase->receive(fdId, m_buffer.get(), BUFFER_SIZE, peer);
             m_cmdHandler->receiveCmd(peer, m_buffer.get(), n);
         }
+        return false;
     }
+
+    return false;
 }
 
 void UeTask::onQuit()
@@ -110,7 +113,7 @@ void UeTask::onQuit()
     nas->onQuit();
 }
 
-void UeTask::checkTimers()
+bool UeTask::checkTimers()
 {
     auto current = utils::CurrentTimeMillis();
 
@@ -138,8 +141,10 @@ void UeTask::checkTimers()
     }
     else if (m_timerSwitchOff != -1 && m_timerSwitchOff <= current)
     {
-        ueController->performSwitchOff(this);
+        return true;
     }
+
+    return false;
 }
 
 void UeTask::triggerCycle()
