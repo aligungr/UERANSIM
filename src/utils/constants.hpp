@@ -34,12 +34,10 @@ struct cons
     static constexpr const int MaxNodeName = 1024;
 
     // Others
+    static constexpr const char DIR_SEPARATOR = '/';
     static constexpr const char *CMD_SERVER_IP = "127.0.0.1";
     static constexpr const char *PROC_TABLE_DIR = "/tmp/UERANSIM.proc-table/"; // todo remove
     static constexpr const char *PROCESS_DIR = "/proc/"; // todo remove
-    static constexpr const char DIR_SEPARATOR = '/';
-    static constexpr const char *DOMAIN_SOCKET_DIR = "/tmp/UERANSIM.ipc/";
-    static constexpr const char *DOMAIN_SOCKET_POSTFIX = ".socket";
-    static constexpr const char *UE_DOMAIN_SOCKET_PREFIX = "/tmp/UERANSIM.ipc/ue.";
+    static constexpr const char *CLI_SOCKET_DIR = "/tmp/UERANSIM.cli-ipc/";
 
 };

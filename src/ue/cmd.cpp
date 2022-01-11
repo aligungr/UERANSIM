@@ -9,8 +9,16 @@
 #include "cmd.hpp"
 #include "task.hpp"
 
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <unistd.h>
+
+#include <lib/app/cli_base.hpp>
 #include <utils/common.hpp>
-#include <utils/printer.hpp>
+#include <utils/io.hpp>
+#include <utils/libc_error.hpp>
+#include <utils/options.hpp>
+#include <utils/random.hpp>
 
 #define PAUSE_CONFIRM_TIMEOUT 3000
 #define PAUSE_POLLING 10
@@ -30,6 +38,112 @@ static std::string SignalDescription(int dbm)
 namespace nr::ue
 {
 
+void UeCmdHandler::onStart()
+{
+    if (!m_ue->config->disableCmd)
+    {
+        io::CreateDirectory(cons::CLI_SOCKET_DIR);
+        std::string socketName = cons::CLI_SOCKET_DIR + m_ue->config->getNodeName();
+
+        struct sockaddr_un name = {};
+        int fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+        if (fd < 0)
+            throw LibError("Could not open domain socket");
+
+        unlink(socketName.c_str());
+
+        name.sun_family = AF_UNIX;
+        strncpy(name.sun_path, socketName.c_str(), sizeof(name.sun_path) - 1);
+
+        int ret = bind(fd, (const struct sockaddr *)&name, sizeof(name));
+        if (ret < 0)
+            throw LibError("Could not bind domain socket");
+
+        m_ue->fdBase->allocate(FdBase::CLI, fd);
+    }
+}
+
+void UeCmdHandler::receiveCmd(const InetAddress &address, const uint8_t *buffer, size_t size)
+{
+    OctetView v{buffer, static_cast<size_t>(size)};
+    if (v.readI() != cons::Major)
+        return;
+    if (v.readI() != cons::Minor)
+        return;
+    if (v.readI() != cons::Patch)
+        return;
+
+    app::CliMessage cliMessage{};
+    cliMessage.type = static_cast<app::CliMessage::Type>(v.readI());
+    int nodeNameLength = v.read4I();
+    cliMessage.nodeName = v.readUtf8String(nodeNameLength);
+    int valueLength = v.read4I();
+    cliMessage.value = v.readUtf8String(valueLength);
+    cliMessage.clientAddr = address;
+
+    if (cliMessage.type == app::CliMessage::Type::ECHO)
+    {
+        sendMessage(cliMessage);
+        return;
+    }
+
+    if (cliMessage.type != app::CliMessage::Type::COMMAND)
+        return;
+
+    if (cliMessage.value.size() > 0xFFFF)
+    {
+        sendMessage(app::CliMessage::Error(cliMessage.clientAddr, "Command is too large"));
+        return;
+    }
+
+    if (cliMessage.nodeName.size() > 0xFFFF)
+    {
+        sendMessage(app::CliMessage::Error(cliMessage.clientAddr, "Node name is too large"));
+        return;
+    }
+
+    if (cliMessage.value.empty())
+    {
+        sendMessage(app::CliMessage::Result(cliMessage.clientAddr, ""));
+        return;
+    }
+
+    std::vector<std::string> tokens{};
+
+    auto exp = opt::PerformExpansion(cliMessage.value, tokens);
+    if (exp != opt::ExpansionResult::SUCCESS)
+    {
+        sendMessage(app::CliMessage::Error(cliMessage.clientAddr, "Invalid command: " + cliMessage.value));
+        return;
+    }
+
+    if (tokens.empty())
+    {
+        sendMessage(app::CliMessage::Error(cliMessage.clientAddr, "Empty command"));
+        return;
+    }
+
+    std::string error{}, output{};
+    auto cmd = app::ParseUeCliCommand(std::move(tokens), error, output);
+    if (!error.empty())
+    {
+        sendMessage(app::CliMessage::Error(cliMessage.clientAddr, error));
+        return;
+    }
+    if (!output.empty())
+    {
+        sendMessage(app::CliMessage::Result(cliMessage.clientAddr, output));
+        return;
+    }
+    if (cmd == nullptr)
+    {
+        sendMessage(app::CliMessage::Error(cliMessage.clientAddr, ""));
+        return;
+    }
+
+    handleCmd(cliMessage.clientAddr, std::move(cmd));
+}
+
 void UeCmdHandler::sendResult(const InetAddress &address, const std::string &output)
 {
     m_ue->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, false));
@@ -40,16 +154,16 @@ void UeCmdHandler::sendError(const InetAddress &address, const std::string &outp
     m_ue->cliCallbackTask->push(std::make_unique<app::NwCliSendResponse>(address, output, true));
 }
 
-void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
+void UeCmdHandler::handleCmd(const InetAddress &address, std::unique_ptr<app::UeCliCommand> &&cmd)
 {
-    switch (msg.cmd->present)
+    switch (cmd->present)
     {
     case app::UeCliCommand::STATUS: {
         std::optional<int> currentCellId = std::nullopt;
         std::optional<Plmn> currentPlmn = std::nullopt;
         std::optional<int> currentTac = std::nullopt;
 
-        auto& currentCell = m_ue->shCtx.currentCell;
+        auto &currentCell = m_ue->shCtx.currentCell;
         if (currentCell.hasValue())
         {
             currentCellId = currentCell.cellId;
@@ -72,7 +186,7 @@ void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
             {"stored-guti", ToJson(m_ue->nas->m_mm->m_storage->storedGuti->get())},
             {"has-emergency", ::ToJson(m_ue->nas->m_mm->hasEmergency())},
         });
-        sendResult(msg.address, json.dumpYaml());
+        sendResult(address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::INFO: {
@@ -97,41 +211,41 @@ void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
             {"is-high-priority", m_ue->nas->m_mm->isHighPriority()},
         });
 
-        sendResult(msg.address, json.dumpYaml());
+        sendResult(address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::TIMERS: {
-        sendResult(msg.address, ToJson(m_ue->nas->m_timers).dumpYaml());
+        sendResult(address, ToJson(m_ue->nas->m_timers).dumpYaml());
         break;
     }
     case app::UeCliCommand::DE_REGISTER: {
-        m_ue->nas->m_mm->deregistrationRequired(msg.cmd->deregCause);
+        m_ue->nas->m_mm->deregistrationRequired(cmd->deregCause);
 
-        if (msg.cmd->deregCause != EDeregCause::SWITCH_OFF)
-            sendResult(msg.address, "De-registration procedure triggered");
+        if (cmd->deregCause != EDeregCause::SWITCH_OFF)
+            sendResult(address, "De-registration procedure triggered");
         else
-            sendResult(msg.address, "De-registration procedure triggered. UE device will be switched off.");
+            sendResult(address, "De-registration procedure triggered. UE device will be switched off.");
         break;
     }
     case app::UeCliCommand::PS_RELEASE: {
-        for (int i = 0; i < msg.cmd->psCount; i++)
-            m_ue->nas->m_sm->sendReleaseRequest(static_cast<int>(msg.cmd->psIds[i]) % 16);
-        sendResult(msg.address, "PDU session release procedure(s) triggered");
+        for (int i = 0; i < cmd->psCount; i++)
+            m_ue->nas->m_sm->sendReleaseRequest(static_cast<int>(cmd->psIds[i]) % 16);
+        sendResult(address, "PDU session release procedure(s) triggered");
         break;
     }
     case app::UeCliCommand::PS_RELEASE_ALL: {
         m_ue->nas->m_sm->sendReleaseRequestForAll();
-        sendResult(msg.address, "PDU session release procedure(s) triggered");
+        sendResult(address, "PDU session release procedure(s) triggered");
         break;
     }
     case app::UeCliCommand::PS_ESTABLISH: {
         SessionConfig config;
         config.type = nas::EPduSessionType::IPV4;
-        config.isEmergency = msg.cmd->isEmergency;
-        config.apn = msg.cmd->apn;
-        config.sNssai = msg.cmd->sNssai;
+        config.isEmergency = cmd->isEmergency;
+        config.apn = cmd->apn;
+        config.sNssai = cmd->sNssai;
         m_ue->nas->m_sm->sendEstablishmentRequest(config);
-        sendResult(msg.address, "PDU session establishment procedure triggered");
+        sendResult(address, "PDU session establishment procedure triggered");
         break;
     }
     case app::UeCliCommand::PS_LIST: {
@@ -154,7 +268,7 @@ void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
 
             json.put("PDU Session" + std::to_string(pduSession->psi), obj);
         }
-        sendResult(msg.address, json.dumpYaml());
+        sendResult(address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::RLS_STATE: {
@@ -162,7 +276,7 @@ void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
             {"sti", OctetString::FromOctet8(m_ue->shCtx.sti).toHexString()},
             {"gnb-search-space", ::ToJson(m_ue->config->gnbSearchList)},
         });
-        sendResult(msg.address, json.dumpYaml());
+        sendResult(address, json.dumpYaml());
         break;
     }
     case app::UeCliCommand::COVERAGE: {
@@ -204,10 +318,14 @@ void UeCmdHandler::handleCmd(NmUeCliCommand &msg)
         if (cells.empty())
             json = "No cell available";
 
-        sendResult(msg.address, json.dumpYaml());
+        sendResult(address, json.dumpYaml());
         break;
     }
     }
+}
+
+void UeCmdHandler::sendMessage(const app::CliMessage &msg)
+{
 }
 
 } // namespace nr::ue

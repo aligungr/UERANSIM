@@ -31,9 +31,9 @@ struct CliMessage
         COMMAND
     } type{};
 
-    std::string nodeName{};
+    std::string nodeName{}; // todo remove
     std::string value{};
-    InetAddress clientAddr{};
+    InetAddress clientAddr{}; // todo remove
 
     static CliMessage Error(InetAddress addr, std::string msg, std::string node = "")
     {
@@ -76,6 +76,7 @@ struct CliMessage
     }
 };
 
+// todo remove
 class CliServer
 {
   private:

@@ -26,7 +26,6 @@
 #include <utils/yaml_utils.hpp>
 #include <yaml-cpp/yaml.h>
 
-static app::CliServer *g_cliServer = nullptr;
 static nr::ue::UeConfig *g_refConfig = nullptr;
 static ConcurrentMap<std::string, nr::ue::UeTask *> g_ueMap{};
 static app::CliResponseTask *g_cliRespTask = nullptr;
@@ -144,6 +143,8 @@ static nr::ue::UeConfig *ReadConfigYaml()
 
     // If we have multiple UEs in the same process, then log names should be separated.
     result->prefixLogger = g_options.count > 1;
+
+    result->disableCmd = g_options.disableCmd;
 
     if (yaml::HasField(config, "supi"))
         result->supi = Supi::Parse(yaml::GetString(config, "supi"));
@@ -345,6 +346,7 @@ static std::unique_ptr<nr::ue::UeConfig> GetConfigByUe(int ueIndex)
     c->defaultSessions = g_refConfig->defaultSessions;
     c->configureRouting = g_refConfig->configureRouting;
     c->prefixLogger = g_refConfig->prefixLogger;
+    c->disableCmd = g_refConfig->disableCmd;
     c->integrityMaxRate = g_refConfig->integrityMaxRate;
     c->uacAic = g_refConfig->uacAic;
     c->uacAcc = g_refConfig->uacAcc;
@@ -357,90 +359,6 @@ static std::unique_ptr<nr::ue::UeConfig> GetConfigByUe(int ueIndex)
         IncrementNumber(*c->imeiSv, ueIndex);
 
     return c;
-}
-
-static void ReceiveCommand(app::CliMessage &msg)
-{
-    if (msg.value.empty())
-    {
-        g_cliServer->sendMessage(app::CliMessage::Result(msg.clientAddr, ""));
-        return;
-    }
-
-    std::vector<std::string> tokens{};
-
-    auto exp = opt::PerformExpansion(msg.value, tokens);
-    if (exp != opt::ExpansionResult::SUCCESS)
-    {
-        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Invalid command: " + msg.value));
-        return;
-    }
-
-    if (tokens.empty())
-    {
-        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Empty command"));
-        return;
-    }
-
-    std::string error{}, output{};
-    auto cmd = app::ParseUeCliCommand(std::move(tokens), error, output);
-    if (!error.empty())
-    {
-        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, error));
-        return;
-    }
-    if (!output.empty())
-    {
-        g_cliServer->sendMessage(app::CliMessage::Result(msg.clientAddr, output));
-        return;
-    }
-    if (cmd == nullptr)
-    {
-        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, ""));
-        return;
-    }
-
-    auto *ue = g_ueMap.getOrDefault(msg.nodeName);
-    if (ue == nullptr)
-    {
-        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node not found: " + msg.nodeName));
-        return;
-    }
-
-    ue->push(std::make_unique<nr::ue::NmUeCliCommand>(std::move(cmd), msg.clientAddr));
-}
-
-static void Loop()
-{
-    if (!g_cliServer)
-    {
-        ::pause();
-        return;
-    }
-
-    auto msg = g_cliServer->receiveMessage();
-    if (msg.type == app::CliMessage::Type::ECHO)
-    {
-        g_cliServer->sendMessage(msg);
-        return;
-    }
-
-    if (msg.type != app::CliMessage::Type::COMMAND)
-        return;
-
-    if (msg.value.size() > 0xFFFF)
-    {
-        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Command is too large"));
-        return;
-    }
-
-    if (msg.nodeName.size() > 0xFFFF)
-    {
-        g_cliServer->sendMessage(app::CliMessage::Error(msg.clientAddr, "Node name is too large"));
-        return;
-    }
-
-    ReceiveCommand(msg);
 }
 
 static class UeController : public app::IUeController
@@ -476,12 +394,6 @@ int main(int argc, char **argv)
     g_controllerTask = new UeControllerTask();
     g_controllerTask->start();
 
-    if (!g_options.disableCmd)
-    {
-        g_cliServer = new app::CliServer{};
-        g_cliRespTask = new app::CliResponseTask(g_cliServer);
-    }
-
     for (int i = 0; i < g_options.count; i++)
     {
         auto config = GetConfigByUe(i);
@@ -490,14 +402,8 @@ int main(int argc, char **argv)
         g_ueMap.put(nodeName, ue);
     }
 
-    if (!g_options.disableCmd)
-    {
-        app::CreateProcTable(g_ueMap, g_cliServer->assignedAddress().getPort());
-        g_cliRespTask->start();
-    }
-
     g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
 
     while (true)
-        Loop();
+        ::pause(); // todo: optimize if single UE
 }

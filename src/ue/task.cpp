@@ -98,7 +98,7 @@ void UeTask::onLoop()
             size_t n = fdBase->receive(fdId, m_buffer.get(), BUFFER_SIZE, peer);
             rlsUdp->receiveRlsPdu(peer, m_buffer.get(), n);
         }
-        else if (fdId == FdBase::CMD)
+        else if (fdId == FdBase::CLI)
         {
             InetAddress peer;
             size_t n = fdBase->receive(fdId, m_buffer.get(), BUFFER_SIZE, peer);

@@ -20,7 +20,7 @@ class FdBase
     static constexpr const int PS_END = 15;
     static constexpr const int RLS_IP4 = 16;
     static constexpr const int RLS_IP6 = 17;
-    static constexpr const int CMD = 18;
+    static constexpr const int CLI = 18;
 
     static constexpr const int SIZE = 19;
 
