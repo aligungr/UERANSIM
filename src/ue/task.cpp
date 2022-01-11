@@ -36,6 +36,7 @@ ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config, app::IUeController *ueCon
     this->nodeListener = nodeListener;
     this->cliCallbackTask = cliCallbackTask;
     this->m_buffer = std::unique_ptr<uint8_t[]>(new uint8_t[BUFFER_SIZE]);
+    this->m_cmdHandler = std::make_unique<UeCmdHandler>(this);
 
     this->shCtx.sti = Random::Mixed(this->config->getNodeName()).nextL();
 
@@ -60,6 +61,7 @@ void UeTask::onStart()
 {
     rrc->onStart();
     nas->onStart();
+    m_cmdHandler->onStart();
 
     auto current = utils::CurrentTimeMillis();
     m_timerL3MachineCycle = current + TimerPeriod::L3_MACHINE_CYCLE;
@@ -96,17 +98,12 @@ void UeTask::onLoop()
             size_t n = fdBase->receive(fdId, m_buffer.get(), BUFFER_SIZE, peer);
             rlsUdp->receiveRlsPdu(peer, m_buffer.get(), n);
         }
-    }
-
-    auto msg = poll();
-    if (!msg)
-        return;
-
-    if (msg->msgType == NtsMessageType::UE_CLI_COMMAND)
-    {
-        auto &w = dynamic_cast<NmUeCliCommand &>(*msg);
-        UeCmdHandler handler{this};
-        handler.handleCmd(w);
+        else if (fdId == FdBase::CMD)
+        {
+            InetAddress peer;
+            size_t n = fdBase->receive(fdId, m_buffer.get(), BUFFER_SIZE, peer);
+            m_cmdHandler->receiveCmd(peer, m_buffer.get(), n);
+        }
     }
 }
 

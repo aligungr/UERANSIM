@@ -10,10 +10,11 @@
 
 #include <unordered_map>
 
-#include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
+#include <lib/rrc/rrc.hpp>
+#include <lib/rls/rls_base.hpp>
 
 #include <asn/rrc/ASN_RRC_InitialUE-Identity.h>
 

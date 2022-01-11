@@ -13,7 +13,6 @@
 #include <ue/nas/mm/mm.hpp>
 #include <ue/nas/sm/sm.hpp>
 #include <ue/nas/usim/usim.hpp>
-#include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
 

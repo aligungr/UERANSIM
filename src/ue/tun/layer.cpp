@@ -10,8 +10,9 @@
 #include "config.hpp"
 
 #include <unistd.h>
-#include <ue/nts.hpp>
+
 #include <ue/task.hpp>
+#include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 
 namespace nr::ue

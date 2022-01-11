@@ -8,8 +8,11 @@
 
 #pragma once
 
-#include "nts.hpp"
 #include "types.hpp"
+
+#include <lib/app/cli_base.hpp>
+#include <lib/app/cli_cmd.hpp>
+#include <utils/network.hpp>
 
 namespace nr::ue
 {
@@ -25,9 +28,12 @@ class UeCmdHandler
     }
 
   public:
-    void handleCmd(NmUeCliCommand &msg);
+    void onStart();
+    void receiveCmd(const InetAddress &address, const uint8_t *buffer, size_t size);
 
   private:
+    void handleCmd(const InetAddress &address, std::unique_ptr<app::UeCliCommand> &&cmd);
+    void sendMessage(const app::CliMessage &msg);
     void sendResult(const InetAddress &address, const std::string &output);
     void sendError(const InetAddress &address, const std::string &output);
 };

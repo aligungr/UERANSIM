@@ -29,7 +29,6 @@ enum class NtsMessageType
     // Start of implementation specific types
     GNB_STATUS_UPDATE,
     GNB_CLI_COMMAND,
-    UE_CLI_COMMAND,
     UE_CTL_COMMAND,
 
     UDP_SERVER_RECEIVE,

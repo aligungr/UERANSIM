@@ -37,6 +37,7 @@ class RlsCtlLayer;
 class UeRrcLayer;
 class NasLayer;
 class TunLayer;
+class UeCmdHandler;
 
 class UeTask : public NtsTask
 {
@@ -50,6 +51,7 @@ class UeTask : public NtsTask
   private:
     bool m_immediateCycle;
     std::unique_ptr<uint8_t[]> m_buffer;
+    std::unique_ptr<UeCmdHandler> m_cmdHandler;
 
   public:
     std::unique_ptr<UeConfig> config;
