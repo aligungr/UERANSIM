@@ -133,7 +133,7 @@ static void SendCommand(int fd, struct sockaddr_un *remoteAddress, const app::Cl
 
     if (sendto(fd, stream.data(), static_cast<size_t>(stream.length()), 0, (const struct sockaddr *)remoteAddress,
                sizeof(sockaddr_un)) < 0) {
-        puts("Command could not send to the node");
+        puts("ERROR: Command could not send to the node");
         exit(1);
     }
 }
