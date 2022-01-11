@@ -19,14 +19,12 @@
 #include <ue/task.hpp>
 #include <ue/types.hpp>
 #include <utils/common.hpp>
-#include <utils/concurrent_map.hpp>
 #include <utils/constants.hpp>
 #include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
 #include <yaml-cpp/yaml.h>
 
 static nr::ue::UeConfig *g_refConfig = nullptr;
-static ConcurrentMap<std::string, nr::ue::UeTask *> g_ueMap{};
 
 static struct Options
 {
@@ -181,7 +179,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
 static void ReadOptions(int argc, char **argv)
 {
     opt::OptionsDescription desc{
-        cons::Project, cons::Tag, "5G-SA UE implementation", cons::Owner, "nr-ue", {"-c <config-file> [option...]"}, {},
+        cons::Project, cons::Tag, cons::DescriptionUe, cons::Owner, "nr-ue", {"-c <config-file> [option...]"}, {},
         true,          false};
 
     opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for UE", "config-file"};
@@ -305,7 +303,7 @@ static class UeController : public app::IUeController
   public:
     void performSwitchOff(nr::ue::UeTask *ue) override
     {
-        std::string key{};
+        /*std::string key{}; todo ==??
         g_ueMap.invokeForeach([&key, ue](auto &item) {
             if (item.second == ue)
                 key = item.first;
@@ -313,9 +311,15 @@ static class UeController : public app::IUeController
         if (key.empty())
             return;
         if (g_ueMap.removeAndGetSize(key) <= 0)
-            exit(0);
+            exit(0);*/
     }
 } g_ueController;
+
+static void ExecuteUeTasks(std::vector<nr::ue::UeTask *> &v)
+{
+    while (true)
+        ::pause(); // todo: optimize if single UE
+}
 
 int main(int argc, char **argv)
 {
@@ -334,18 +338,17 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    std::cout << cons::Name << std::endl;
+    std::cout << utils::CopyrightDeclarationUe() << std::endl;
+
+    std::vector<nr::ue::UeTask *> ueTasks;
 
     for (int i = 0; i < g_options.count; i++)
     {
         auto config = GetConfigByUe(i);
         auto nodeName = config->getNodeName();
-        auto *ue = new nr::ue::UeTask(std::move(config), &g_ueController);
-        g_ueMap.put(nodeName, ue);
+        ueTasks.push_back(new nr::ue::UeTask(std::move(config), &g_ueController));
     }
 
-    g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
-
-    while (true)
-        ::pause(); // todo: optimize if single UE
+    ExecuteUeTasks(ueTasks);
+    return 0;
 }

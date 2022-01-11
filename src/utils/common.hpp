@@ -43,6 +43,9 @@ void AssertNodeName(const std::string &str);
 void Trim(std::string &str);
 void Trim(std::stringstream &str);
 bool IsLittleEndian();
+std::string CopyrightDeclarationUe();
+std::string CopyrightDeclarationGnb();
+std::string CopyrightDeclarationCli();
 
 template <typename T>
 inline void ClearAndDelete(std::vector<T *> &vector)

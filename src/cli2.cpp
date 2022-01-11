@@ -31,7 +31,7 @@ static uint8_t g_receiveBuffer[8192];
 
 static void ReadOptions(int argc, char **argv, Options &output)
 {
-    opt::OptionsDescription desc{"UERANSIM",  cons::Tag, "Command Line Interface",
+    opt::OptionsDescription desc{"UERANSIM",  cons::Tag, cons::DescriptionCli,
                                  cons::Owner, "nr-cli",  {"<node-name> [option...]", "--dump"},
                                  {},          true,      false};
 

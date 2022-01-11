@@ -17,6 +17,7 @@
 #include <lib/app/cli_base.hpp>
 #include <lib/app/cli_cmd.hpp>
 #include <lib/app/proc_table.hpp>
+#include <utils/common.hpp>
 #include <utils/constants.hpp>
 #include <utils/io.hpp>
 #include <utils/options.hpp>
@@ -82,15 +83,9 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
 
 static void ReadOptions(int argc, char **argv)
 {
-    opt::OptionsDescription desc{cons::Project,
-                                 cons::Tag,
-                                 "5G-SA gNB implementation",
-                                 cons::Owner,
-                                 "nr-gnb",
-                                 {"-c <config-file> [option...]"},
-                                 {},
-                                 true,
-                                 false};
+    opt::OptionsDescription desc{
+        cons::Project, cons::Tag, cons::DescriptionGnb, cons::Owner, "nr-gnb", {"-c <config-file> [option...]"}, {},
+        true,          false};
 
     opt::OptionItem itemConfigFile = {'c', "config", "Use specified configuration file for gNB", "config-file"};
     opt::OptionItem itemDisableCmd = {'l', "disable-cmd", "Disable command line functionality for this instance",
@@ -205,7 +200,7 @@ int main(int argc, char **argv)
     app::Initialize();
     ReadOptions(argc, argv);
 
-    std::cout << cons::Name << std::endl;
+    std::cout << utils::CopyrightDeclarationGnb() << std::endl;
 
     if (!g_options.disableCmd)
     {

@@ -339,3 +339,33 @@ bool utils::IsLittleEndian()
 {
     return htonl(1453) != 1453;
 }
+
+std::string utils::CopyrightDeclarationUe()
+{
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto parts = std::localtime(&now);
+    auto year = 1900 + parts->tm_year;
+
+    return std::string{cons::Name} + " | " + cons::DescriptionUe + " | Copyright (c) " + std::to_string(year) + " " +
+           cons::Owner;
+}
+
+std::string utils::CopyrightDeclarationGnb()
+{
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto parts = std::localtime(&now);
+    auto year = 1900 + parts->tm_year;
+
+    return std::string{cons::Name} + " | " + cons::DescriptionGnb + " | Copyright (c) " + std::to_string(year) + " " +
+           cons::Owner;
+}
+
+std::string utils::CopyrightDeclarationCli()
+{
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto parts = std::localtime(&now);
+    auto year = 1900 + parts->tm_year;
+
+    return std::string{cons::Name} + " | " + cons::DescriptionCli + " | Copyright (c) " + std::to_string(year) + " " +
+           cons::Owner;
+}

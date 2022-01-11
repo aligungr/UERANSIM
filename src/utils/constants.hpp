@@ -20,6 +20,9 @@ struct cons
     static constexpr const char *Tag = "v3.2.5";
     static constexpr const char *Name = "UERANSIM v3.2.5";
     static constexpr const char *Owner = "ALİ GÜNGÖR";
+    static constexpr const char *DescriptionUe = "5G-SA UE implementation";
+    static constexpr const char *DescriptionGnb = "5G-SA gNB implementation";
+    static constexpr const char *DescriptionCli = "Command Line Interface";
 
     // Some port values
     static constexpr const uint16_t GtpPort = 2152;
@@ -37,7 +40,6 @@ struct cons
     static constexpr const char DIR_SEPARATOR = '/';
     static constexpr const char *CMD_SERVER_IP = "127.0.0.1";
     static constexpr const char *PROC_TABLE_DIR = "/tmp/UERANSIM.proc-table/"; // todo remove
-    static constexpr const char *PROCESS_DIR = "/proc/"; // todo remove
+    static constexpr const char *PROCESS_DIR = "/proc/";                       // todo remove
     static constexpr const char *CLI_SOCKET_DIR = "/tmp/UERANSIM.cli-ipc/";
-
 };
