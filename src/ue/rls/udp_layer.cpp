@@ -64,43 +64,46 @@ void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)
 
 void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, uint8_t *buffer, size_t size)
 {
-    auto msg = rls::DecodeRlsMessage(OctetView{buffer, size});
-    if (msg == nullptr)
+    rls::EMessageType msgType;
+    uint64_t sti;
+
+    if (!rls::DecodeRlsHeader(buffer, size, msgType, sti))
     {
         m_logger->err("Unable to decode RLS message");
         return;
     }
 
-    if (msg->msgType == rls::EMessageType::HEARTBEAT_ACK)
+    if (msgType == rls::EMessageType::HEARTBEAT_ACK)
     {
-        if (!m_cells.count(msg->sti))
+        if (!m_cells.count(sti))
         {
-            m_cells[msg->sti].cellId = ++m_cellIdCounter;
-            m_cellIdToSti[m_cells[msg->sti].cellId] = msg->sti;
+            m_cells[sti].cellId = ++m_cellIdCounter;
+            m_cellIdToSti[m_cells[sti].cellId] = sti;
         }
 
         int oldDbm = INT32_MIN;
-        if (m_cells.count(msg->sti))
-            oldDbm = m_cells[msg->sti].dbm;
+        if (m_cells.count(sti))
+            oldDbm = m_cells[sti].dbm;
 
-        m_cells[msg->sti].address = addr;
-        m_cells[msg->sti].lastSeen = utils::CurrentTimeMillis();
+        m_cells[sti].address = addr;
+        m_cells[sti].lastSeen = utils::CurrentTimeMillis();
 
-        int newDbm = ((const rls::RlsHeartBeatAck &)*msg).dbm;
-        m_cells[msg->sti].dbm = newDbm;
+        int newDbm;
+        rls::DecodeHeartbeatAck(buffer, size, newDbm);
+        m_cells[sti].dbm = newDbm;
 
         if (oldDbm != newDbm)
-            onSignalChangeOrLost(m_cells[msg->sti].cellId);
+            onSignalChangeOrLost(m_cells[sti].cellId);
         return;
     }
 
-    if (!m_cells.count(msg->sti))
+    if (!m_cells.count(sti))
     {
         // if no HB-ACK received yet, and the message is not HB-ACK, then ignore the message
         return;
     }
 
-    m_ue->rlsCtl->handleRlsMessage(m_cells[msg->sti].cellId, *msg);
+    m_ue->rlsCtl->handleRlsMessage(m_cells[sti].cellId, msgType, sti, buffer, size);
 }
 
 void RlsUdpLayer::onSignalChangeOrLost(int cellId)

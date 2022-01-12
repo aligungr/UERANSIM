@@ -19,7 +19,7 @@
 namespace nr::ue
 {
 
-void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &rrcPdu)
+void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const uint8_t *buffer, size_t size)
 {
     if (!hasSignalToCell(cellId))
         return;
@@ -27,7 +27,7 @@ void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oc
     switch (channel)
     {
     case rrc::RrcChannel::BCCH_BCH: {
-        auto *pdu = rrc::encode::Decode<ASN_RRC_BCCH_BCH_Message>(asn_DEF_ASN_RRC_BCCH_BCH_Message, rrcPdu);
+        auto *pdu = rrc::encode::Decode<ASN_RRC_BCCH_BCH_Message>(asn_DEF_ASN_RRC_BCCH_BCH_Message, buffer, size);
         if (pdu == nullptr)
             m_logger->err("RRC BCCH-BCH PDU decoding failed.");
         else
@@ -36,7 +36,7 @@ void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oc
         break;
     }
     case rrc::RrcChannel::BCCH_DL_SCH: {
-        auto *pdu = rrc::encode::Decode<ASN_RRC_BCCH_DL_SCH_Message>(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, rrcPdu);
+        auto *pdu = rrc::encode::Decode<ASN_RRC_BCCH_DL_SCH_Message>(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, buffer, size);
         if (pdu == nullptr)
             m_logger->err("RRC BCCH-DL-SCH PDU decoding failed.");
         else
@@ -45,7 +45,7 @@ void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oc
         break;
     }
     case rrc::RrcChannel::DL_CCCH: {
-        auto *pdu = rrc::encode::Decode<ASN_RRC_DL_CCCH_Message>(asn_DEF_ASN_RRC_DL_CCCH_Message, rrcPdu);
+        auto *pdu = rrc::encode::Decode<ASN_RRC_DL_CCCH_Message>(asn_DEF_ASN_RRC_DL_CCCH_Message, buffer, size);
         if (pdu == nullptr)
             m_logger->err("RRC DL-CCCH PDU decoding failed.");
         else
@@ -56,7 +56,7 @@ void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oc
     case rrc::RrcChannel::DL_DCCH: {
         if (isActiveCell(cellId))
         {
-            auto *pdu = rrc::encode::Decode<ASN_RRC_DL_DCCH_Message>(asn_DEF_ASN_RRC_DL_DCCH_Message, rrcPdu);
+            auto *pdu = rrc::encode::Decode<ASN_RRC_DL_DCCH_Message>(asn_DEF_ASN_RRC_DL_DCCH_Message, buffer, size);
             if (pdu == nullptr)
                 m_logger->err("RRC DL-DCCH PDU decoding failed.");
             else
@@ -68,7 +68,7 @@ void UeRrcLayer::handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const Oc
     case rrc::RrcChannel::PCCH: {
         if (isActiveCell(cellId))
         {
-            auto *pdu = rrc::encode::Decode<ASN_RRC_PCCH_Message>(asn_DEF_ASN_RRC_PCCH_Message, rrcPdu);
+            auto *pdu = rrc::encode::Decode<ASN_RRC_PCCH_Message>(asn_DEF_ASN_RRC_PCCH_Message, buffer, size);
             if (pdu == nullptr)
                 m_logger->err("RRC PCCH PDU decoding failed.");
             else
