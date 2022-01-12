@@ -111,9 +111,9 @@ void NasLayer::handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size)
     m_sm->handleUplinkDataRequest(psi, buffer, size);
 }
 
-void NasLayer::handleDownlinkDataRequest(int psi, OctetString &&data)
+void NasLayer::handleDownlinkDataRequest(int psi, const uint8_t *buffer, size_t size)
 {
-    m_sm->handleDownlinkDataRequest(psi, std::move(data));
+    m_sm->handleDownlinkDataRequest(psi, buffer, size);
 }
 
 } // namespace nr::ue

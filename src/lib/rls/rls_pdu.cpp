@@ -115,4 +115,55 @@ std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream)
     return nullptr;
 }
 
+bool DecodeRlsHeader(const uint8_t *buffer, size_t size, EMessageType &msgType, uint64_t &sti)
+{
+    auto first = buffer[0];
+    if (first != 3)
+        return false;
+
+    if (buffer[1] != cons::Major)
+        return false;
+    if (buffer[2] != cons::Minor)
+        return false;
+    if (buffer[3] != cons::Patch)
+        return false;
+
+    msgType = static_cast<EMessageType>(buffer[4]);
+
+    uint64_t v = 0;
+    for (int i = 0; i < 8; i++)
+    {
+        v <<= 8;
+        v |= static_cast<uint64_t>(buffer[5 + i]);
+    }
+    sti = v;
+    return true;
+}
+
+void DecodeHeartbeatAck(const uint8_t *buffer, size_t size, int &dbm)
+{
+    dbm = OctetView{buffer + 13, size - 13}.read4I();
+}
+
+OctetView DecodePduTransmissionAck(const uint8_t *buffer, size_t size)
+{
+    int count = OctetView{buffer + 13, size - 13}.read4I();
+    const uint8_t *pduIds = buffer + 17;
+
+    int viewSize = std::min(static_cast<int>(size) - 17, 4 * count);
+    return {pduIds, static_cast<size_t>(viewSize)};
+}
+
+void DecodePduTransmission(const uint8_t *buffer, size_t size, EPduType &pduType, uint32_t &pduId, uint32_t &payload,
+                           const uint8_t *&pduData, size_t &pduLength)
+{
+    auto view = OctetView{buffer + 13, size - 13};
+
+    pduType = static_cast<EPduType>((uint8_t)view.read());
+    pduId = view.read4UI();
+    payload = view.read4UI();
+    pduLength = view.read4I();
+    pduData = buffer + view.currentIndex() + 13;
+}
+
 } // namespace rls

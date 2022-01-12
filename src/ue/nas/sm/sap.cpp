@@ -66,7 +66,7 @@ void NasSm::handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size)
     }
 }
 
-void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
+void NasSm::handleDownlinkDataRequest(int psi, const uint8_t *buffer, size_t size)
 {
     if (m_mm->m_cmState == ECmState::CM_IDLE)
         return;
@@ -78,7 +78,7 @@ void NasSm::handleDownlinkDataRequest(int psi, OctetString &&data)
         state != EMmSubState::MM_SERVICE_REQUEST_INITIATED_PS)
         return;
 
-    m_ue->fdBase->write(FdBase::PS_START + psi, data.data(), static_cast<size_t>(data.length()));
+    m_ue->fdBase->write(FdBase::PS_START + psi, buffer, size);
 }
 
 } // namespace nr::ue

@@ -125,7 +125,7 @@ class UeRrcLayer
 
   public:
     /* RRC Message Transmission and Receive */
-    void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const OctetString &pdu);
+    void handleDownlinkRrc(int cellId, rrc::RrcChannel channel, const uint8_t *buffer, size_t size);
 
     /* Cell Management */
     void handleCellSignalChange(int cellId, int dbm);

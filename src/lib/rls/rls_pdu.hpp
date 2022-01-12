@@ -91,6 +91,12 @@ struct RlsPduTransmissionAck : RlsMessage
 };
 
 int EncodeRlsMessage(const RlsMessage &msg, uint8_t *buffer);
-std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream);
+std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream); // todo: remove
+
+bool DecodeRlsHeader(const uint8_t *buffer, size_t size, EMessageType &msgType, uint64_t &sti);
+void DecodeHeartbeatAck(const uint8_t *buffer, size_t size, int &dbm);
+OctetView DecodePduTransmissionAck(const uint8_t *buffer, size_t size);
+void DecodePduTransmission(const uint8_t *buffer, size_t size, EPduType &pduType, uint32_t &pduId, uint32_t &payload,
+                           const uint8_t *&pduData, size_t &pduLength);
 
 } // namespace rls

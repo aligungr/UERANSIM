@@ -50,7 +50,7 @@ class NasLayer
     void handleActiveCellChange(const Tai &prevTai);
     void handleNasDelivery(const OctetString& data);
     void handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size);
-    void handleDownlinkDataRequest(int psi, OctetString &&data);
+    void handleDownlinkDataRequest(int psi, const uint8_t *buffer, size_t size);
 };
 
 } // namespace nr::ue

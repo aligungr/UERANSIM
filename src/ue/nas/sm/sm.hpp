@@ -92,7 +92,7 @@ class NasSm
   private: /* Service Access Point */
     void onTimerTick();
     void handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size);
-    void handleDownlinkDataRequest(int psi, OctetString &&data);
+    void handleDownlinkDataRequest(int psi, const uint8_t *buffer, size_t size);
     void setupTunInterface(const PduSession &pduSession);
 };
 
