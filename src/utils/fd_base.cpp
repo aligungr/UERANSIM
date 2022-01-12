@@ -69,7 +69,7 @@ void FdBase::release(int id)
     updateFdSetCache();
 }
 
-void FdBase::write(int id, uint8_t *buffer, size_t size)
+void FdBase::write(int id, const uint8_t *buffer, size_t size)
 {
     if (m_fd[id] < 0)
         return;
@@ -83,7 +83,7 @@ void FdBase::write(int id, uint8_t *buffer, size_t size)
     }
 }
 
-void FdBase::sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &address)
+void FdBase::sendTo(int id, const uint8_t *buffer, size_t size, const InetAddress &address)
 {
     if (m_fd[id] < 0)
         return;
