@@ -23,7 +23,7 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-FdBase::FdBase() : m_fd{}, m_dice{}
+FdBase::FdBase(int timeout) : m_fd{}, m_dice{}, m_timeout{timeout}
 {
     for (auto &fd : m_fd)
         fd = -1;
@@ -116,7 +116,7 @@ bool FdBase::contains(int id) const
     return m_fd[id] >= 0;
 }
 
-int FdBase::performSelect(int timeout)
+int FdBase::performSelect()
 {
     int max = 0;
 
@@ -134,10 +134,10 @@ int FdBase::performSelect(int timeout)
     }
 
     timeval to{};
-    to.tv_sec = timeout / 1000;
-    to.tv_usec = (timeout % 1000) * 1000;
+    to.tv_sec = m_timeout / 1000;
+    to.tv_usec = (m_timeout % 1000) * 1000;
 
-    int ret = select(max + 1, &fdSet, nullptr, nullptr, timeout <= 0 ? nullptr : &to);
+    int ret = select(max + 1, &fdSet, nullptr, nullptr, m_timeout <= 0 ? nullptr : &to);
     if (ret < 0)
         return -1;
 

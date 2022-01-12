@@ -27,9 +27,10 @@ class FdBase
   private:
     std::array<int, SIZE> m_fd;
     size_t m_dice;
+    int m_timeout;
 
   public:
-    FdBase();
+    explicit FdBase(int timeout = 500);
     ~FdBase();
 
   public:
@@ -37,7 +38,7 @@ class FdBase
     void release(int id);
     [[nodiscard]] bool contains(int id) const;
 
-    int performSelect(int timeout);
+    int performSelect();
 
     size_t read(int id, uint8_t *buffer, size_t size);
     void write(int id, uint8_t *buffer, size_t size);

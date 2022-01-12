@@ -21,7 +21,6 @@ struct TimerPeriod
 };
 
 #define BUFFER_SIZE 65535
-#define RECEIVE_TIMEOUT 500
 
 namespace nr::ue
 {
@@ -81,7 +80,7 @@ bool UeTask::onLoop()
         return false;
     }
 
-    int fdId = fdBase->performSelect(RECEIVE_TIMEOUT);
+    int fdId = fdBase->performSelect();
     if (fdId >= 0)
     {
         if (fdId >= FdBase::PS_START && fdId <= FdBase::PS_END)
