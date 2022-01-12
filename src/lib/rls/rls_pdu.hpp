@@ -48,7 +48,7 @@ struct RlsMessage
     {
     }
 
-    ~RlsMessage() = default;
+    virtual ~RlsMessage() = default;
 };
 
 struct RlsHeartBeat : RlsMessage
