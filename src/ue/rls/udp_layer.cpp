@@ -103,7 +103,7 @@ void RlsUdpLayer::receiveRlsPdu(const InetAddress &addr, uint8_t *buffer, size_t
         return;
     }
 
-    m_ue->rlsCtl->handleRlsMessage(m_cells[sti].cellId, msgType, sti, buffer, size);
+    m_ue->rlsCtl->handleRlsMessage(m_cells[sti].cellId, msgType, buffer, size);
 }
 
 void RlsUdpLayer::onSignalChangeOrLost(int cellId)

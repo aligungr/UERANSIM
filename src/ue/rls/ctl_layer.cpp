@@ -13,21 +13,28 @@ RlsCtlLayer::RlsCtlLayer(UeTask *ue) : m_ue{ue}, m_servingCell{}, m_pduMap{}, m_
     m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "rls-ctl");
 }
 
-void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
+void RlsCtlLayer::handleRlsMessage(int cellId, rls::EMessageType msgType, uint8_t *buffer, size_t size)
 {
-    if (msg.msgType == rls::EMessageType::PDU_TRANSMISSION_ACK)
+    if (msgType == rls::EMessageType::PDU_TRANSMISSION_ACK)
     {
-        auto &m = (rls::RlsPduTransmissionAck &)msg;
-        for (auto pduId : m.pduIds)
-            m_pduMap.erase(pduId);
+        OctetView view = rls::DecodePduTransmissionAck(buffer, size);
+        while (view.hasNext())
+            m_pduMap.erase(view.read4UI());
     }
-    else if (msg.msgType == rls::EMessageType::PDU_TRANSMISSION)
+    else if (msgType == rls::EMessageType::PDU_TRANSMISSION)
     {
-        auto &m = (rls::RlsPduTransmission &)msg;
-        if (m.pduId != 0)
-            m_pendingAck[cellId].push_back(m.pduId);
+        rls::EPduType pduType;
+        uint32_t pduId;
+        uint32_t payload;
+        const uint8_t *pduData;
+        size_t pduLength;
 
-        if (m.pduType == rls::EPduType::DATA)
+        rls::DecodePduTransmission(buffer, size, pduType, pduId, payload, pduData, pduLength);
+
+        if (pduId != 0)
+            m_pendingAck[cellId].push_back(pduId);
+
+        if (pduType == rls::EPduType::DATA)
         {
             if (cellId != m_servingCell)
             {
@@ -36,10 +43,10 @@ void RlsCtlLayer::handleRlsMessage(int cellId, rls::RlsMessage &msg)
                 return;
             }
 
-            m_ue->nas->handleDownlinkDataRequest(static_cast<int>(m.payload), std::move(m.pdu));
+            m_ue->nas->handleDownlinkDataRequest(static_cast<int>(payload), pduData, pduLength);
         }
-        else if (m.pduType == rls::EPduType::RRC)
-            m_ue->rrc->handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(m.payload), m.pdu);
+        else if (pduType == rls::EPduType::RRC)
+            m_ue->rrc->handleDownlinkRrc(cellId, static_cast<rrc::RrcChannel>(payload), pduData, pduLength);
         else
             m_logger->err("Unhandled RLS PDU type");
     }

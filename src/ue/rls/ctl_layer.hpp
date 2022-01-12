@@ -38,7 +38,7 @@ class RlsCtlLayer
   public:
     void onAckControlTimerExpired();
     void onAckSendTimerExpired();
-    void handleRlsMessage(int cellId, rls::RlsMessage &msg);
+    void handleRlsMessage(int cellId, rls::EMessageType msgType, uint8_t *buffer, size_t size);
     void assignCurrentCell(int cellId);
     void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
     void handleUplinkDataDelivery(int psi, uint8_t *buffer, size_t size);
