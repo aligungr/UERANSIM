@@ -16,11 +16,11 @@
 class FdBase
 {
   public:
-    static constexpr const int PS_START = 0;
-    static constexpr const int PS_END = 15;
-    static constexpr const int RLS_IP4 = 16;
-    static constexpr const int RLS_IP6 = 17;
-    static constexpr const int CLI = 18;
+    static constexpr const int RLS_IP4 = 0;
+    static constexpr const int RLS_IP6 = 1;
+    static constexpr const int CLI = 2;
+    static constexpr const int PS_START = 3;
+    static constexpr const int PS_END = 18;
 
     static constexpr const int SIZE = 19;
 
@@ -31,6 +31,7 @@ class FdBase
     const timeval m_timevalCache;
     fd_set m_fdSetCache;
     int m_maxFdCache;
+    size_t m_minFdSize;
 
   public:
     explicit FdBase(int timeout = 500);

@@ -32,7 +32,8 @@ static timeval MakeTimeVal(int timeout)
 }
 
 FdBase::FdBase(int timeout)
-    : m_fd{}, m_dice{}, m_timeout{timeout}, m_timevalCache{MakeTimeVal(timeout)}, m_fdSetCache{}, m_maxFdCache{}
+    : m_fd{}, m_dice{}, m_timeout{timeout}, m_timevalCache{MakeTimeVal(timeout)}, m_fdSetCache{}, m_maxFdCache{},
+      m_minFdSize{}
 {
     for (auto &fd : m_fd)
         fd = -1;
@@ -137,9 +138,9 @@ int FdBase::performSelect()
         return -1;
 
     size_t dice = m_dice++;
-    for (size_t i = 0; i < SIZE; i++)
+    for (size_t i = 0; i < m_minFdSize; i++)
     {
-        size_t j = (dice + i) % SIZE;
+        size_t j = (dice + i) % m_minFdSize;
         int fd = m_fd[j];
         if (fd >= 0 && FD_ISSET(fd, &fdSet))
             return static_cast<int>(j);
@@ -150,12 +151,18 @@ int FdBase::performSelect()
 
 void FdBase::updateFdSetCache()
 {
+    for (size_t i = 0; i < SIZE; i++)
+    {
+        if (m_fd[i] >= 0)
+            m_minFdSize = i + 1;
+    }
+
     int max = 0;
 
     fd_set fdSet;
     FD_ZERO(&fdSet);
 
-    for (size_t i = 0; i < SIZE; i++)
+    for (size_t i = 0; i < m_minFdSize; i++)
     {
         int fd = m_fd[i];
         if (fd >= 0)
