@@ -23,7 +23,16 @@ static std::string GetErrorMessage(const std::string &cause)
     return what;
 }
 
-FdBase::FdBase(int timeout) : m_fd{}, m_dice{}, m_timeout{timeout}
+static timeval MakeTimeVal(int timeout)
+{
+    timeval to{};
+    to.tv_sec = timeout / 1000;
+    to.tv_usec = (timeout % 1000) * 1000;
+    return to;
+}
+
+FdBase::FdBase(int timeout)
+    : m_fd{}, m_dice{}, m_timeout{timeout}, m_timevalCache{MakeTimeVal(timeout)}, m_fdSetCache{}, m_maxFdCache{}
 {
     for (auto &fd : m_fd)
         fd = -1;
@@ -48,6 +57,7 @@ void FdBase::allocate(int id, int fd)
         throw std::runtime_error{"FdBase existing id"};
 
     m_fd[id] = fd;
+    updateFdSetCache();
 }
 
 void FdBase::release(int id)
@@ -55,6 +65,7 @@ void FdBase::release(int id)
     if (m_fd[id] >= 0)
         ::close(m_fd[id]);
     m_fd[id] = -1;
+    updateFdSetCache();
 }
 
 void FdBase::write(int id, uint8_t *buffer, size_t size)
@@ -118,6 +129,27 @@ bool FdBase::contains(int id) const
 
 int FdBase::performSelect()
 {
+    fd_set fdSet = m_fdSetCache;
+    timeval to = m_timevalCache;
+
+    int ret = select(m_maxFdCache, &fdSet, nullptr, nullptr, m_timeout <= 0 ? nullptr : &to);
+    if (ret < 0)
+        return -1;
+
+    size_t dice = m_dice++;
+    for (size_t i = 0; i < SIZE; i++)
+    {
+        size_t j = (dice + i) % SIZE;
+        int fd = m_fd[j];
+        if (fd >= 0 && FD_ISSET(fd, &fdSet))
+            return static_cast<int>(j);
+    }
+
+    return -1;
+}
+
+void FdBase::updateFdSetCache()
+{
     int max = 0;
 
     fd_set fdSet;
@@ -133,22 +165,6 @@ int FdBase::performSelect()
         }
     }
 
-    timeval to{};
-    to.tv_sec = m_timeout / 1000;
-    to.tv_usec = (m_timeout % 1000) * 1000;
-
-    int ret = select(max + 1, &fdSet, nullptr, nullptr, m_timeout <= 0 ? nullptr : &to);
-    if (ret < 0)
-        return -1;
-
-    size_t dice = m_dice++;
-    for (size_t i = 0; i < SIZE; i++)
-    {
-        size_t j = (dice + i) % SIZE;
-        int fd = m_fd[j];
-        if (fd >= 0 && FD_ISSET(fd, &fdSet))
-            return static_cast<int>(j);
-    }
-
-    return -1;
+    m_maxFdCache = max + 1;
+    m_fdSetCache = fdSet;
 }

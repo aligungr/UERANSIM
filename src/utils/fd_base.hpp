@@ -27,7 +27,10 @@ class FdBase
   private:
     std::array<int, SIZE> m_fd;
     size_t m_dice;
-    int m_timeout;
+    const int m_timeout;
+    const timeval m_timevalCache;
+    fd_set m_fdSetCache;
+    int m_maxFdCache;
 
   public:
     explicit FdBase(int timeout = 500);
@@ -45,4 +48,7 @@ class FdBase
 
     size_t receive(int id, uint8_t *buffer, size_t size, InetAddress &outAddress);
     void sendTo(int id, uint8_t *buffer, size_t size, const InetAddress &address);
+
+  private:
+    void updateFdSetCache();
 };
