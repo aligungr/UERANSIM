@@ -47,6 +47,8 @@ struct RlsMessage
     explicit RlsMessage(EMessageType msgType, uint64_t sti) : msgType(msgType), sti(sti)
     {
     }
+
+    ~RlsMessage() = default;
 };
 
 struct RlsHeartBeat : RlsMessage
