@@ -11,9 +11,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include <lib/rrc/rrc.hpp>
 #include <lib/rls/rls_base.hpp>
+#include <lib/rrc/rrc.hpp>
 #include <ue/types.hpp>
+#include <utils/compound_buffer.hpp>
 #include <utils/nts.hpp>
 
 namespace nr::ue
@@ -27,6 +28,7 @@ class RlsCtlLayer
     int m_servingCell;
     std::unordered_map<uint32_t, rls::PduInfo> m_pduMap;
     std::unordered_map<int, std::vector<uint32_t>> m_pendingAck;
+    CompoundBuffer m_cBuffer;
 
   public:
     explicit RlsCtlLayer(UeTask *ue);
@@ -41,7 +43,7 @@ class RlsCtlLayer
     void handleRlsMessage(int cellId, rls::EMessageType msgType, uint8_t *buffer, size_t size);
     void assignCurrentCell(int cellId);
     void handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcChannel channel, OctetString &&data);
-    void handleUplinkDataDelivery(int psi, uint8_t *buffer, size_t size);
+    void handleUplinkDataDelivery(int psi, CompoundBuffer &buffer);
 };
 
 } // namespace nr::ue

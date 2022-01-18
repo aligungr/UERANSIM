@@ -7,7 +7,7 @@
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
-static constexpr const int SEND_BUFFER = 16384;
+static constexpr const int BUFFER_SIZE = 2048ull;
 static constexpr const int LOOP_PERIOD = 1000;
 static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE_TIMEOUT)'dan büyük olmalı
 
@@ -15,8 +15,7 @@ namespace nr::ue
 {
 
 RlsUdpLayer::RlsUdpLayer(UeTask *ue)
-    : m_ue{ue}, m_sendBuffer{new uint8_t[SEND_BUFFER]}, m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{},
-      m_cellIdCounter{}
+    : m_ue{ue}, m_cBuffer(BUFFER_SIZE), m_searchSpace{}, m_cells{}, m_cellIdToSti{}, m_lastLoop{}, m_cellIdCounter{}
 {
     m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "rls-udp");
 
@@ -41,24 +40,21 @@ void RlsUdpLayer::checkHeartbeat()
     }
 }
 
-void RlsUdpLayer::sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg)
+void RlsUdpLayer::sendRlsPdu(const InetAddress &address, CompoundBuffer &buffer)
 {
-    int n = rls::EncodeRlsMessage(msg, m_sendBuffer.get());
-
     int version = address.getIpVersion();
     if (version != 4 && version != 6)
         throw std::runtime_error{"UdpServer::Send failure: Invalid IP version"};
 
-    m_ue->fdBase->sendTo(version == 4 ? FdBase::RLS_IP4 : FdBase::RLS_IP6, m_sendBuffer.get(), static_cast<size_t>(n),
-                         address);
+    m_ue->fdBase->sendTo(version == 4 ? FdBase::RLS_IP4 : FdBase::RLS_IP6, buffer.data(), buffer.size(), address);
 }
 
-void RlsUdpLayer::send(int cellId, const rls::RlsMessage &msg)
+void RlsUdpLayer::send(int cellId, CompoundBuffer &buffer)
 {
     if (m_cellIdToSti.count(cellId))
     {
         auto sti = m_cellIdToSti[cellId];
-        sendRlsPdu(m_cells[sti].address, msg);
+        sendRlsPdu(m_cells[sti].address, buffer);
     }
 }
 
@@ -138,12 +134,10 @@ void RlsUdpLayer::heartbeatCycle(uint64_t time, const Vector3 &simPos)
     for (auto cell : toRemove)
         onSignalChangeOrLost(cell);
 
+    rls::EncodeHeartbeat(m_cBuffer, m_ue->shCtx.sti, simPos);
+
     for (auto &address : m_searchSpace)
-    {
-        rls::RlsHeartBeat msg{m_ue->shCtx.sti};
-        msg.simPos = simPos;
-        sendRlsPdu(address, msg);
-    }
+        sendRlsPdu(address, m_cBuffer);
 }
 
 } // namespace nr::ue

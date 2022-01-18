@@ -13,6 +13,18 @@
 namespace rls
 {
 
+static void EncodeDefault(uint8_t *buffer, rls::EMessageType msgType, uint64_t sti)
+{
+    buffer[0] = 0x03; // (Just for old RLS compatibility)
+
+    buffer[1] = cons::Major;
+    buffer[2] = cons::Minor;
+    buffer[3] = cons::Patch;
+    buffer[4] = static_cast<uint8_t>(msgType);
+
+    octet8::SetTo(octet8{sti}, buffer + 5);
+}
+
 int EncodeRlsMessage(const RlsMessage &msg, uint8_t *buffer)
 {
     buffer[0] = 0x03; // (Just for old RLS compatibility)
@@ -164,6 +176,46 @@ void DecodePduTransmission(const uint8_t *buffer, size_t size, EPduType &pduType
     payload = view.read4UI();
     pduLength = view.read4I();
     pduData = buffer + view.currentIndex() + 13;
+}
+
+void EncodeHeartbeat(CompoundBuffer &buffer, uint64_t sti, const Vector3 &simPos)
+{
+    buffer.reset();
+    EncodeDefault(buffer.cmAddress(), EMessageType::HEARTBEAT, sti);
+    octet4::SetTo(octet4{simPos.x}, buffer.cmAddress() + 13);
+    octet4::SetTo(octet4{simPos.y}, buffer.cmAddress() + 17);
+    octet4::SetTo(octet4{simPos.z}, buffer.cmAddress() + 21);
+    buffer.setCmSize(25);
+}
+
+void EncodePduTransmissionAck(CompoundBuffer &buffer, uint64_t sti, const std::vector<uint32_t> &pduIds)
+{
+    buffer.reset();
+
+    uint8_t *data = buffer.cmAddress();
+
+    EncodeDefault(data, EMessageType::PDU_TRANSMISSION_ACK, sti);
+
+    octet4::SetTo(octet4{pduIds.size()}, data + 13);
+    data += 17;
+    for (auto pduId : pduIds)
+    {
+        octet4::SetTo(octet4{pduId}, data);
+        data += 4;
+    }
+    buffer.setCmSize(17ull + pduIds.size() * 4ull);
+}
+
+void EncodePduTransmission(CompoundBuffer &buffer, uint64_t sti, rls::EPduType pduType, uint32_t payload,
+                           uint32_t pduId)
+{
+    buffer.setTailCapacity(26);
+    auto tail = buffer.tailAddress();
+    EncodeDefault(tail, EMessageType::PDU_TRANSMISSION, sti);
+    tail[13] = static_cast<uint8_t>(pduType);
+    octet4::SetTo(octet4{pduId}, tail + 14);
+    octet4::SetTo(octet4{payload}, tail + 18);
+    octet4::SetTo(octet4{buffer.cmSize()}, tail + 22);
 }
 
 } // namespace rls

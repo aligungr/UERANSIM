@@ -25,6 +25,7 @@
 #include <ue/rrc/layer.hpp>
 #include <ue/tun/layer.hpp>
 #include <utils/common_types.hpp>
+#include <utils/compound_buffer.hpp>
 #include <utils/fd_base.hpp>
 #include <utils/logger.hpp>
 #include <utils/nts.hpp>
@@ -52,6 +53,7 @@ class UeTask
     bool m_immediateCycle;
     std::unique_ptr<uint8_t[]> m_buffer;
     std::unique_ptr<UeCmdHandler> m_cmdHandler;
+    CompoundBuffer m_cBuffer;
 
   public:
     std::unique_ptr<UeConfig> config;

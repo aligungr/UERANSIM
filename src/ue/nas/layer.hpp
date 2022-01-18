@@ -14,6 +14,7 @@
 #include <ue/nas/sm/sm.hpp>
 #include <ue/nas/usim/usim.hpp>
 #include <ue/types.hpp>
+#include <utils/compound_buffer.hpp>
 #include <utils/nts.hpp>
 
 namespace nr::ue
@@ -48,8 +49,8 @@ class NasLayer
     void handleRadioLinkFailure();
     void handleRrcEstablishmentFailure();
     void handleActiveCellChange(const Tai &prevTai);
-    void handleNasDelivery(const OctetString& data);
-    void handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size);
+    void handleNasDelivery(const OctetString &data);
+    void handleUplinkDataRequest(int psi, CompoundBuffer &buffer);
     void handleDownlinkDataRequest(int psi, const uint8_t *buffer, size_t size);
 };
 

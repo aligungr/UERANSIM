@@ -185,7 +185,6 @@ void RlsControlTask::handleDownlinkRrcDelivery(int ueId, uint32_t pduId, rrc::Rr
 
         m_pduMap[pduId].endPointId = ueId;
         m_pduMap[pduId].id = pduId;
-        m_pduMap[pduId].pdu = data.copy();
         m_pduMap[pduId].rrcChannel = channel;
         m_pduMap[pduId].sentTime = utils::CurrentTimeMillis();
     }
@@ -223,7 +222,7 @@ void RlsControlTask::onAckControlTimerExpired()
         if (delta > MAX_PDU_TTL)
         {
             transmissionFailureIds.push_back(pdu.first);
-            transmissionFailures.push_back(std::move(pdu.second));
+            transmissionFailures.push_back(pdu.second);
         }
     }
 

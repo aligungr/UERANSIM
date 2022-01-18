@@ -106,9 +106,9 @@ void NasLayer::handleNasDelivery(const OctetString &data)
         m_mm->receiveNasMessage(*nasMessage);
 }
 
-void NasLayer::handleUplinkDataRequest(int psi, uint8_t* buffer, size_t size)
+void NasLayer::handleUplinkDataRequest(int psi, CompoundBuffer &buffer)
 {
-    m_sm->handleUplinkDataRequest(psi, buffer, size);
+    m_sm->handleUplinkDataRequest(psi, buffer);
 }
 
 void NasLayer::handleDownlinkDataRequest(int psi, const uint8_t *buffer, size_t size)

@@ -8,7 +8,7 @@ static constexpr const int MAX_PDU_TTL = 3000;
 namespace nr::ue
 {
 
-RlsCtlLayer::RlsCtlLayer(UeTask *ue) : m_ue{ue}, m_servingCell{}, m_pduMap{}, m_pendingAck{}
+RlsCtlLayer::RlsCtlLayer(UeTask *ue) : m_ue{ue}, m_servingCell{}, m_pduMap{}, m_pendingAck{}, m_cBuffer{8192}
 {
     m_logger = ue->logBase->makeUniqueLogger(ue->config->getLoggerPrefix() + "rls-ctl");
 }
@@ -76,29 +76,21 @@ void RlsCtlLayer::handleUplinkRrcDelivery(int cellId, uint32_t pduId, rrc::RrcCh
 
         m_pduMap[pduId].endPointId = cellId;
         m_pduMap[pduId].id = pduId;
-        m_pduMap[pduId].pdu = data.copy();
         m_pduMap[pduId].rrcChannel = channel;
         m_pduMap[pduId].sentTime = utils::CurrentTimeMillis();
     }
 
-    rls::RlsPduTransmission msg{m_ue->shCtx.sti};
-    msg.pduType = rls::EPduType::RRC;
-    msg.pdu = std::move(data);
-    msg.payload = static_cast<uint32_t>(channel);
-    msg.pduId = pduId;
-
-    m_ue->rlsUdp->send(cellId, msg);
+    m_cBuffer.reset();
+    m_cBuffer.setCmSize(static_cast<size_t>(data.length()));
+    std::memcpy(m_cBuffer.cmAddress(), data.data(), m_cBuffer.cmSize());
+    rls::EncodePduTransmission(m_cBuffer, m_ue->shCtx.sti, rls::EPduType::RRC, static_cast<uint32_t>(channel), pduId);
+    m_ue->rlsUdp->send(cellId, m_cBuffer);
 }
 
-void RlsCtlLayer::handleUplinkDataDelivery(int psi, uint8_t *buffer, size_t size)
+void RlsCtlLayer::handleUplinkDataDelivery(int psi, CompoundBuffer &buffer)
 {
-    rls::RlsPduTransmission msg{m_ue->shCtx.sti};
-    msg.pduType = rls::EPduType::DATA;
-    msg.pdu = OctetString::FromArray(buffer, size);
-    msg.payload = static_cast<uint32_t>(psi);
-    msg.pduId = 0;
-
-    m_ue->rlsUdp->send(m_servingCell, msg);
+    rls::EncodePduTransmission(buffer, m_ue->shCtx.sti, rls::EPduType::DATA, static_cast<uint32_t>(psi), 0);
+    m_ue->rlsUdp->send(m_servingCell, buffer);
 }
 
 void RlsCtlLayer::onAckControlTimerExpired()
@@ -114,7 +106,7 @@ void RlsCtlLayer::onAckControlTimerExpired()
         if (delta > MAX_PDU_TTL)
         {
             transmissionFailureIds.push_back(pdu.first);
-            transmissionFailures.push_back(std::move(pdu.second));
+            transmissionFailures.push_back(pdu.second);
         }
     }
 
@@ -127,19 +119,15 @@ void RlsCtlLayer::onAckControlTimerExpired()
 
 void RlsCtlLayer::onAckSendTimerExpired()
 {
-    auto copy = m_pendingAck;
-    m_pendingAck.clear();
-
-    for (auto &item : copy)
+    for (auto &item : m_pendingAck)
     {
         if (!item.second.empty())
             continue;
 
-        rls::RlsPduTransmissionAck msg{m_ue->shCtx.sti};
-        msg.pduIds = std::move(item.second);
-
-        m_ue->rlsUdp->send(item.first, msg);
+        rls::EncodePduTransmissionAck(m_cBuffer, m_ue->shCtx.sti, item.second);
+        m_ue->rlsUdp->send(item.first, m_cBuffer);
     }
+    m_pendingAck.clear();
 }
 
 void RlsCtlLayer::assignCurrentCell(int cellId)

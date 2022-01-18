@@ -20,12 +20,12 @@ struct TimerPeriod
     static constexpr const int SWITCH_OFF = 500;
 };
 
-#define BUFFER_SIZE 65535
+#define BUFFER_SIZE 32768ull
 
 namespace nr::ue
 {
 
-ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config)
+ue::UeTask::UeTask(std::unique_ptr<UeConfig> &&config) : m_cBuffer(BUFFER_SIZE)
 {
     this->logBase = std::make_unique<LogBase>("logs/ue-" + config->getNodeName() + ".log");
     this->config = std::move(config);
@@ -85,8 +85,10 @@ bool UeTask::onLoop()
     {
         if (fdId >= FdBase::PS_START && fdId <= FdBase::PS_END)
         {
-            size_t n = fdBase->read(fdId, m_buffer.get(), BUFFER_SIZE);
-            nas->handleUplinkDataRequest(fdId - FdBase::PS_START, m_buffer.get(), n);
+            size_t n = fdBase->read(fdId, m_cBuffer.cmAddress(), m_cBuffer.cmCapacity());
+            m_cBuffer.reset();
+            m_cBuffer.setCmSize(n);
+            nas->handleUplinkDataRequest(fdId - FdBase::PS_START, m_cBuffer);
         }
         else if (fdId == FdBase::RLS_IP4 || fdId == FdBase::RLS_IP6)
         {

@@ -17,6 +17,7 @@
 #include <lib/udp/server_task.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
+#include <utils/compound_buffer.hpp>
 
 namespace nr::ue
 {
@@ -35,7 +36,7 @@ class RlsUdpLayer
   private:
     UeTask *m_ue;
     std::unique_ptr<Logger> m_logger;
-    std::unique_ptr<uint8_t[]> m_sendBuffer;
+    CompoundBuffer m_cBuffer;
     std::vector<InetAddress> m_searchSpace;
     std::unordered_map<uint64_t, CellInfo> m_cells;
     std::unordered_map<int, uint64_t> m_cellIdToSti;
@@ -50,14 +51,14 @@ class RlsUdpLayer
     ~RlsUdpLayer();
 
   private:
-    void sendRlsPdu(const InetAddress &address, const rls::RlsMessage &msg);
+    void sendRlsPdu(const InetAddress &address, CompoundBuffer &buffer);
     void onSignalChangeOrLost(int cellId);
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
     void checkHeartbeat();
-    void send(int cellId, const rls::RlsMessage &msg);
-    void receiveRlsPdu(const InetAddress &address, uint8_t* buffer, size_t size);
+    void send(int cellId, CompoundBuffer &buffer);
+    void receiveRlsPdu(const InetAddress &address, uint8_t *buffer, size_t size);
 };
 
 } // namespace nr::ue

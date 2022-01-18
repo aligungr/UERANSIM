@@ -10,8 +10,11 @@
 
 #include <cstdint>
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
 #include <utils/common_types.hpp>
+#include <utils/compound_buffer.hpp>
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
 
@@ -39,7 +42,7 @@ enum class EPduType : uint8_t
     DATA
 };
 
-struct RlsMessage
+struct RlsMessage // TODO: remove
 {
     const EMessageType msgType;
     const uint64_t sti{};
@@ -90,8 +93,13 @@ struct RlsPduTransmissionAck : RlsMessage
     }
 };
 
-int EncodeRlsMessage(const RlsMessage &msg, uint8_t *buffer);
+int EncodeRlsMessage(const RlsMessage &msg, uint8_t *buffer);          // todo: remove
 std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream); // todo: remove
+
+void EncodeHeartbeat(CompoundBuffer &buffer, uint64_t sti, const Vector3 &simPos);
+void EncodePduTransmissionAck(CompoundBuffer &buffer, uint64_t sti, const std::vector<uint32_t> &pduIds);
+void EncodePduTransmission(CompoundBuffer &buffer, uint64_t sti, rls::EPduType pduType, uint32_t payload,
+                           uint32_t pduId);
 
 bool DecodeRlsHeader(const uint8_t *buffer, size_t size, EMessageType &msgType, uint64_t &sti);
 void DecodeHeartbeatAck(const uint8_t *buffer, size_t size, int &dbm);

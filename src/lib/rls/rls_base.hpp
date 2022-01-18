@@ -18,7 +18,6 @@ namespace rls
 struct PduInfo
 {
     uint32_t id{};
-    OctetString pdu;
     rrc::RrcChannel rrcChannel{};
     int64_t sentTime{};
     int endPointId{};
