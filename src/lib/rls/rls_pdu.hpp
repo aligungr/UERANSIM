@@ -25,9 +25,9 @@ enum class EMessageType : uint8_t
 {
     RESERVED = 0,
 
-    DEPRECATED1 = 1,
-    DEPRECATED2 = 2,
-    DEPRECATED3 = 3,
+    DEPRECATED1 [[maybe_unused]] = 1,
+    DEPRECATED2 [[maybe_unused]] = 2,
+    DEPRECATED3 [[maybe_unused]] = 3,
 
     HEARTBEAT = 4,
     HEARTBEAT_ACK = 5,
