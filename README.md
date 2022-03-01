@@ -12,7 +12,6 @@ implementation. It can be considered as a 5G mobile phone and a base station in 
 testing 5G Core Network and studying 5G System.
 
 UERANSIM introduces the world's first and only open source 5G-SA UE and gNodeB implementation.
-Some parts of this software are patent pending.
 
 ## Current Status
 
@@ -51,7 +50,7 @@ You can support UERANSIM by:
 
 ## License
 
-Copyright (c) 2021 ALİ GÜNGÖR.
+Copyright (c) 2022 ALİ GÜNGÖR.
 
 All source code and related files including documentation and wiki pages are
 dual licensed with [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) and a commercial license.
