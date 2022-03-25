@@ -139,18 +139,18 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         if (msg.messageType == nas::EMessageType::REGISTRATION_REQUEST ||
             msg.messageType == nas::EMessageType::SERVICE_REQUEST)
         {
-            if  (m_cmState == ECmState::CM_IDLE)
+            if (m_cmState == ECmState::CM_IDLE)
             {
-                auto copy = nas::utils::DeepCopyMsg(msg);              
-                if (HasNonCleartext(msg)) {
-                    // create NAS Message Container
+                auto copy = nas::utils::DeepCopyMsg(msg);
+                if (HasNonCleartext(msg))
+                {
                     auto tmpMsg = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, false, false);
-                    m_usim->m_currentNsCtx->rollbackCountOnEncrypt();   // without this, two Encrypt() in this function will case count+=2
-                    auto cntrContents = tmpMsg->plainNasMessage.copy();    // only the encrypted original pdu is used  
-                    RemoveCleartextIEs((nas::PlainMmMessage &)*copy, std::move(cntrContents));
+                    m_usim->m_currentNsCtx->rollbackCountOnEncrypt();
+                    auto content = tmpMsg->plainNasMessage.copy();
+                    RemoveCleartextIEs((nas::PlainMmMessage &)*copy, std::move(content));
                 }
-                 auto copySecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, true, true);
-                 nas::EncodeNasMessage(*copySecured, pdu);
+                auto copySecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, true, true);
+                nas::EncodeNasMessage(*copySecured, pdu);
             }
             else
             {
@@ -160,13 +160,13 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
         }
         else if (msg.messageType == nas::EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING)
         {
-            if  (m_cmState == ECmState::CM_IDLE)
+            if (m_cmState == ECmState::CM_IDLE)
             {
-                // initial nas message: don't cipher
                 auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true, true);
                 nas::EncodeNasMessage(*secured, pdu);
             }
-            else {
+            else
+            {
                 auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
                 nas::EncodeNasMessage(*secured, pdu);
             }
