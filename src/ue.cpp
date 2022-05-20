@@ -23,6 +23,7 @@
 #include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
 #include <yaml-cpp/yaml.h>
+#include <stdlib.h> 
 
 static app::CliServer *g_cliServer = nullptr;
 static nr::ue::UeConfig *g_refConfig = nullptr;
@@ -36,6 +37,7 @@ static struct Options
     bool disableCmd{};
     std::string imsi{};
     int count{};
+    int tempo{};
 } g_options{};
 
 struct NwUeControllerCmd : NtsMessage
@@ -246,6 +248,7 @@ static void ReadOptions(int argc, char **argv)
     opt::OptionItem itemImsi = {'i', "imsi", "Use specified IMSI number instead of provided one", "imsi"};
     opt::OptionItem itemCount = {'n', "num-of-UE", "Generate specified number of UEs starting from the given IMSI",
                                  "num"};
+    opt::OptionItem itemTempo = {'t', "tempo", "Duration in seconds between two calls", "tempo"};
     opt::OptionItem itemDisableCmd = {'l', "disable-cmd", "Disable command line functionality for this instance",
                                       std::nullopt};
     opt::OptionItem itemDisableRouting = {'r', "no-routing-config",
@@ -254,6 +257,7 @@ static void ReadOptions(int argc, char **argv)
     desc.items.push_back(itemConfigFile);
     desc.items.push_back(itemImsi);
     desc.items.push_back(itemCount);
+    desc.items.push_back(itemTempo);
     desc.items.push_back(itemDisableCmd);
     desc.items.push_back(itemDisableRouting);
 
@@ -272,6 +276,15 @@ static void ReadOptions(int argc, char **argv)
     else
     {
         g_options.count = 1;
+    }
+
+    if (opt.hasFlag(itemTempo))
+    {
+        g_options.tempo = utils::ParseInt(opt.getOption(itemTempo));
+    }
+    else
+    {
+        g_options.tempo = 0;
     }
 
     g_options.imsi = {};
@@ -493,7 +506,12 @@ int main(int argc, char **argv)
         g_cliRespTask->start();
     }
 
+    if (g_options.tempo != 0)
+    {
+    g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); sleep(g_options.tempo);});
+    } else {
     g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
+    }
 
     while (true)
         Loop();
