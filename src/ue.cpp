@@ -6,8 +6,10 @@
 // and subject to the terms and conditions defined in LICENSE file.
 //
 
+#include <chrono>
 #include <iostream>
 #include <stdexcept>
+#include <thread>
 
 #include <unistd.h>
 
@@ -23,7 +25,6 @@
 #include <utils/options.hpp>
 #include <utils/yaml_utils.hpp>
 #include <yaml-cpp/yaml.h>
-#include <stdlib.h> 
 
 static app::CliServer *g_cliServer = nullptr;
 static nr::ue::UeConfig *g_refConfig = nullptr;
@@ -248,7 +249,7 @@ static void ReadOptions(int argc, char **argv)
     opt::OptionItem itemImsi = {'i', "imsi", "Use specified IMSI number instead of provided one", "imsi"};
     opt::OptionItem itemCount = {'n', "num-of-UE", "Generate specified number of UEs starting from the given IMSI",
                                  "num"};
-    opt::OptionItem itemTempo = {'t', "tempo", "Duration in seconds between two calls", "tempo"};
+    opt::OptionItem itemTempo = {'t', "tempo", "Starting delay in milliseconds for each of the UEs", "tempo"};
     opt::OptionItem itemDisableCmd = {'l', "disable-cmd", "Disable command line functionality for this instance",
                                       std::nullopt};
     opt::OptionItem itemDisableRouting = {'r', "no-routing-config",
@@ -279,13 +280,9 @@ static void ReadOptions(int argc, char **argv)
     }
 
     if (opt.hasFlag(itemTempo))
-    {
         g_options.tempo = utils::ParseInt(opt.getOption(itemTempo));
-    }
     else
-    {
         g_options.tempo = 0;
-    }
 
     g_options.imsi = {};
     if (opt.hasFlag(itemImsi))
@@ -508,9 +505,14 @@ int main(int argc, char **argv)
 
     if (g_options.tempo != 0)
     {
-    g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); sleep(g_options.tempo);});
-    } else {
-    g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
+        g_ueMap.invokeForeach([](const auto &ue) {
+            ue.second->start();
+            std::this_thread::sleep_for(std::chrono::milliseconds(g_options.tempo));
+        });
+    }
+    else
+    {
+        g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
     }
 
     while (true)
