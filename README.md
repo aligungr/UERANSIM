@@ -13,6 +13,8 @@ testing 5G Core Network and studying 5G System.
 
 UERANSIM introduces the world's first and only open source 5G-SA UE and gNodeB implementation.
 
+**WARNING:** I'm no longer active in the development of UERANSIM. However community contributions are welcomed.
+
 ## Current Status
 
 Our UE and gNodeB are functional and ready to use. You can connect them to your 5G core network right now and start
