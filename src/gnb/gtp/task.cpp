@@ -224,27 +224,57 @@ void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
     OctetView buffer{msg.packet};
     auto gtp = gtp::DecodeGtpMessage(buffer);
 
-    auto sessionInd = m_sessionTree.findByDownTeid(gtp->teid);
-    if (sessionInd == 0)
-    {
-        m_logger->err("TEID %d not found on GTP-U Downlink", gtp->teid);
-        return;
+    switch (gtp->msgType) {
+        case gtp::GtpMessage::MT_G_PDU: {
+            auto sessionInd = m_sessionTree.findByDownTeid(gtp->teid);
+            if (sessionInd == 0)
+            {
+                m_logger->err("TEID %d not found on GTP-U Downlink", gtp->teid);
+                return;
+            }
+
+            if (m_rateLimiter->allowDownlinkPacket(sessionInd, gtp->payload.length()))
+            {
+                auto w = std::make_unique<NmGnbGtpToRls>(NmGnbGtpToRls::DATA_PDU_DELIVERY);
+                w->ueId = GetUeId(sessionInd);
+                w->psi = GetPsi(sessionInd);
+                w->pdu = std::move(gtp->payload);
+                m_base->rlsTask->push(std::move(w));
+            }
+            return;
+        }
+        case gtp::GtpMessage::MT_ECHO_REQUEST: {
+            // Even if there is no path in use, a GTP-U peer shall
+            // be prepared to receive an Echo Request at any time
+            // and it shall reply with an Echo Response.
+
+            gtp::GtpMessage gtpResponse{};
+            gtpResponse.msgType = gtp::GtpMessage::MT_ECHO_RESPONSE;
+            if (gtp->seq.has_value()) {
+                gtpResponse.seq = gtp->seq.value();
+            }
+            // The Recovery information element is mandatory due
+            // to backwards compatibility reasons.
+            // Type value for Recovery information is decimal 14,
+            // format is Type-Value.
+            // The Restart Counter value in the Recovery information element
+            // shall not be used, i.e. it shall be set to zero by the sender
+            // and shall be ignored by the receiver.
+            gtpResponse.payload = std::move(OctetString::FromOctet2({14, 0}));
+
+            OctetString gtpPdu;
+            if (!gtp::EncodeGtpMessage(gtpResponse, gtpPdu))
+                m_logger->err("Uplink data failure, GTP encoding failed");
+            else
+                m_udpServer->send(msg.fromAddress, gtpPdu);
+            return;
+        }
+        default: {
+            m_logger->err("Unhandled GTP-U message type: %d", gtp->msgType);
+            return;
+        }
     }
 
-    if (gtp->msgType != gtp::GtpMessage::MT_G_PDU)
-    {
-        m_logger->err("Unhandled GTP-U message type: %d", gtp->msgType);
-        return;
-    }
-
-    if (m_rateLimiter->allowDownlinkPacket(sessionInd, gtp->payload.length()))
-    {
-        auto w = std::make_unique<NmGnbGtpToRls>(NmGnbGtpToRls::DATA_PDU_DELIVERY);
-        w->ueId = GetUeId(sessionInd);
-        w->psi = GetPsi(sessionInd);
-        w->pdu = std::move(gtp->payload);
-        m_base->rlsTask->push(std::move(w));
-    }
 }
 
 void GtpTask::updateAmbrForUe(int ueId)
