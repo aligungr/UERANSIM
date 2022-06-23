@@ -1,4 +1,4 @@
-mcc: '901'          # Mobile Country Code value
+mcc: '999'          # Mobile Country Code value
 mnc: '70'           # Mobile Network Code value (2 or 3 digits)
 
 nci: '0x000000010'  # NR Cell Identity (36-bit)
