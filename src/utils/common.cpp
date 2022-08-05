@@ -13,6 +13,7 @@
 #include <atomic>
 #include <cctype>
 #include <chrono>
+#include <cstring>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
@@ -196,7 +197,7 @@ OctetString utils::IpToOctetString(const std::string &address)
     }
     else if (ipVersion == 6)
     {
-        std::vector<uint8_t> data{16};
+        std::vector<uint8_t> data(16);
         if (!IPv6FromString(address.c_str(), data.data()))
             return {};
         return OctetString(std::move(data));
