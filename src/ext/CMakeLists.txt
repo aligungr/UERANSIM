@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.17)
-
 file(GLOB_RECURSE H_FILES *.h)
 file(GLOB_RECURSE C_FILES *.c)
 file(GLOB_RECURSE HDR_FILES *.hpp)
