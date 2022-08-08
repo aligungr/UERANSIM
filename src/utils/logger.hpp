@@ -95,10 +95,10 @@ class Logger
     template <typename... Args>
     inline void log(Severity severity, const std::string &fmt, Args &&...args)
     {
-        int size = snprintf(nullptr, 0, fmt.c_str(), args...);
+        int size = snprintf(nullptr, 0, "%s", fmt.c_str(), args...);
         std::string res;
         res.resize(size);
-        snprintf(&res[0], size + 1, fmt.c_str(), args...);
+        snprintf(&res[0], size + 1, "%s", fmt.c_str(), args...);
         logImpl(severity, res);
     }
 
