@@ -45,7 +45,7 @@ class Logger
 
     inline void debug(const std::string &fmt)
     {
-        log(Severity::DEBUG, fmt);
+        log(Severity::DEBUG, "%s", fmt.c_str());
     }
 
     template <typename... Args>
@@ -56,7 +56,7 @@ class Logger
 
     inline void info(const std::string &fmt)
     {
-        log(Severity::INFO, fmt);
+        log(Severity::INFO, "%s", fmt.c_str());
     }
 
     template <typename... Args>
@@ -67,7 +67,7 @@ class Logger
 
     inline void warn(const std::string &fmt)
     {
-        log(Severity::WARN, fmt);
+        log(Severity::WARN, "%s", fmt.c_str());
     }
 
     template <typename... Args>
@@ -78,7 +78,7 @@ class Logger
 
     inline void err(const std::string &fmt)
     {
-        log(Severity::ERR, fmt);
+        log(Severity::ERR, "%s", fmt.c_str());
     }
 
     template <typename... Args>
@@ -89,16 +89,16 @@ class Logger
 
     inline void fatal(const std::string &fmt)
     {
-        log(Severity::FATAL, fmt);
+        log(Severity::FATAL, "%s", fmt.c_str());
     }
 
     template <typename... Args>
     inline void log(Severity severity, const std::string &fmt, Args &&...args)
     {
-        int size = snprintf(nullptr, 0, "%s", fmt.c_str(), args...);
+        int size = snprintf(nullptr, 0, fmt.c_str(), args...);
         std::string res;
         res.resize(size);
-        snprintf(&res[0], size + 1, "%s", fmt.c_str(), args...);
+        snprintf(&res[0], size + 1, fmt.c_str(), args...);
         logImpl(severity, res);
     }
 
