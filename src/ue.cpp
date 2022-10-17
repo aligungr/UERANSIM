@@ -152,6 +152,9 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->imei = yaml::GetString(config, "imei", 15, 15);
     if (yaml::HasField(config, "imeiSv"))
         result->imeiSv = yaml::GetString(config, "imeiSv", 16, 16);
+    // Interface name has to be 16 bytes long max. Leaving some bytes free for indexing.
+    if (yaml::HasField(config, "tunNamePrefix"))
+        result->tunNamePrefix = yaml::GetString(config, "tunNamePrefix", 1, 13);
 
     yaml::AssertHasField(config, "integrity");
     yaml::AssertHasField(config, "ciphering");
@@ -345,6 +348,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->imei = g_refConfig->imei;
     c->imeiSv = g_refConfig->imeiSv;
     c->supi = g_refConfig->supi;
+    c->tunNamePrefix = g_refConfig->tunNamePrefix;
     c->hplmn = g_refConfig->hplmn;
     c->configuredNssai = g_refConfig->configuredNssai;
     c->defaultConfiguredNssai = g_refConfig->defaultConfiguredNssai;

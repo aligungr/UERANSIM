@@ -179,8 +179,10 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
-    std::string error{}, allocatedName{};
-    int fd = tun::TunAllocate(cons::TunNamePrefix, allocatedName, error);
+    std::string error{}, allocatedName{}, requestedName{cons::TunNamePrefix};
+    if (m_base->config->tunNamePrefix.has_value())
+        requestedName = *m_base->config->tunNamePrefix;
+    int fd = tun::TunAllocate(requestedName.c_str(), allocatedName, error);
     if (fd == 0 || error.length() > 0)
     {
         m_logger->err("TUN allocation failure [%s]", error.c_str());
