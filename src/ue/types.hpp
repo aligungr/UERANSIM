@@ -106,6 +106,7 @@ struct UeConfig
     IntegrityMaxDataRateConfig integrityMaxRate{};
     NetworkSlice defaultConfiguredNssai{};
     NetworkSlice configuredNssai{};
+    std::optional<std::string> tunNamePrefix{};
 
     struct
     {
