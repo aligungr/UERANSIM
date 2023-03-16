@@ -109,6 +109,8 @@ static nr::ue::UeConfig *ReadConfigYaml()
     yaml::GetString(config, "mcc", 3, 3);
     result->hplmn.mnc = yaml::GetInt32(config, "mnc", 0, 999);
     result->hplmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() == 3;
+    if (yaml::HasField(config, "routingIndicator"))
+        result->routingIndicator = yaml::GetString(config, "routingIndicator", 4, 4);
 
     for (auto &gnbSearchItem : yaml::GetSequence(config, "gnbSearchList"))
         result->gnbSearchList.push_back(gnbSearchItem.as<std::string>());
@@ -348,6 +350,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->imei = g_refConfig->imei;
     c->imeiSv = g_refConfig->imeiSv;
     c->supi = g_refConfig->supi;
+    c->routingIndicator = g_refConfig->routingIndicator;
     c->tunNamePrefix = g_refConfig->tunNamePrefix;
     c->hplmn = g_refConfig->hplmn;
     c->configuredNssai = g_refConfig->configuredNssai;

@@ -91,7 +91,14 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
     ret.imsi.plmn.isLongMnc = plmn.isLongMnc;
     ret.imsi.plmn.mcc = plmn.mcc;
     ret.imsi.plmn.mnc = plmn.mnc;
-    ret.imsi.routingIndicator = "0000";
+    if (m_base->config->routingIndicator.has_value())
+    {
+        ret.imsi.routingIndicator = *m_base->config->routingIndicator;
+    }
+    else
+    {
+        ret.imsi.routingIndicator = "0000";
+    }
     ret.imsi.protectionSchemaId = 0;
     ret.imsi.homeNetworkPublicKeyIdentifier = 0;
     ret.imsi.schemeOutput = imsi.substr(plmn.isLongMnc ? 6 : 5);

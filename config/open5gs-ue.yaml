@@ -4,6 +4,8 @@ supi: 'imsi-999700000000001'
 mcc: '999'
 # Mobile Network Code value of HPLMN (2 or 3 digits)
 mnc: '70'
+# Routing Indicator
+routingIndicator: '0000'
 
 # Permanent subscription key
 key: '465B5CE8B199B49FAA5F0A2EE238A6BC'
