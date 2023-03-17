@@ -52,7 +52,7 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
         int big = halfOctets[2 * i + 1];
         int octet = big << 4 | little;
         stream.appendOctet(octet);
-        octectCount++;
+        octetCount++;
     }
     // 3GPP TS 24.501 section 9.11.3.4 (mobile identity) table 9.11.3.4.1
     // Routing Indicator shall consist of 1 to 4 digits. The coding of this
