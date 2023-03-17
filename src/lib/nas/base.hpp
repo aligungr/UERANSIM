@@ -239,7 +239,7 @@ static inline bool DecodeListVal(const OctetView &stream, int length, std::vecto
 }
 
 void EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
-                     int skippedHalfOctet);
+                     int skippedHalfOctet, bool isRoutingIndicator = false);
 
 std::string DecodeBcdString(const OctetView &stream, int length, bool skipFirst);
 
