@@ -45,7 +45,7 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
     for (size_t i = 0; i < spare; i++)
         halfOctets[i + bcd.length() + (skipFirst ? 1 : 0)] = 0xF;
 
-    size_t octectCount = 0;
+    size_t octetCount = 0;
     for (size_t i = 0; i < requiredHalfOctets / 2; i++)
     {
         int little = halfOctets[2 * i];
