@@ -69,7 +69,7 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
     // "0110", bits 1 to 4 of octet 9 are coded as "0111", bits 5 to 8 of
     // octet 9 are coded as "1111".
     if (isRoutingIndicator) {
-        while (octectCount < octetLength) {
+        while (octetCount < octetLength) {
             stream.appendOctet(0xFF);
             octectCount++;
         }
