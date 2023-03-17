@@ -71,7 +71,7 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
     if (isRoutingIndicator) {
         while (octetCount < octetLength) {
             stream.appendOctet(0xFF);
-            octectCount++;
+            octetCount++;
         }
     }    
 }
