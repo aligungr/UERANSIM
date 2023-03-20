@@ -1,0 +1,74 @@
+# IMSI number of the UE. IMSI = [MCC|MNC|MSISDN] (In total 15 digits)
+supi: 'imsi-208019900005748'
+# Mobile Country Code value of HPLMN
+mcc: '208'
+# Mobile Network Code value of HPLMN (2 or 3 digits)
+mnc: '01'
+# Routing Indicator
+routingIndicator: '1'
+
+# Permanent subscription key
+key: '00000000000000000000000000000000'
+# Operator code (OP or OPC) of the UE
+op: '66E94BD4EF8A2C3B884CFA59CA342B2E'
+# This value specifies the OP type and it can be either 'OP' or 'OPC'
+opType: 'OPC'
+# Authentication Management Field (AMF) value
+amf: '8000'
+# IMEI number of the device. It is used if no SUPI is provided
+imei: '356938035643803'
+# IMEISV number of the device. It is used if no SUPI and IMEI is provided
+imeiSv: '4370816125816151'
+
+# List of gNB IP addresses for Radio Link Simulation
+gnbSearchList:
+  - 10.194.124.10
+
+# UAC Access Identities Configuration
+uacAic:
+  mps: false
+  mcs: false
+
+# UAC Access Control Class
+uacAcc:
+  normalClass: 0
+  class11: false
+  class12: false
+  class13: false
+  class14: false
+  class15: false
+
+# Initial PDU sessions to be established
+sessions:
+  - type: 'IPv4'
+    apn: 'orange'
+    slice:
+      sst: 1
+      sd: 0x000001
+
+# Configured NSSAI for this UE by HPLMN
+configured-nssai:
+  - sst: 1
+    #    sd: 0x000001
+
+# Default Configured NSSAI for this UE
+default-nssai:
+  - sst: 1
+    #    sd: 0x000001
+
+# Supported integrity algorithms by this UE
+integrity:
+  IA1: true
+  IA2: true
+  IA3: true
+
+# Supported encryption algorithms by this UE
+ciphering:
+  EA1: true
+  EA2: true
+  EA3: true
+
+# Integrity protection maximum data rate for user plane
+integrityMaxRate:
+  uplink: 'full'
+  downlink: 'full'

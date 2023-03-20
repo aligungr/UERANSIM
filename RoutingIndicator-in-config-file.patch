@@ -1,0 +1,191 @@
+diff --git a/config/custom-ue.yaml b/config/custom-ue.yaml
+index 53420aa..a42226a 100644
+--- a/config/custom-ue.yaml
++++ b/config/custom-ue.yaml
+@@ -4,6 +4,8 @@ supi: 'imsi-286010000000001'
+ mcc: '286'
+ # Mobile Network Code value of HPLMN (2 or 3 digits)
+ mnc: '93'
++# Routing Indicator
++routingIndicator: '0000'
+ 
+ # Permanent subscription key
+ key: '465B5CE8B199B49FAA5F0A2EE238A6BC'
+diff --git a/config/free5gc-ue.yaml b/config/free5gc-ue.yaml
+index 9089ba0..87ee449 100644
+--- a/config/free5gc-ue.yaml
++++ b/config/free5gc-ue.yaml
+@@ -4,6 +4,8 @@ supi: 'imsi-208930000000003'
+ mcc: '208'
+ # Mobile Network Code value of HPLMN (2 or 3 digits)
+ mnc: '93'
++# Routing Indicator
++routingIndicator: '0000'
+ 
+ # Permanent subscription key
+ key: '8baf473f2f8fd09487cccbd7097c6862'
+diff --git a/config/open5gs-ue.yaml b/config/open5gs-ue.yaml
+index 6dce9cd..e4f0b18 100644
+--- a/config/open5gs-ue.yaml
++++ b/config/open5gs-ue.yaml
+@@ -4,6 +4,8 @@ supi: 'imsi-999700000000001'
+ mcc: '999'
+ # Mobile Network Code value of HPLMN (2 or 3 digits)
+ mnc: '70'
++# Routing Indicator
++routingIndicator: '0000'
+ 
+ # Permanent subscription key
+ key: '465B5CE8B199B49FAA5F0A2EE238A6BC'
+diff --git a/src/lib/nas/base.cpp b/src/lib/nas/base.cpp
+index f6b852a..3be8855 100644
+--- a/src/lib/nas/base.cpp
++++ b/src/lib/nas/base.cpp
+@@ -11,7 +11,7 @@
+ #include <stdexcept>
+ 
+ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
+-                          int skippedHalfOctet)
++                          int skippedHalfOctet, bool isRoutingIndicator)
+ {
+     size_t requiredHalfOctets = bcd.length();
+     if (skipFirst)
+@@ -45,13 +45,35 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
+     for (size_t i = 0; i < spare; i++)
+         halfOctets[i + bcd.length() + (skipFirst ? 1 : 0)] = 0xF;
+ 
++    size_t octetCount = 0;
+     for (size_t i = 0; i < requiredHalfOctets / 2; i++)
+     {
+         int little = halfOctets[2 * i];
+         int big = halfOctets[2 * i + 1];
+         int octet = big << 4 | little;
+         stream.appendOctet(octet);
++        octetCount++;
+     }
++    // 3GPP TS 24.501 section 9.11.3.4 (mobile identity) table 9.11.3.4.1
++    // Routing Indicator shall consist of 1 to 4 digits. The coding of this
++    // field is the responsibility of home network operator but BCD coding 
++    // shall be used. If a network operator decides to assign less than 
++    // 4 digits to Routing Indicator, the remaining digits shall be coded 
++    // as "1111" to fill the 4 digits coding of Routing Indicator 
++    // (see NOTE 2). If no Routing Indicator is configured in the USIM, the
++    // UE shall code bits 1 to 4 of octet 8 of the Routing Indicator 
++    // as "0000" and the remaining digits as “1111".
++    //
++    // NOTE 2:	For a 3-digit Routing Indicator, e.g "567", bits 1 to 4 of
++    // octet 8 are coded as "0101", bits 5 to 8 of octet 8 are coded as
++    // "0110", bits 1 to 4 of octet 9 are coded as "0111", bits 5 to 8 of
++    // octet 9 are coded as "1111".
++    if (isRoutingIndicator) {
++        while (octetCount < octetLength) {
++            stream.appendOctet(0xFF);
++            octetCount++;
++        }
++    }    
+ }
+ 
+ std::string nas::DecodeBcdString(const OctetView &stream, int length, bool skipFirst)
+diff --git a/src/lib/nas/base.hpp b/src/lib/nas/base.hpp
+index 13c4442..b5c806f 100644
+--- a/src/lib/nas/base.hpp
++++ b/src/lib/nas/base.hpp
+@@ -239,7 +239,7 @@ static inline bool DecodeListVal(const OctetView &stream, int length, std::vecto
+ }
+ 
+ void EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
+-                     int skippedHalfOctet);
++                     int skippedHalfOctet, bool isRoutingIndicator = false);
+ 
+ std::string DecodeBcdString(const OctetView &stream, int length, bool skipFirst);
+ 
+diff --git a/src/lib/nas/ie6.cpp b/src/lib/nas/ie6.cpp
+index 54cd8b0..e5aed05 100644
+--- a/src/lib/nas/ie6.cpp
++++ b/src/lib/nas/ie6.cpp
+@@ -304,7 +304,7 @@ void IE5gsMobileIdentity::Encode(const IE5gsMobileIdentity &ie, OctetString &str
+ 
+             VPlmn::Encode(VPlmn{ie.imsi.plmn.mcc, ie.imsi.plmn.mnc, ie.imsi.plmn.isLongMnc}, stream);
+ 
+-            EncodeBcdString(stream, ie.imsi.routingIndicator, 2, false, 0);
++            EncodeBcdString(stream, ie.imsi.routingIndicator, 2, false, 0, true);
+             stream.appendOctet(ie.imsi.protectionSchemaId);
+             stream.appendOctet(ie.imsi.homeNetworkPublicKeyIdentifier);
+ 
+diff --git a/src/ue.cpp b/src/ue.cpp
+index 02bd10b..229b5bb 100644
+--- a/src/ue.cpp
++++ b/src/ue.cpp
+@@ -109,6 +109,8 @@ static nr::ue::UeConfig *ReadConfigYaml()
+     yaml::GetString(config, "mcc", 3, 3);
+     result->hplmn.mnc = yaml::GetInt32(config, "mnc", 0, 999);
+     result->hplmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() == 3;
++    if (yaml::HasField(config, "routingIndicator"))
++        result->routingIndicator = yaml::GetString(config, "routingIndicator", 1, 4);
+ 
+     for (auto &gnbSearchItem : yaml::GetSequence(config, "gnbSearchList"))
+         result->gnbSearchList.push_back(gnbSearchItem.as<std::string>());
+@@ -348,6 +350,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
+     c->imei = g_refConfig->imei;
+     c->imeiSv = g_refConfig->imeiSv;
+     c->supi = g_refConfig->supi;
++    c->routingIndicator = g_refConfig->routingIndicator;
+     c->tunNamePrefix = g_refConfig->tunNamePrefix;
+     c->hplmn = g_refConfig->hplmn;
+     c->configuredNssai = g_refConfig->configuredNssai;
+diff --git a/src/ue/nas/mm/auth.cpp b/src/ue/nas/mm/auth.cpp
+index 2c28291..d378926 100644
+--- a/src/ue/nas/mm/auth.cpp
++++ b/src/ue/nas/mm/auth.cpp
+@@ -11,6 +11,9 @@
+ #include <lib/nas/utils.hpp>
+ #include <ue/nas/keys.hpp>
+ 
++//STEPHANE
++#include <iostream>
++
+ namespace nr::ue
+ {
+ 
+@@ -477,6 +480,9 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetStrin
+     OctetString receivedAMF = autn.subCopy(6, 2);
+     OctetString receivedMAC = autn.subCopy(8, 8);
+ 
++    // STEPHANE
++    std::cout << "AMF VALUE : " << receivedAMF.toHexString() << std::endl;
++
+     // Check the separation bit
+     if (receivedAMF.get(0).bit(7) != 1)
+     {
+diff --git a/src/ue/nas/mm/identity.cpp b/src/ue/nas/mm/identity.cpp
+index d95393e..358282d 100644
+--- a/src/ue/nas/mm/identity.cpp
++++ b/src/ue/nas/mm/identity.cpp
+@@ -91,7 +91,14 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
+     ret.imsi.plmn.isLongMnc = plmn.isLongMnc;
+     ret.imsi.plmn.mcc = plmn.mcc;
+     ret.imsi.plmn.mnc = plmn.mnc;
+-    ret.imsi.routingIndicator = "0000";
++    if (m_base->config->routingIndicator.has_value())
++    {
++        ret.imsi.routingIndicator = *m_base->config->routingIndicator;
++    }
++    else
++    {
++        ret.imsi.routingIndicator = "0000";
++    }
+     ret.imsi.protectionSchemaId = 0;
+     ret.imsi.homeNetworkPublicKeyIdentifier = 0;
+     ret.imsi.schemeOutput = imsi.substr(plmn.isLongMnc ? 6 : 5);
+diff --git a/src/ue/types.hpp b/src/ue/types.hpp
+index 5565371..f7c22c7 100644
+--- a/src/ue/types.hpp
++++ b/src/ue/types.hpp
+@@ -93,6 +93,7 @@ struct UeConfig
+ {
+     /* Read from config file */
+     std::optional<Supi> supi{};
++    std::optional<std::string> routingIndicator{};
+     Plmn hplmn{};
+     OctetString key{};
+     OctetString opC{};
