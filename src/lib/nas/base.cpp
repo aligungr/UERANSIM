@@ -10,8 +10,8 @@
 
 #include <stdexcept>
 
-void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
-                          int skippedHalfOctet, bool isRoutingIndicator)
+size_t nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
+                          int skippedHalfOctet)
 {
     size_t requiredHalfOctets = bcd.length();
     if (skipFirst)
@@ -45,35 +45,16 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
     for (size_t i = 0; i < spare; i++)
         halfOctets[i + bcd.length() + (skipFirst ? 1 : 0)] = 0xF;
 
-    size_t octectCount = 0;
+    size_t octetCount = 0;
     for (size_t i = 0; i < requiredHalfOctets / 2; i++)
     {
         int little = halfOctets[2 * i];
         int big = halfOctets[2 * i + 1];
         int octet = big << 4 | little;
         stream.appendOctet(octet);
-        octectCount++;
+        octetCount++;
     }
-    // 3GPP TS 24.501 section 9.11.3.4 (mobile identity) table 9.11.3.4.1
-    // Routing Indicator shall consist of 1 to 4 digits. The coding of this
-    // field is the responsibility of home network operator but BCD coding 
-    // shall be used. If a network operator decides to assign less than 
-    // 4 digits to Routing Indicator, the remaining digits shall be coded 
-    // as "1111" to fill the 4 digits coding of Routing Indicator 
-    // (see NOTE 2). If no Routing Indicator is configured in the USIM, the
-    // UE shall code bits 1 to 4 of octet 8 of the Routing Indicator 
-    // as "0000" and the remaining digits as “1111".
-    //
-    // NOTE 2:	For a 3-digit Routing Indicator, e.g "567", bits 1 to 4 of
-    // octet 8 are coded as "0101", bits 5 to 8 of octet 8 are coded as
-    // "0110", bits 1 to 4 of octet 9 are coded as "0111", bits 5 to 8 of
-    // octet 9 are coded as "1111".
-    if (isRoutingIndicator) {
-        while (octectCount < octetLength) {
-            stream.appendOctet(0xFF);
-            octectCount++;
-        }
-    }    
+    return octetCount;
 }
 
 std::string nas::DecodeBcdString(const OctetView &stream, int length, bool skipFirst)
@@ -109,4 +90,15 @@ std::string nas::DecodeBcdString(const OctetView &stream, int length, bool skipF
     }
 
     return str;
+}
+
+
+void nas::EncodeRoutingIndicator(OctetString &stream, const std::string &bcd)
+{
+    size_t count;
+    count = EncodeBcdString(stream, bcd, 2, false, 0);
+
+    if (count < 2) {
+        stream.appendOctet(0xFF);
+    }
 }
