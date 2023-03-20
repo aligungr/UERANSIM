@@ -110,7 +110,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
     result->hplmn.mnc = yaml::GetInt32(config, "mnc", 0, 999);
     result->hplmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() == 3;
     if (yaml::HasField(config, "routingIndicator"))
-        result->routingIndicator = yaml::GetString(config, "routingIndicator", 4, 4);
+        result->routingIndicator = yaml::GetString(config, "routingIndicator", 1, 4);
 
     for (auto &gnbSearchItem : yaml::GetSequence(config, "gnbSearchList"))
         result->gnbSearchList.push_back(gnbSearchItem.as<std::string>());

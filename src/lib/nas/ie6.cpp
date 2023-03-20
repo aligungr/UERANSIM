@@ -304,7 +304,7 @@ void IE5gsMobileIdentity::Encode(const IE5gsMobileIdentity &ie, OctetString &str
 
             VPlmn::Encode(VPlmn{ie.imsi.plmn.mcc, ie.imsi.plmn.mnc, ie.imsi.plmn.isLongMnc}, stream);
 
-            EncodeBcdString(stream, ie.imsi.routingIndicator, 2, false, 0);
+            EncodeRoutingIndicator(stream, ie.imsi.routingIndicator);
             stream.appendOctet(ie.imsi.protectionSchemaId);
             stream.appendOctet(ie.imsi.homeNetworkPublicKeyIdentifier);
 
