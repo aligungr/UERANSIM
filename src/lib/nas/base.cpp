@@ -10,7 +10,7 @@
 
 #include <stdexcept>
 
-void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
+size_t nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
                           int skippedHalfOctet)
 {
     size_t requiredHalfOctets = bcd.length();
@@ -45,13 +45,16 @@ void nas::EncodeBcdString(OctetString &stream, const std::string &bcd, size_t oc
     for (size_t i = 0; i < spare; i++)
         halfOctets[i + bcd.length() + (skipFirst ? 1 : 0)] = 0xF;
 
+    size_t octetCount = 0;
     for (size_t i = 0; i < requiredHalfOctets / 2; i++)
     {
         int little = halfOctets[2 * i];
         int big = halfOctets[2 * i + 1];
         int octet = big << 4 | little;
         stream.appendOctet(octet);
+        octetCount++;
     }
+    return octetCount;
 }
 
 std::string nas::DecodeBcdString(const OctetView &stream, int length, bool skipFirst)
@@ -87,4 +90,15 @@ std::string nas::DecodeBcdString(const OctetView &stream, int length, bool skipF
     }
 
     return str;
+}
+
+
+void nas::EncodeRoutingIndicator(OctetString &stream, const std::string &bcd)
+{
+    size_t count;
+    count = EncodeBcdString(stream, bcd, 2, false, 0);
+
+    if (count < 2) {
+        stream.appendOctet(0xFF);
+    }
 }

@@ -238,9 +238,11 @@ static inline bool DecodeListVal(const OctetView &stream, int length, std::vecto
     return true;
 }
 
-void EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
+size_t EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,
                      int skippedHalfOctet);
 
 std::string DecodeBcdString(const OctetView &stream, int length, bool skipFirst);
+
+void EncodeRoutingIndicator(OctetString &stream, const std::string &bcd);
 
 } // namespace nas
