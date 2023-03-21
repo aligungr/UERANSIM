@@ -150,6 +150,8 @@ static nr::ue::UeConfig *ReadConfigYaml()
 
     if (yaml::HasField(config, "supi"))
         result->supi = Supi::Parse(yaml::GetString(config, "supi"));
+    if (yaml::HasField(config, "protectionScheme"))
+        result->protectionScheme = yaml::GetInt32(config, "protectionScheme", 0, 255);     
     if (yaml::HasField(config, "imei"))
         result->imei = yaml::GetString(config, "imei", 15, 15);
     if (yaml::HasField(config, "imeiSv"))
