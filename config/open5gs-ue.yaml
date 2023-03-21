@@ -4,6 +4,8 @@ supi: 'imsi-999700000000001'
 mcc: '999'
 # Mobile Network Code value of HPLMN (2 or 3 digits)
 mnc: '70'
+# SUCI Protection Scheme : 0 for Null-scheme, 1 for Profile A and 2 for Profile B
+protectionScheme: 0
 # Routing Indicator
 routingIndicator: '0000'
 

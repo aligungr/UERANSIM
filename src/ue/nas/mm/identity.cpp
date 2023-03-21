@@ -73,6 +73,7 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
 {
     auto &supi = m_base->config->supi;
     auto &plmn = m_base->config->hplmn;
+    auto &protectionScheme = m_base->config->protectionScheme;
 
     if (!supi.has_value())
         return {};
@@ -99,10 +100,17 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
     {
         ret.imsi.routingIndicator = "0000";
     }
-    ret.imsi.protectionSchemaId = 0;
-    ret.imsi.homeNetworkPublicKeyIdentifier = 0;
-    ret.imsi.schemeOutput = imsi.substr(plmn.isLongMnc ? 6 : 5);
-    return ret;
+    if (protectionScheme == 0) {
+        ret.imsi.protectionSchemaId = 0;
+        ret.imsi.homeNetworkPublicKeyIdentifier = 0;
+        ret.imsi.schemeOutput = imsi.substr(plmn.isLongMnc ? 6 : 5);
+        return ret;
+    }
+    else
+    {
+        m_logger->err("Protection Scheme %d not implemented", protectionScheme);
+        return {};
+    }
 }
 
 nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()
