@@ -151,7 +151,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
     if (yaml::HasField(config, "supi"))
         result->supi = Supi::Parse(yaml::GetString(config, "supi"));
     if (yaml::HasField(config, "protectionScheme"))
-        result->protectionScheme = yaml::GetInt32(config, "protectionScheme", 0, 255);     
+        result->protectionScheme = yaml::GetInt32(config, "protectionScheme", 0, 255); 
     if (yaml::HasField(config, "imei"))
         result->imei = yaml::GetString(config, "imei", 15, 15);
     if (yaml::HasField(config, "imeiSv"))
@@ -352,6 +352,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->imei = g_refConfig->imei;
     c->imeiSv = g_refConfig->imeiSv;
     c->supi = g_refConfig->supi;
+    c->protectionScheme = g_refConfig->protectionScheme;
     c->routingIndicator = g_refConfig->routingIndicator;
     c->tunNamePrefix = g_refConfig->tunNamePrefix;
     c->hplmn = g_refConfig->hplmn;
