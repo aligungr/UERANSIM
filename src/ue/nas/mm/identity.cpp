@@ -7,7 +7,7 @@
 //
 
 #include "mm.hpp"
-
+#include <lib/nas/base.hpp>
 #include <utils/common.hpp>
 // STEPHANE
 #include <iostream>
@@ -135,7 +135,6 @@ std::string NasMm::generateSUCIProfileA(const std::string &imsi, const OctetStri
     {
         seed = seed + utils::IntToHex(rnd.nextI());
     }
-    std::cout << "Seed                 : " << seed << std::endl;
 
     OctetString randomSeed = OctetString::FromHex(seed);
     uint8_t privateKey[X25519_KEY_SIZE];
@@ -144,9 +143,6 @@ std::string NasMm::generateSUCIProfileA(const std::string &imsi, const OctetStri
 
     OctetString uePrivateKey = OctetString::FromArray(privateKey, X25519_KEY_SIZE);
     OctetString uePublicKey = OctetString::FromArray(publicKey, X25519_KEY_SIZE);
-    std::cout << "UE Private Key       : " << uePrivateKey.toHexString() << std::endl;
-    std::cout << "UE Public Key        : " << uePublicKey.toHexString() << std::endl;
-
     OctetString shared;
     shared.appendPadding(32);
     compact_x25519_shared(shared.data(), uePrivateKey.data(), hnPublicKey.data());
@@ -154,36 +150,21 @@ std::string NasMm::generateSUCIProfileA(const std::string &imsi, const OctetStri
     uint8_t derivatedKey[64];
     x963kdf(derivatedKey, shared.data(), uePublicKey.data(), 64);
     OctetString buf = OctetString::FromArray(derivatedKey, 64);
-    std::cout << "Derivated key        : " << buf.toHexString() << std::endl;
-
     OctetString encryptionKey = buf.subCopy(0, 16);
-    std::cout << "Encryption key       : " << encryptionKey.toHexString() << std::endl;
-
     OctetString initializationVector = buf.subCopy(16, 16);
-    std::cout << "ICB                  : " << initializationVector.toHexString() << std::endl;
-
     OctetString macKey = buf.subCopy(32, 32);
-    std::cout << "Mac key              : " << macKey.toHexString() << std::endl;
 
-    OctetString msin = OctetString::FromHex(imsi);
+    OctetString msin;
+    nas::EncodeBcdString(msin, imsi, ~0, false, 0);
     struct AES_ctx ctx;
     AES_init_ctx(&ctx, encryptionKey.data());
     AES_ctx_set_iv(&ctx, initializationVector.data());
     AES_CTR_xcrypt_buffer(&ctx, msin.data(), msin.length());
 
-    std::cout << "Cipher text          : " << msin.toHexString() << std::endl;
-
     uint8_t suciHMAC[HMAC_SHA256_DIGEST_SIZE];
     hmac_sha256(suciHMAC, msin.data(), msin.length(), macKey.data(), HMAC_SHA256_DIGEST_SIZE);
     
     OctetString macTag = OctetString::FromArray(suciHMAC, 8);
-    std::cout << "Mac Tag              : " << macTag.toHexString() << std::endl;
-
-    std::cout << "Scheme output        : " << uePublicKey.toHexString() 
-                                           << msin.toHexString()
-                                           << macTag.toHexString() 
-                                           << std::endl;
-
     OctetString schemeOutput;
     schemeOutput.append(uePublicKey);
     schemeOutput.append(msin);
