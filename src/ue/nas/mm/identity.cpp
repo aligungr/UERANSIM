@@ -7,8 +7,10 @@
 //
 
 #include "mm.hpp"
-
+#include <lib/nas/base.hpp>
 #include <utils/common.hpp>
+// STEPHANE
+#include <iostream>
 
 namespace nr::ue
 {
@@ -73,6 +75,9 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
 {
     auto &supi = m_base->config->supi;
     auto &plmn = m_base->config->hplmn;
+    auto &protectionScheme = m_base->config->protectionScheme;
+    auto &homeNetworkPublicKeyId = m_base->config->homeNetworkPublicKeyId;
+    auto &homeNetworkPublicKey = m_base->config->homeNetworkPublicKey;
 
     if (!supi.has_value())
         return {};
@@ -99,10 +104,72 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
     {
         ret.imsi.routingIndicator = "0000";
     }
-    ret.imsi.protectionSchemaId = 0;
-    ret.imsi.homeNetworkPublicKeyIdentifier = 0;
-    ret.imsi.schemeOutput = imsi.substr(plmn.isLongMnc ? 6 : 5);
-    return ret;
+    if (protectionScheme == 0) {
+        ret.imsi.protectionSchemaId = 0;
+        ret.imsi.homeNetworkPublicKeyIdentifier = 0;
+        ret.imsi.schemeOutput = imsi.substr(plmn.isLongMnc ? 6 : 5);
+        return ret;
+    }
+    else if (protectionScheme == 1)
+    {
+        ret.imsi.protectionSchemaId = 1;
+        ret.imsi.homeNetworkPublicKeyIdentifier = homeNetworkPublicKeyId;
+        ret.imsi.schemeOutput = generateSUCIProfileA(imsi.substr(plmn.isLongMnc ? 6 : 5), homeNetworkPublicKey);
+        return ret;
+    }
+    else
+    {
+        m_logger->err("Protection Scheme %d not implemented", protectionScheme);
+        return {};
+    }
+}
+
+std::string NasMm::generateSUCIProfileA(const std::string &imsi, const OctetString &hnPublicKey)
+{
+    std::string name("Seed for x25519 generation");
+    std::string seed;
+    Random rnd = Random::Mixed(name);
+    int intLength = sizeof(int32_t);
+
+    for (int i=0; i < (X25519_KEY_SIZE/intLength); i++)
+    {
+        seed = seed + utils::IntToHex(rnd.nextI());
+    }
+
+    OctetString randomSeed = OctetString::FromHex(seed);
+    uint8_t privateKey[X25519_KEY_SIZE];
+    uint8_t publicKey[X25519_KEY_SIZE];    
+    compact_x25519_keygen(privateKey,publicKey, randomSeed.data());
+
+    OctetString uePrivateKey = OctetString::FromArray(privateKey, X25519_KEY_SIZE);
+    OctetString uePublicKey = OctetString::FromArray(publicKey, X25519_KEY_SIZE);
+    OctetString shared;
+    shared.appendPadding(32);
+    compact_x25519_shared(shared.data(), uePrivateKey.data(), hnPublicKey.data());
+
+    uint8_t derivatedKey[64];
+    x963kdf(derivatedKey, shared.data(), uePublicKey.data(), 64);
+    OctetString buf = OctetString::FromArray(derivatedKey, 64);
+    OctetString encryptionKey = buf.subCopy(0, 16);
+    OctetString initializationVector = buf.subCopy(16, 16);
+    OctetString macKey = buf.subCopy(32, 32);
+
+    OctetString msin;
+    nas::EncodeBcdString(msin, imsi, ~0, false, 0);
+    struct AES_ctx ctx;
+    AES_init_ctx(&ctx, encryptionKey.data());
+    AES_ctx_set_iv(&ctx, initializationVector.data());
+    AES_CTR_xcrypt_buffer(&ctx, msin.data(), msin.length());
+
+    uint8_t suciHMAC[HMAC_SHA256_DIGEST_SIZE];
+    hmac_sha256(suciHMAC, msin.data(), msin.length(), macKey.data(), HMAC_SHA256_DIGEST_SIZE);
+    
+    OctetString macTag = OctetString::FromArray(suciHMAC, 8);
+    OctetString schemeOutput;
+    schemeOutput.append(uePublicKey);
+    schemeOutput.append(msin);
+    schemeOutput.append(macTag);
+    return schemeOutput.toHexString();
 }
 
 nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()

@@ -4,6 +4,12 @@ supi: 'imsi-208930000000003'
 mcc: '208'
 # Mobile Network Code value of HPLMN (2 or 3 digits)
 mnc: '93'
+# SUCI Protection Scheme : 0 for Null-scheme, 1 for Profile A and 2 for Profile B
+protectionScheme: 0
+# Home Network Public Key for protecting with SUCI Profile A
+homeNetworkPublicKey: '5a8d38864820197c3394b92613b20b91633cbd897119273bf8e4a6f4eec0a650'
+# Home Network Public Key ID for protecting with SUCI Profile A
+homeNetworkPublicKeyId: 1
 # Routing Indicator
 routingIndicator: '0000'
 
