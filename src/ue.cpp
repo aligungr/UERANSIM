@@ -154,7 +154,7 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->protectionScheme = yaml::GetInt32(config, "protectionScheme", 0, 255);
     if (yaml::HasField(config, "homeNetworkPublicKeyId"))
         result->homeNetworkPublicKeyId = yaml::GetInt32(config, "homeNetworkPublicKeyId", 0, 255);
-if (yaml::HasField(config, "homeNetworkPublicKey"))        
+    if (yaml::HasField(config, "homeNetworkPublicKey"))        
         result->homeNetworkPublicKey = OctetString::FromHex(yaml::GetString(config, "homeNetworkPublicKey", 64, 64)); 
     if (yaml::HasField(config, "imei"))
         result->imei = yaml::GetString(config, "imei", 15, 15);
