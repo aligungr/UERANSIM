@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include "task.hpp"
@@ -179,9 +179,10 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
-    std::string error{}, allocatedName{}, requestedName{cons::TunNamePrefix};
-    if (m_base->config->tunNamePrefix.has_value())
-        requestedName = *m_base->config->tunNamePrefix;
+    std::string error{}, allocatedName{};
+    std::string requestedName = cons::TunNamePrefix;
+    if (m_base->config->tunName.has_value())
+        requestedName = *m_base->config->tunName;
     int fd = tun::TunAllocate(requestedName.c_str(), allocatedName, error);
     if (fd == 0 || error.length() > 0)
     {

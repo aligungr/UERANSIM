@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include "internal.hpp"
@@ -53,22 +53,23 @@ void BindSocket(int sd, const std::string &address, uint16_t port)
 
     int ipVersion = utils::GetIpVersion(address);
 
-    if (ipVersion == 4)
+    if (ipVersion == 6)
     {
-        auto addr4 = (sockaddr_in *)&addr;
-        addr4->sin_family = AF_INET;
-        addr4->sin_port = htons(port);
+        auto socketAddress = (sockaddr_in6 *)&addr;
+        socketAddress->sin6_family = AF_INET6;
+        socketAddress->sin6_port = htons(port);
 
-        if (inet_pton(AF_INET, address.c_str(), &(addr4->sin_addr)) != 1)
-            ThrowError("Bad IPv4 address.");
-    }
-    else if (ipVersion == 6)
-    {
-        auto addr6 = (sockaddr_in6 *)&addr;
-        addr6->sin6_family = AF_INET6;
-        addr6->sin6_port = htons(port);
-        if (inet_pton(AF_INET6, address.c_str(), &(addr6->sin6_addr)) != 1)
+        if (inet_pton(AF_INET6, address.c_str(), &(socketAddress->sin6_addr)) != 1)
             ThrowError("Bad IPv6 address.");
+    }
+    else if (ipVersion == 4)
+    {
+        auto socketAddress = (sockaddr_in *)&addr;
+        socketAddress->sin_family = AF_INET;
+        socketAddress->sin_port = htons(port);
+
+        if (inet_pton(AF_INET, address.c_str(), &(socketAddress->sin_addr)) != 1)
+            ThrowError("Bad IPv4 address.");
     }
     else
         ThrowError("Bad IPv4 or IPv6 address.");

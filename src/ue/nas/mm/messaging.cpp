@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include "mm.hpp"
@@ -144,9 +144,10 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
                 auto copy = nas::utils::DeepCopyMsg(msg);
                 if (HasNonCleartext(msg))
                 {
-                    auto tmpMsg = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, false, false);
+                    auto temporary =
+                        nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, false, false);
                     m_usim->m_currentNsCtx->rollbackCountOnEncrypt();
-                    auto content = tmpMsg->plainNasMessage.copy();
+                    auto content = temporary->plainNasMessage.copy();
                     RemoveCleartextIEs((nas::PlainMmMessage &)*copy, std::move(content));
                 }
                 auto copySecured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, (nas::PlainMmMessage &)*copy, true, true);
@@ -154,27 +155,27 @@ EProcRc NasMm::sendNasMessage(const nas::PlainMmMessage &msg)
             }
             else
             {
-                auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
-                nas::EncodeNasMessage(*secured, pdu);
+                auto encrypted = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
+                nas::EncodeNasMessage(*encrypted, pdu);
             }
         }
         else if (msg.messageType == nas::EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING)
         {
             if (m_cmState == ECmState::CM_IDLE)
             {
-                auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true, true);
-                nas::EncodeNasMessage(*secured, pdu);
+                auto encrypted = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, true, true);
+                nas::EncodeNasMessage(*encrypted, pdu);
             }
             else
             {
-                auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
-                nas::EncodeNasMessage(*secured, pdu);
+                auto encrypted = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
+                nas::EncodeNasMessage(*encrypted, pdu);
             }
         }
         else
         {
-            auto secured = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
-            nas::EncodeNasMessage(*secured, pdu);
+            auto encrypted = nas_enc::Encrypt(*m_usim->m_currentNsCtx, msg, false, false);
+            nas::EncodeNasMessage(*encrypted, pdu);
         }
     }
     else

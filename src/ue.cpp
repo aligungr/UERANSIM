@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include <chrono>
@@ -160,9 +160,8 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->imei = yaml::GetString(config, "imei", 15, 15);
     if (yaml::HasField(config, "imeiSv"))
         result->imeiSv = yaml::GetString(config, "imeiSv", 16, 16);
-    // Interface name has to be 16 bytes long max. Leaving some bytes free for indexing.
-    if (yaml::HasField(config, "tunNamePrefix"))
-        result->tunNamePrefix = yaml::GetString(config, "tunNamePrefix", 1, 13);
+    if (yaml::HasField(config, "tunPrefix"))
+        result->tunPrefix = yaml::GetString(config, "tunPrefix", 1, 12);
 
     yaml::AssertHasField(config, "integrity");
     yaml::AssertHasField(config, "ciphering");
@@ -360,7 +359,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->homeNetworkPublicKey = g_refConfig->homeNetworkPublicKey.copy();
     c->homeNetworkPublicKeyId = g_refConfig->homeNetworkPublicKeyId;
     c->routingIndicator = g_refConfig->routingIndicator;
-    c->tunNamePrefix = g_refConfig->tunNamePrefix;
+    c->tunPrefix = g_refConfig->tunPrefix;
     c->hplmn = g_refConfig->hplmn;
     c->configuredNssai = g_refConfig->configuredNssai;
     c->defaultConfiguredNssai = g_refConfig->defaultConfiguredNssai;

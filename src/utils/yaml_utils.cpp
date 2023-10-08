@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include "yaml_utils.hpp"
@@ -142,58 +142,25 @@ int64_t GetInt64(const YAML::Node &node, const std::string &name, std::optional<
     return value;
 }
 
-std::string GetIp4(const YAML::Node &node, const std::string &name)
+std::string GetIpAddress(const YAML::Node &node, const std::string &name)
 {
     std::string s = GetString(node, name);
 
-    s = io::GetHostByName(s);
+    s = io::TryResolveHost(s);
 
     int version = utils::GetIpVersion(s);
-    if (version == 6)
-        FieldError(name, "must be a valid IPv4 address, FQDN or a valid network interface with a IPv4 address");
-    if (version == 4)
+    if (version == 4 || version == 6)
         return s;
 
-    auto ipFromIf = io::GetIp4OfInterface(s);
-    if (ipFromIf.empty())
-        FieldError(name, "must be a valid IPv4 address, FQDN or a valid network interface with a IPv4 address");
-    return ipFromIf;
-}
+    auto ipFromInterface = io::GetIp4OfInterface(s);
+    if (!ipFromInterface.empty())
+        return ipFromInterface;
 
-std::string GetIp6(const YAML::Node &node, const std::string &name)
-{
-    std::string s = GetString(node, name);
+    ipFromInterface = io::GetIp6OfInterface(s);
+    if (!ipFromInterface.empty())
+        return ipFromInterface;
 
-    s = io::GetHostByName(s);
-
-    int version = utils::GetIpVersion(s);
-    if (version == 4)
-        FieldError(name, "must be a valid IPv6 address, FQDN or a valid network interface with a IPv6 address");
-    if (version == 6)
-        return s;
-
-    auto ipFromIf = io::GetIp6OfInterface(s);
-    if (ipFromIf.empty())
-        FieldError(name, "must be a valid IPv6 address, FQDN or a valid network interface with a IPv6 address");
-    return ipFromIf;
-}
-
-std::string GetIp(const YAML::Node &node, const std::string & name)
-{
-    std::string s = GetString(node, name);
-
-    s = io::GetHostByName(s);
-
-    int version = utils::GetIpVersion(s);
-    if (version == 6 || version == 4)
-        return s;
-    auto ip4FromIf = io::GetIp4OfInterface(s);
-    if (!ip4FromIf.empty())
-        return ip4FromIf;
-    auto ip6FromIf = io::GetIp6OfInterface(s);
-    if (!ip6FromIf.empty())
-        return ip6FromIf;
-    FieldError(name, "must be a valid IP address, FQDN or a valid network interface with an IP address");
+    FieldError(name, "must be a valid IP address, or FQDN, or a valid network interface with an IP address");
 }
 
 void AssertHasBool(const YAML::Node &node, const std::string &name)

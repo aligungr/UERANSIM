@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include "task.hpp"
@@ -122,9 +122,10 @@ void NgapTask::sendNgSetupRequest(int amfId)
 
     auto *globalGnbId = asn::New<ASN_NGAP_GlobalGNB_ID>();
     globalGnbId->gNB_ID.present = ASN_NGAP_GNB_ID_PR_gNB_ID;
-    asn::SetBitString(globalGnbId->gNB_ID.choice.gNB_ID,
-                      octet4{m_base->config->getGnbId() << (32 - m_base->config->gnbIdLength)},
-                      static_cast<size_t>(m_base->config->gnbIdLength));
+    auto gnbIdLength = m_base->config->gnbIdLength;
+    auto bitsToShift = 32 - gnbIdLength;
+    asn::SetBitString(globalGnbId->gNB_ID.choice.gNB_ID, octet4{m_base->config->getGnbId() << bitsToShift},
+                      static_cast<size_t>(gnbIdLength));
     asn::SetOctetString3(globalGnbId->pLMNIdentity, ngap_utils::PlmnToOctet3(m_base->config->plmn));
 
     auto *ieGlobalGnbId = asn::New<ASN_NGAP_NGSetupRequestIEs>();

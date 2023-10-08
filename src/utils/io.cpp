@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include "io.hpp"
@@ -17,13 +17,13 @@
 #include <arpa/inet.h>
 #include <dirent.h>
 #include <net/if.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <netdb.h>
 
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
@@ -189,17 +189,18 @@ void AppendPath(std::string &source, const std::string &target)
     source += target;
 }
 
-std::string GetIp4OfInterface(const std::string &ifName)
+template <bool isIp4>
+static std::string TryGetIpOfInterface(const std::string &ifName)
 {
     std::string res;
-
     struct ifreq ifr = {};
 
-    int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    int domain = isIp4 ? AF_INET : AF_INET6;
+    int fd = socket(domain, SOCK_DGRAM, 0);
     if (fd <= 0)
         return "";
 
-    ifr.ifr_addr.sa_family = AF_INET;
+    ifr.ifr_addr.sa_family = domain;
     strncpy(ifr.ifr_name, ifName.c_str(), IFNAMSIZ - 1);
 
     if (ioctl(fd, SIOCGIFADDR, &ifr))
@@ -210,59 +211,44 @@ std::string GetIp4OfInterface(const std::string &ifName)
 
     close(fd);
 
-    auto address = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
+    char str[isIp4 ? INET_ADDRSTRLEN : INET6_ADDRSTRLEN] = {0};
+    void *addrPtr;
 
-    char str[INET_ADDRSTRLEN] = {0};
-    if (inet_ntop(AF_INET, &address, str, INET_ADDRSTRLEN) == nullptr)
+    if (isIp4)
+        addrPtr = &((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
+    else
+        addrPtr = &((struct sockaddr_in6 *)&ifr.ifr_addr)->sin6_addr;
+
+    if (inet_ntop(domain, addrPtr, str, sizeof(str)) == nullptr)
         return "";
 
     return std::string{str};
+}
+
+std::string GetIp4OfInterface(const std::string &ifName)
+{
+    return TryGetIpOfInterface<true>(ifName);
 }
 
 std::string GetIp6OfInterface(const std::string &ifName)
 {
-    std::string res;
-
-    struct ifreq ifr = {};
-
-    int fd = socket(AF_INET6, SOCK_DGRAM, 0);
-    if (fd <= 0)
-        return "";
-
-    ifr.ifr_addr.sa_family = AF_INET6;
-    strncpy(ifr.ifr_name, ifName.c_str(), IFNAMSIZ - 1);
-
-    if (ioctl(fd, SIOCGIFADDR, &ifr))
-    {
-        close(fd);
-        return "";
-    }
-
-    close(fd);
-
-    auto address = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
-
-    char str[INET6_ADDRSTRLEN] = {0};
-    if (inet_ntop(AF_INET6, &address, str, INET6_ADDRSTRLEN) == nullptr)
-        return "";
-
-    return std::string{str};
+    return TryGetIpOfInterface<false>(ifName);
 }
 
-std::string GetHostByName(const std::string &name)
+std::string TryResolveHost(const std::string &name)
 {
     struct addrinfo hints = {};
     struct addrinfo *res;
 
     hints.ai_family = AF_UNSPEC;
 
-    if (getaddrinfo(name.c_str(), NULL, &hints, &res))
+    if (getaddrinfo(name.c_str(), nullptr, &hints, &res))
         return "";
 
-    if (res->ai_family == AF_INET)
+    if (res->ai_family == AF_INET6)
     {
-        char str[INET_ADDRSTRLEN] = {0};
-        if (inet_ntop(AF_INET, &((struct sockaddr_in*)res->ai_addr)->sin_addr, str, INET_ADDRSTRLEN) == nullptr)
+        char str[INET6_ADDRSTRLEN] = {0};
+        if (inet_ntop(AF_INET6, &((struct sockaddr_in6 *)res->ai_addr)->sin6_addr, str, INET6_ADDRSTRLEN) == nullptr)
         {
             freeaddrinfo(res);
             return "";
@@ -270,10 +256,10 @@ std::string GetHostByName(const std::string &name)
         freeaddrinfo(res);
         return std::string{str};
     }
-    else if (res->ai_family == AF_INET6)
+    else if (res->ai_family == AF_INET)
     {
-        char str[INET6_ADDRSTRLEN] = {0};
-        if (inet_ntop(AF_INET6, &((struct sockaddr_in6*)res->ai_addr)->sin6_addr, str, INET6_ADDRSTRLEN) == nullptr)
+        char str[INET_ADDRSTRLEN] = {0};
+        if (inet_ntop(AF_INET, &((struct sockaddr_in *)res->ai_addr)->sin_addr, str, INET_ADDRSTRLEN) == nullptr)
         {
             freeaddrinfo(res);
             return "";

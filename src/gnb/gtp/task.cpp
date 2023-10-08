@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include "task.hpp"
@@ -19,8 +19,8 @@ namespace nr::gnb
 {
 
 GtpTask::GtpTask(TaskBase *base)
-    : m_base{base}, m_udpServer{}, m_ueContexts{},
-      m_rateLimiter(std::make_unique<RateLimiter>()), m_pduSessions{}, m_sessionTree{}
+    : m_base{base}, m_udpServer{}, m_ueContexts{}, m_rateLimiter(std::make_unique<RateLimiter>()), m_pduSessions{},
+      m_sessionTree{}
 {
     m_logger = m_base->logBase->makeUniqueLogger("gtp");
 }
@@ -247,15 +247,14 @@ void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
     case gtp::GtpMessage::MT_ECHO_REQUEST: {
         gtp::GtpMessage gtpResponse{};
         gtpResponse.msgType = gtp::GtpMessage::MT_ECHO_RESPONSE;
-        if (gtp->seq.has_value())
-            gtpResponse.seq = gtp->seq.value();
+        gtpResponse.seq = gtp->seq;
         gtpResponse.payload = OctetString::FromOctet2({14, 0});
 
         OctetString gtpPdu;
-        if (!gtp::EncodeGtpMessage(gtpResponse, gtpPdu))
-            m_logger->err("Uplink data failure, GTP encoding failed");
-        else
+        if (gtp::EncodeGtpMessage(gtpResponse, gtpPdu))
             m_udpServer->send(msg.fromAddress, gtpPdu);
+        else
+            m_logger->err("Uplink data failure, GTP encoding failed");
         return;
     }
     default: {

@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #pragma once
@@ -41,9 +41,7 @@ std::string GetString(const YAML::Node &node, const std::string &name);
 std::string GetString(const YAML::Node &node, const std::string &name, std::optional<int> minLength,
                       std::optional<int> maxLength);
 
-std::string GetIp4(const YAML::Node &node, const std::string &name);
-std::string GetIp6(const YAML::Node &node, const std::string &name);
-std::string GetIp(const YAML::Node &node, const std::string &name);
+std::string GetIpAddress(const YAML::Node &node, const std::string &name);
 
 bool GetBool(const YAML::Node &node, const std::string &name);
 

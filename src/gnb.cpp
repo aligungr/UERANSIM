@@ -1,9 +1,9 @@
 //
-// This file is a part of UERANSIM open source project.
-// Copyright (c) 2021 ALİ GÜNGÖR.
+// This file is a part of UERANSIM project.
+// Copyright (c) 2023 ALİ GÜNGÖR.
 //
-// The software and all associated files are licensed under GPL-3.0
-// and subject to the terms and conditions defined in LICENSE file.
+// https://github.com/aligungr/UERANSIM/
+// See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
 #include <iostream>
@@ -42,18 +42,18 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
     result->plmn.mcc = yaml::GetInt32(config, "mcc", 1, 999);
     yaml::GetString(config, "mcc", 3, 3);
     result->plmn.mnc = yaml::GetInt32(config, "mnc", 0, 999);
-    result->plmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() == 3;
+    result->plmn.isLongMnc = yaml::GetString(config, "mnc", 2, 3).size() != 2;
 
     result->nci = yaml::GetInt64(config, "nci", 0, 0xFFFFFFFFFll);
     result->gnbIdLength = yaml::GetInt32(config, "idLength", 22, 32);
     result->tac = yaml::GetInt32(config, "tac", 0, 0xFFFFFF);
 
-    result->linkIp = yaml::GetIp(config, "linkIp");
-    result->ngapIp = yaml::GetIp(config, "ngapIp");
-    result->gtpIp = yaml::GetIp(config, "gtpIp");
+    result->linkIp = yaml::GetIpAddress(config, "linkIp");
+    result->ngapIp = yaml::GetIpAddress(config, "ngapIp");
+    result->gtpIp = yaml::GetIpAddress(config, "gtpIp");
 
     if (yaml::HasField(config, "gtpAdvertiseIp"))
-        result->gtpAdvertiseIp = yaml::GetIp(config, "gtpAdvertiseIp");
+        result->gtpAdvertiseIp = yaml::GetIpAddress(config, "gtpAdvertiseIp");
 
     result->ignoreStreamIds = yaml::GetBool(config, "ignoreStreamIds");
     result->pagingDrx = EPagingDrx::V128;
@@ -63,7 +63,7 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
     for (auto &amfConfig : yaml::GetSequence(config, "amfConfigs"))
     {
         nr::gnb::GnbAmfConfig c{};
-        c.address = yaml::GetIp(amfConfig, "address");
+        c.address = yaml::GetIpAddress(amfConfig, "address");
         c.port = static_cast<uint16_t>(yaml::GetInt32(amfConfig, "port", 1024, 65535));
         result->amfConfigs.push_back(c);
     }
