@@ -344,7 +344,6 @@ void external_aes_cmac(uint8_t *cmac, const uint8_t *key, const uint8_t *msg, co
     uint8_t k1[16], k2[16];
     int i, j, n, bs, flag;
     uint32_t rk[AES_RKLENGTH(AES_MAX_KEY_BITS)];
-    int nRounds;
 
     GenerateSubKey(k1, k2, key);
 
