@@ -1,13 +1,3 @@
-//
-// This file is a part of UERANSIM project.
-// Copyright (c) 2023 ALİ GÜNGÖR.
-//
-// https://github.com/aligungr/UERANSIM/
-// See README, LICENSE, and CONTRIBUTING files for licensing details.
-//
-
-/* *****  This source is modified for/by UERANSIM ***** */
-
 /*
  * Copyright 2002-2020 The OpenSSL Project Authors. All Rights Reserved.
  *
@@ -17,24 +7,7 @@
  * https://www.openssl.org/source/license.html
  */
 
-/*
- * Copyright (C) 2019-2020 by Sukchan Lee <acetcom@gmail.com>
- *
- * This file is part of Open5GS.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+/* *****  This source is modified for/by UERANSIM ***** */
 
 #define AES_BLOCK_SIZE 16
 #define AES_MAX_KEY_BITS 256
@@ -206,7 +179,6 @@ static const uint32_t Te4[256] = {
 static const uint32_t rcon[] = {
     0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
     0x20000000, 0x40000000, 0x80000000, 0x1B000000, 0x36000000,
-    /* for 128-bit blocks, Rijndael never uses more than 10 rcon values */
 };
 
 #define GETU32(plaintext)                                                                                              \
@@ -221,7 +193,7 @@ static const uint32_t rcon[] = {
         (ciphertext)[3] = (uint8_t)(st);                                                                               \
     }
 
-static int ogs_aes_setup_enc(uint32_t *rk, const uint8_t *key, int keybits)
+static int AesSetup(uint32_t *rk, const uint8_t *key)
 {
     int i = 0;
     uint32_t temp;
@@ -230,67 +202,21 @@ static int ogs_aes_setup_enc(uint32_t *rk, const uint8_t *key, int keybits)
     rk[1] = GETU32(key + 4);
     rk[2] = GETU32(key + 8);
     rk[3] = GETU32(key + 12);
-    if (keybits == 128)
+    for (;;)
     {
-        for (;;)
-        {
-            temp = rk[3];
-            rk[4] = rk[0] ^ (Te4[(temp >> 16) & 0xff] & 0xff000000) ^ (Te4[(temp >> 8) & 0xff] & 0x00ff0000) ^
-                    (Te4[(temp)&0xff] & 0x0000ff00) ^ (Te4[(temp >> 24)] & 0x000000ff) ^ rcon[i];
-            rk[5] = rk[1] ^ rk[4];
-            rk[6] = rk[2] ^ rk[5];
-            rk[7] = rk[3] ^ rk[6];
-            if (++i == 10)
-                return 10;
-            rk += 4;
-        }
+        temp = rk[3];
+        rk[4] = rk[0] ^ (Te4[(temp >> 16) & 0xff] & 0xff000000) ^ (Te4[(temp >> 8) & 0xff] & 0x00ff0000) ^
+                (Te4[(temp)&0xff] & 0x0000ff00) ^ (Te4[(temp >> 24)] & 0x000000ff) ^ rcon[i];
+        rk[5] = rk[1] ^ rk[4];
+        rk[6] = rk[2] ^ rk[5];
+        rk[7] = rk[3] ^ rk[6];
+        if (++i == 10)
+            return 10;
+        rk += 4;
     }
-    rk[4] = GETU32(key + 16);
-    rk[5] = GETU32(key + 20);
-    if (keybits == 192)
-    {
-        for (;;)
-        {
-            temp = rk[5];
-            rk[6] = rk[0] ^ (Te4[(temp >> 16) & 0xff] & 0xff000000) ^ (Te4[(temp >> 8) & 0xff] & 0x00ff0000) ^
-                    (Te4[(temp)&0xff] & 0x0000ff00) ^ (Te4[(temp >> 24)] & 0x000000ff) ^ rcon[i];
-            rk[7] = rk[1] ^ rk[6];
-            rk[8] = rk[2] ^ rk[7];
-            rk[9] = rk[3] ^ rk[8];
-            if (++i == 8)
-                return 12;
-            rk[10] = rk[4] ^ rk[9];
-            rk[11] = rk[5] ^ rk[10];
-            rk += 6;
-        }
-    }
-    rk[6] = GETU32(key + 24);
-    rk[7] = GETU32(key + 28);
-    if (keybits == 256)
-    {
-        for (;;)
-        {
-            temp = rk[7];
-            rk[8] = rk[0] ^ (Te4[(temp >> 16) & 0xff] & 0xff000000) ^ (Te4[(temp >> 8) & 0xff] & 0x00ff0000) ^
-                    (Te4[(temp)&0xff] & 0x0000ff00) ^ (Te4[(temp >> 24)] & 0x000000ff) ^ rcon[i];
-            rk[9] = rk[1] ^ rk[8];
-            rk[10] = rk[2] ^ rk[9];
-            rk[11] = rk[3] ^ rk[10];
-            if (++i == 7)
-                return 14;
-            temp = rk[11];
-            rk[12] = rk[4] ^ (Te4[(temp >> 24)] & 0xff000000) ^ (Te4[(temp >> 16) & 0xff] & 0x00ff0000) ^
-                     (Te4[(temp >> 8) & 0xff] & 0x0000ff00) ^ (Te4[(temp)&0xff] & 0x000000ff);
-            rk[13] = rk[5] ^ rk[12];
-            rk[14] = rk[6] ^ rk[13];
-            rk[15] = rk[7] ^ rk[14];
-            rk += 8;
-        }
-    }
-    return 0;
 }
 
-static void ogs_aes_encrypt(const uint32_t *rk, int nrounds, const uint8_t plaintext[16], uint8_t ciphertext[16])
+static void AesEncrypt(const uint32_t *rk, const uint8_t plaintext[16], uint8_t ciphertext[16])
 {
     uint32_t s0, s1, s2, s3, t0, t1, t2, t3;
 #ifndef FULL_UNROLL
@@ -350,52 +276,9 @@ static void ogs_aes_encrypt(const uint32_t *rk, int nrounds, const uint8_t plain
     t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ rk[37];
     t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ rk[38];
     t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ rk[39];
-    if (nrounds > 10)
-    {
-        /* round 10: */
-        s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ rk[40];
-        s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ rk[41];
-        s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ rk[42];
-        s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ rk[43];
-        /* round 11: */
-        t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ rk[44];
-        t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ rk[45];
-        t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ rk[46];
-        t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ rk[47];
-        if (nrounds > 12)
-        {
-            /* round 12: */
-            s0 = Te0[t0 >> 24] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[t3 & 0xff] ^ rk[48];
-            s1 = Te0[t1 >> 24] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[t0 & 0xff] ^ rk[49];
-            s2 = Te0[t2 >> 24] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[t1 & 0xff] ^ rk[50];
-            s3 = Te0[t3 >> 24] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[t2 & 0xff] ^ rk[51];
-            /* round 13: */
-            t0 = Te0[s0 >> 24] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[s3 & 0xff] ^ rk[52];
-            t1 = Te0[s1 >> 24] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[s0 & 0xff] ^ rk[53];
-            t2 = Te0[s2 >> 24] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[s1 & 0xff] ^ rk[54];
-            t3 = Te0[s3 >> 24] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[s2 & 0xff] ^ rk[55];
-        }
-    }
-    rk += nrounds << 2;
-#else /* !FULL_UNROLL */
-    /*
-     * nrounds - 1 full rounds:
-     */
-    r = nrounds >> 1;
-    for (;;)
-    {
-        t0 = Te0[(s0 >> 24)] ^ Te1[(s1 >> 16) & 0xff] ^ Te2[(s2 >> 8) & 0xff] ^ Te3[(s3)&0xff] ^ rk[4];
-        t1 = Te0[(s1 >> 24)] ^ Te1[(s2 >> 16) & 0xff] ^ Te2[(s3 >> 8) & 0xff] ^ Te3[(s0)&0xff] ^ rk[5];
-        t2 = Te0[(s2 >> 24)] ^ Te1[(s3 >> 16) & 0xff] ^ Te2[(s0 >> 8) & 0xff] ^ Te3[(s1)&0xff] ^ rk[6];
-        t3 = Te0[(s3 >> 24)] ^ Te1[(s0 >> 16) & 0xff] ^ Te2[(s1 >> 8) & 0xff] ^ Te3[(s2)&0xff] ^ rk[7];
-        rk += 8;
-        if (--r == 0)
-            break;
-        s0 = Te0[(t0 >> 24)] ^ Te1[(t1 >> 16) & 0xff] ^ Te2[(t2 >> 8) & 0xff] ^ Te3[(t3)&0xff] ^ rk[0];
-        s1 = Te0[(t1 >> 24)] ^ Te1[(t2 >> 16) & 0xff] ^ Te2[(t3 >> 8) & 0xff] ^ Te3[(t0)&0xff] ^ rk[1];
-        s2 = Te0[(t2 >> 24)] ^ Te1[(t3 >> 16) & 0xff] ^ Te2[(t0 >> 8) & 0xff] ^ Te3[(t1)&0xff] ^ rk[2];
-        s3 = Te0[(t3 >> 24)] ^ Te1[(t0 >> 16) & 0xff] ^ Te2[(t1 >> 8) & 0xff] ^ Te3[(t2)&0xff] ^ rk[3];
-    }
+    rk += 10 << 2;
+#else  /* !FULL_UNROLL */
+
 #endif /* ?FULL_UNROLL */
     /*
      * apply last round and
@@ -422,10 +305,10 @@ static void GenerateSubKey(uint8_t *k1, uint8_t *k2, const uint8_t *key)
     uint8_t L[16];
 
     uint32_t rk[AES_RKLENGTH(AES_MAX_KEY_BITS)];
-    int i, nRounds;
+    int i;
 
-    nRounds = ogs_aes_setup_enc(rk, key, 128);
-    ogs_aes_encrypt(rk, nRounds, zero, L);
+    AesSetup(rk, key);
+    AesEncrypt(rk, zero, L);
 
     if ((L[0] & 0x80) == 0)
     {
@@ -498,18 +381,17 @@ void external_aes_cmac(uint8_t *cmac, const uint8_t *key, const uint8_t *msg, co
             m_last[i] = 0x00 ^ k2[i];
     }
 
-    nRounds = ogs_aes_setup_enc(rk, key, 128);
+    AesSetup(rk, key);
 
     for (i = 0; i <= n - 2; i++)
     {
         bs = i * AES_BLOCK_SIZE;
         for (j = 0; j < 16; j++)
             y[j] = x[j] ^ msg[bs + j];
-        ogs_aes_encrypt(rk, nRounds, y, x);
+        AesEncrypt(rk, y, x);
     }
 
-    bs = (n - 1) * AES_BLOCK_SIZE;
     for (j = 0; j < 16; j++)
         y[j] = m_last[j] ^ x[j];
-    ogs_aes_encrypt(rk, nRounds, y, cmac);
+    AesEncrypt(rk, y, cmac);
 }
