@@ -488,12 +488,14 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetStrin
     auto milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
     OctetString receivedSQN = OctetString::Xor(receivedSQNxorAK, milenage.ak);
 
+    m_logger->debug("Received SQN [%s]", receivedSQN.toHexString().c_str());
+    m_logger->debug("SQN-MS [%s]", m_usim->m_sqnMng->getSqn().toHexString().c_str());
+
     // Verify that the received sequence number SQN is in the correct range
-    if (!m_usim->m_sqnMng->checkSqn(receivedSQN))
-        return EAutnValidationRes::SYNCHRONISATION_FAILURE;
+    bool sqn_ok = m_usim->m_sqnMng->checkSqn(receivedSQN);
 
     // Re-execute the milenage calculation (if case of sqn is changed with the received value)
-    milenage = calculateMilenage(m_usim->m_sqnMng->getSqn(), rand, false);
+    milenage = calculateMilenage(receivedSQN, rand, false);
 
     // Check MAC
     if (receivedMAC != milenage.mac_a)
@@ -502,6 +504,9 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetStrin
                       receivedMAC.toHexString().c_str());
         return EAutnValidationRes::MAC_FAILURE;
     }
+
+    if(!sqn_ok)
+        return EAutnValidationRes::SYNCHRONISATION_FAILURE;
 
     return EAutnValidationRes::OK;
 }
