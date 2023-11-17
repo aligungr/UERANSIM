@@ -9,6 +9,9 @@
 #include "test.hpp"
 #include "rlc.hpp"
 
+#include <string>
+#include <cstdio>
+
 #include <utils/nts.hpp>
 
 enum class EntityType
