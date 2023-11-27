@@ -164,6 +164,7 @@ void NgapTask::receiveRerouteNasRequest(int amfId, ASN_NGAP_RerouteNASRequest *m
 
     auto ngapPdu = asn::New<ASN_NGAP_NGAP_PDU>();
     ngapPdu->present = ASN_NGAP_NGAP_PDU_PR_initiatingMessage;
+    ngapPdu->choice.initiatingMessage = asn::New<ASN_NGAP_InitiatingMessage>();
     ngapPdu->choice.initiatingMessage->procedureCode = ASN_NGAP_ProcedureCode_id_InitialUEMessage;
     ngapPdu->choice.initiatingMessage->criticality = ASN_NGAP_Criticality_ignore;
     ngapPdu->choice.initiatingMessage->value.present = ASN_NGAP_InitiatingMessage__value_PR_InitialUEMessage;
