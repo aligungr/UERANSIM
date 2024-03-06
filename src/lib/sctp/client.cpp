@@ -9,10 +9,11 @@
 #include "client.hpp"
 #include "internal.hpp"
 
-sctp::SctpClient::SctpClient(PayloadProtocolId ppid) : sd(CreateSocket()), ppid(ppid)
+sctp::SctpClient::SctpClient(PayloadProtocolId ppid, const std::string &address) : sd(0), ppid(ppid)
 {
     try
     {
+        sd = CreateSocket(address);
         SetInitOptions(sd, 10, 10, 10, 10 * 1000);
         SetEventOptions(sd);
     }
