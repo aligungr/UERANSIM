@@ -13,7 +13,7 @@ sctp::SctpServer::SctpServer(const std::string &address, uint16_t port) : sd(0)
 {
     try
     {
-        sd = CreateSocket();
+        sd = CreateSocket(address);
         BindSocket(sd, address, port);
         SetInitOptions(sd, 10, 10, 10, 10 * 1000);
         SetEventOptions(sd);

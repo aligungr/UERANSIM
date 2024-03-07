@@ -38,9 +38,14 @@ namespace sctp
     throw SctpError(prefix + str);
 }
 
-int CreateSocket()
+int CreateSocket(const std::string &address)
 {
-    int sd = socket(AF_INET6, SOCK_STREAM, IPPROTO_SCTP);
+    int sd = 0;
+    int ipVersion = utils::GetIpVersion(address);
+    if (ipVersion == 6)
+        sd = socket(AF_INET6, SOCK_STREAM, IPPROTO_SCTP);
+    else
+        sd = socket(AF_INET, SOCK_STREAM, IPPROTO_SCTP);
     if (sd < 0)
         ThrowError("SCTP socket could not be created");
     return sd;

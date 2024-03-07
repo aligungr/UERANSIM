@@ -15,7 +15,7 @@
 namespace sctp
 {
 
-int CreateSocket();
+int CreateSocket(const std::string &address);
 void BindSocket(int sd, const std::string &address, uint16_t port);
 void SetInitOptions(int sd, int maxRxStreams, int maxTxStreams, int maxAttempts, int initTimeoutMs);
 void SetEventOptions(int sd);

@@ -19,11 +19,11 @@ namespace sctp
 class SctpClient
 {
   private:
-    const int sd;
+    int sd;
     const PayloadProtocolId ppid;
 
   public:
-    explicit SctpClient(PayloadProtocolId ppid);
+    explicit SctpClient(PayloadProtocolId ppid, const std::string &address);
     ~SctpClient();
 
     void bind(const std::string &address, uint16_t port);
