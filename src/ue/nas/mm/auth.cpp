@@ -176,7 +176,6 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         {
             m_logger->err("AT_MAC failure in EAP AKA'. expected: %s received: %s", expectedMac.toHexString().c_str(),
                           receivedMac.toHexString().c_str());
-
             if (networkFailingTheAuthCheck(true))
                 return;
             m_timers->t3520.start();
@@ -193,11 +192,10 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         m_usim->m_resStar = {};
 
         // Create new partial native NAS security context and continue with key derivation
-        auto kAusf = keys::CalculateKAusfForEapAkaPrime(mk);
         m_usim->m_nonCurrentNsCtx = std::make_unique<NasSecurityContext>();
         m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
-        m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
+        m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfForEapAkaPrime(mk);
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
         keys::DeriveKeysSeafAmf(*m_base->config, currentPlmn, *m_usim->m_nonCurrentNsCtx);
@@ -214,7 +212,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
             // Calculate and put mac value
             auto sendingMac = keys::CalculateMacForEapAkaPrime(kaut, *akaPrimeResponse);
-            akaPrimeResponse->attributes.putMac(sendingMac);
+            akaPrimeResponse->attributes.replaceMac(sendingMac);
 
             nas::AuthenticationResponse resp;
             resp.eapMessage = nas::IEEapMessage{};

@@ -17,10 +17,6 @@ OctetString eap::EapAttributes::getRand() const
     if (!val.has_value() || val->length() < 2)
         return {};
 
-    int len = val->get2I(0);
-    if (len != val->length() - 2)
-        return {};
-
     return val->subCopy(2);
 }
 
@@ -30,10 +26,6 @@ OctetString eap::EapAttributes::getMac() const
     if (!val.has_value() || val->length() < 2)
         return {};
 
-    int len = val->get2I(0);
-    if (len != val->length() - 2)
-        return {};
-
     return val->subCopy(2);
 }
 
@@ -41,10 +33,6 @@ OctetString eap::EapAttributes::getAutn() const
 {
     auto &val = attributes[(int)EAttributeType::AT_AUTN];
     if (!val.has_value() || val->length() < 2)
-        return {};
-
-    int len = val->get2I(0);
-    if (len != val->length() - 2)
         return {};
 
     return val->subCopy(2);
@@ -84,27 +72,32 @@ OctetString eap::EapAttributes::getKdfInput() const
 
 void eap::EapAttributes::putRes(const OctetString &value)
 {
-    attributes[(int)EAttributeType::AT_RES] = OctetString::Concat(OctetString::FromOctet2(value.length()), value);
+    putRawAttribute(EAttributeType::AT_RES, OctetString::Concat(OctetString::FromOctet2(value.length() * 8), value));
 }
 
 void eap::EapAttributes::putMac(const OctetString &value)
+{
+    putRawAttribute(EAttributeType::AT_MAC, OctetString::Concat(OctetString::FromOctet2(0), value));
+}
+
+void eap::EapAttributes::replaceMac(const OctetString &value)
 {
     attributes[(int)EAttributeType::AT_MAC] = OctetString::Concat(OctetString::FromOctet2(0), value);
 }
 
 void eap::EapAttributes::putKdf(int value)
 {
-    attributes[(int)EAttributeType::AT_KDF] = OctetString::FromOctet2(value);
+    putRawAttribute(EAttributeType::AT_KDF, OctetString::FromOctet2(value));
 }
 
 void eap::EapAttributes::putClientErrorCode(int code)
 {
-    attributes[(int)EAttributeType::AT_CLIENT_ERROR_CODE] = OctetString::FromOctet2(code);
+    putRawAttribute(EAttributeType::AT_CLIENT_ERROR_CODE, OctetString::FromOctet2(code));
 }
 
 void eap::EapAttributes::putAuts(OctetString &&auts)
 {
-    attributes[(int)EAttributeType::AT_AUTS] = std::move(auts);
+    putRawAttribute(EAttributeType::AT_AUTS, std::move(auts));
 }
 
 void eap::EapAttributes::forEachEntry(const std::function<void(EAttributeType, const OctetString &)> &fun) const
@@ -114,9 +107,17 @@ void eap::EapAttributes::forEachEntry(const std::function<void(EAttributeType, c
             fun(static_cast<EAttributeType>(i), attributes[i].value());
 }
 
+void eap::EapAttributes::forEachEntryOrdered(const std::function<void(EAttributeType, const OctetString &)> &fun) const
+{
+    for (auto it = order_received.begin(); it != order_received.end(); it++)
+        if (attributes[*it].has_value())
+            fun(static_cast<EAttributeType>(*it), attributes[*it].value());
+}
+
 void eap::EapAttributes::putRawAttribute(eap::EAttributeType key, OctetString &&value)
 {
     attributes[(int)key] = std::move(value);
+    order_received.push_back((int)key);
 }
 
 eap::Eap::Eap(eap::ECode code, octet id, eap::EEapType eapType) : code(code), id(id), eapType(eapType)
@@ -168,7 +169,7 @@ void eap::EncodeEapPdu(OctetString &stream, const eap::Eap &pdu)
             stream.appendOctet(static_cast<int>(akaPrime.subType));
             stream.appendOctet2(0);
 
-            akaPrime.attributes.forEachEntry([&stream](EAttributeType key, const OctetString &value) {
+            akaPrime.attributes.forEachEntryOrdered([&stream](EAttributeType key, const OctetString &value) {
                 stream.appendOctet((int)key);
                 stream.appendOctet((value.length() + 2) / 4);
                 stream.append(value);
