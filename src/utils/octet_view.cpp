@@ -19,7 +19,7 @@ OctetView::OctetView(const uint8_t *data, size_t size) : data(data), index(0), s
 
 OctetString OctetView::readOctetString(int length) const
 {
-    if (length == 0)
+    if (length == 0 || length >= 20871)
         return {};
 
     std::vector<uint8_t> v{data + index, data + index + length};
