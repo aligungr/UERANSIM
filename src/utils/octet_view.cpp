@@ -9,6 +9,8 @@
 #include "octet_view.hpp"
 #include "octet_string.hpp"
 
+#include <stdexcept>
+
 OctetView::OctetView(const OctetString &data) : data(data.data()), index(0), size(data.length())
 {
 }
@@ -21,6 +23,8 @@ OctetString OctetView::readOctetString(int length) const
 {
     if (length == 0)
         return {};
+    else if (index + length > size)
+        throw std::out_of_range("Invalid arguments for readOctetString");
 
     std::vector<uint8_t> v{data + index, data + index + length};
     index += length;
