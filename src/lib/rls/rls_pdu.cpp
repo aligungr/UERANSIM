@@ -93,7 +93,7 @@ std::unique_ptr<RlsMessage> DecodeRlsMessage(const OctetView &stream)
         if (pduLength > 16384)
             return nullptr;
         
-        res->pdu = stream.readOctetString(stream.read4I());
+        res->pdu = stream.readOctetString(pduLength);
         return res;
     }
     else if (msgType == EMessageType::PDU_TRANSMISSION_ACK)
