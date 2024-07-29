@@ -3,7 +3,7 @@ supi: 'imsi-286010000000001'
 # Mobile Country Code value of HPLMN
 mcc: '286'
 # Mobile Network Code value of HPLMN (2 or 3 digits)
-mnc: '93'
+mnc: '01'
 # SUCI Protection Scheme : 0 for Null-scheme, 1 for Profile A and 2 for Profile B
 protectionScheme: 0
 # Home Network Public Key for protecting with SUCI Profile A
