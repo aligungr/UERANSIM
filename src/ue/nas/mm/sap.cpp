@@ -25,6 +25,11 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
         break;
     }
     case NmUeRrcToNas::NAS_DELIVERY: {
+        if (msg.nasPdu.length() == 0)
+        {
+            m_logger->err("Empty NAS PDU received, ignore it");
+            break;
+        }
         OctetView buffer{msg.nasPdu};
         auto nasMessage = nas::DecodeNasMessage(buffer);
         if (nasMessage != nullptr)
