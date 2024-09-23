@@ -25,6 +25,11 @@ class OctetString
     {
     }
 
+    const std::vector<uint8_t>& getData() const
+    {
+        return m_data;
+    }
+
     explicit OctetString(std::vector<uint8_t> &&data) : m_data(std::move(data))
     {
     }
