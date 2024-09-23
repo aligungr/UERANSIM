@@ -25,6 +25,11 @@ struct octet
     {
     }
 
+    inline uint8_t getValue() const
+    {
+        return value;
+    }
+
     /* no explicit */ octet(int32_t value) noexcept : value(static_cast<uint8_t>(value & 0xFF))
     {
     }
