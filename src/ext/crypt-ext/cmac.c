@@ -500,7 +500,7 @@ void external_aes_cmac(uint8_t *cmac, const uint8_t *key, const uint8_t *msg, co
 
     nRounds = ogs_aes_setup_enc(rk, key, 128);
 
-    for (i = 0; i <= n - 2; i++)
+    for (i = 0; i < n - 1; i++)
     {
         bs = i * AES_BLOCK_SIZE;
         for (j = 0; j < 16; j++)
