@@ -71,7 +71,7 @@ class NgapTask : public NtsTask
     /* Utility functions */
     void createAmfContext(const GnbAmfConfig &config);
     NgapAmfContext *findAmfContext(int ctxId);
-    void createUeContext(int ueId, const int32_t &requestedSliceType);
+    void createUeContext(int ueId, int32_t &requestedSliceType);
     NgapUeContext *findUeContext(int ctxId);
     NgapUeContext *findUeByRanId(int64_t ranUeNgapId);
     NgapUeContext *findUeByAmfId(int64_t amfUeNgapId);
@@ -118,7 +118,7 @@ class NgapTask : public NtsTask
     void sendContextRelease(int ueId, NgapCause cause);
 
     /* NAS Node Selection */
-    NgapAmfContext *selectAmf(int ueId, const int32_t &requestedSliceType);
+    NgapAmfContext *selectAmf(int ueId, int32_t &requestedSliceType);
     NgapAmfContext *selectNewAmfForReAllocation(int ueId, int initiatedAmfId, int amfSetId);
 
     /* Radio resource control */

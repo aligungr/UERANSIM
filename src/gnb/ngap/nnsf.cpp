@@ -11,12 +11,12 @@
 namespace nr::gnb
 {
 
-NgapAmfContext *NgapTask::selectAmf(int ueId, const int32_t &requestedSliceType)
+NgapAmfContext *NgapTask::selectAmf(int ueId, int32_t &requestedSliceType)
 {
     for (auto &amf : m_amfCtx) {
-        for (const auto &PlmnSupport : amf.second->plmnSupportList) {
-            for (const auto &SingleSlice : PlmnSupport->sliceSupportList.slices) {
-                int32_t supportedSliceType = static_cast<int32_t>(SingleSlice.sst.getValue());
+        for (const auto &plmnSupport : amf.second->plmnSupportList) {
+            for (const auto &singleSlice : plmnSupport->sliceSupportList.slices) {
+                int32_t supportedSliceType = static_cast<int32_t>(singleSlice.sst);
                 if (supportedSliceType == requestedSliceType) {
                     return amf.second;
                 }
