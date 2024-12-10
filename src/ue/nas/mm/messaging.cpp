@@ -73,7 +73,6 @@ static void RemoveCleartextIEs(nas::PlainMmMessage &msg, OctetString &&nasMsgCon
         regReq.micoIndication = std::nullopt;
         regReq.networkSlicingIndication = std::nullopt;
         regReq.mmCapability = std::nullopt;
-        regReq.requestedNSSAI = std::nullopt;
         regReq.requestedDrxParameters = std::nullopt;
         regReq.uesUsageSetting = std::nullopt;
         regReq.updateType = std::nullopt;
