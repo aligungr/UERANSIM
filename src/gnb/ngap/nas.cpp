@@ -30,8 +30,9 @@ namespace nr::gnb
 int32_t extractSliceInfoAndModifyPdu(OctetString &nasPdu) {
     nas::RegistrationRequest *regRequest = nullptr;
     int32_t requestedSliceType = -1;
-    auto m_data = nasPdu.getData();
-    OctetView octetView(m_data.data(), m_data.size());
+    const uint8_t *m_data = nasPdu.data();
+    size_t m_dataLength = nasPdu.length(); 
+    OctetView octetView(m_data, m_dataLength);
     auto nasMessage = nas::DecodeNasMessage(octetView);  
     if (nasMessage->epd == nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES)
     {
@@ -46,7 +47,7 @@ int32_t extractSliceInfoAndModifyPdu(OctetString &nasPdu) {
                 {
                     auto sz = regRequest->requestedNSSAI->sNssais.size();
                     if (sz > 0) {
-                        requestedSliceType = static_cast<int32_t>(regRequest->requestedNSSAI->sNssais[0].sst.getValue());
+                        requestedSliceType = static_cast<uint8_t>(regRequest->requestedNSSAI->sNssais[0].sst);
                     }
                 }
             }

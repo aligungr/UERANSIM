@@ -33,7 +33,7 @@ void NgapTask::createAmfContext(const GnbAmfConfig &conf)
     m_amfCtx[ctx->ctxId] = ctx;
 }
 
-void NgapTask::createUeContext(int ueId, const int32_t &requestedSliceType)
+void NgapTask::createUeContext(int ueId, int32_t &requestedSliceType)
 {
     auto *ctx = new NgapUeContext(ueId);
     ctx->amfUeNgapId = -1;
