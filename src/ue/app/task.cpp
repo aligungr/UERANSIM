@@ -181,8 +181,12 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     std::string error{}, allocatedName{};
     std::string requestedName = cons::TunNamePrefix;
+    std::string requestedNetmask = cons::TunNetmask;
     if (m_base->config->tunName.has_value())
         requestedName = *m_base->config->tunName;
+    if (m_base->config->tunNetmask.has_value())
+        requestedNetmask = *m_base->config->tunNetmask;
+    
     int fd = tun::TunAllocate(requestedName.c_str(), allocatedName, error);
     if (fd == 0 || error.length() > 0)
     {
@@ -192,7 +196,7 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     std::string ipAddress = utils::OctetStringToIp(pduSession->pduAddress->pduAddressInformation);
 
-    bool r = tun::TunConfigure(allocatedName, ipAddress, cons::TunMtu, m_base->config->configureRouting, error);
+    bool r = tun::TunConfigure(allocatedName, ipAddress, requestedNetmask, cons::TunMtu, m_base->config->configureRouting, error);
     if (!r || error.length() > 0)
     {
         m_logger->err("TUN configuration failure [%s]", error.c_str());

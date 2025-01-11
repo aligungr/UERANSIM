@@ -32,11 +32,11 @@ int TunAllocate(const char *namePrefix, std::string &allocatedName, std::string 
     return fd;
 }
 
-bool TunConfigure(const std::string &tunName, const std::string &ipAddress, int mtu, bool configureRouting, std::string &error)
+bool TunConfigure(const std::string &tunName, const std::string &ipAddress, const std::string &netmask, int mtu, bool configureRouting, std::string &error)
 {
     try
     {
-        tun::ConfigureTun(tunName.c_str(), ipAddress.c_str(), mtu, configureRouting);
+        tun::ConfigureTun(tunName.c_str(), ipAddress.c_str(), netmask.c_str(), mtu, configureRouting);
     }
     catch (const LibError &e)
     {
