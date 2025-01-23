@@ -189,6 +189,10 @@ void eap::EncodeEapPdu(OctetString &stream, const eap::Eap &pdu)
 std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetView &stream)
 {
     auto code = static_cast<ECode>(stream.readI());
+
+    if (code < ECode::REQUEST || code > ECode::FINISH)
+        return nullptr;
+
     int id = stream.readI();
     int length = stream.read2I();
 
@@ -196,6 +200,9 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetView &stream)
         return std::make_unique<Eap>(code, id, EEapType::NO_TYPE);
 
     auto type = static_cast<EEapType>(stream.readI());
+
+    if (type < EEapType::NO_TYPE || type > EEapType::EXPERIMENTAL)
+        return nullptr;
 
     int innerLength = length - 1 // code
                       - 1        // id
@@ -208,6 +215,10 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetView &stream)
 
         // decode subtype
         auto subType = static_cast<ESubType>(stream.readI());
+
+        if (subType < ESubType::AKA_CHALLENGE || subType > ESubType::AKA_CLIENT_ERROR)
+            return nullptr;
+
         readBytes += 1;
 
         auto *akaPrime = new EapAkaPrime(code, id, subType);
