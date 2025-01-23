@@ -222,9 +222,16 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetView &stream)
             auto t = static_cast<EAttributeType>(stream.readI());
             readBytes += 1;
 
+            if (t < EAttributeType::AT_RAND || t > EAttributeType::AT_TRUST_IND)
+                return nullptr;
+
             // decode attribute length
             auto attributeLength = stream.readI();
             readBytes += 1;
+
+            // Valid length must be at least 2 octets
+            if (attributeLength < 2)
+                return nullptr;
 
             // decode attribute value
             auto attributeVal = stream.readOctetString(4 * attributeLength - 2);
