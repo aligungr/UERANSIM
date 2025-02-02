@@ -20,3 +20,7 @@ build: FORCE
 	@printf "${GREEN}UERANSIM successfully built.${NC}\n"
 
 FORCE:
+
+clean:
+	rm -fr build
+	rm -fr cmake-build-release/
