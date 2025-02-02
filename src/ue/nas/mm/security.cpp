@@ -227,7 +227,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     // ============================ Handle EAP-Success message if any. ============================
 
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
     {
         if (msg.eapMessage->eap->code == eap::ECode::SUCCESS)
             receiveEapSuccessMessage(*msg.eapMessage->eap);

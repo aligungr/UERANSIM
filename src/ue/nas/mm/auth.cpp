@@ -70,7 +70,7 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
 
     // ========================== Check the received message syntactically ==========================
 
-    if (!msg.eapMessage.has_value())
+    if (!msg.eapMessage.has_value() || !msg.eapMessage->eap)
     {
         sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
         return;
@@ -426,7 +426,7 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
     m_usim->m_resStar = {};
     m_timers->t3516.stop();
 
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);

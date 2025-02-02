@@ -255,7 +255,7 @@ void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
     }
 
     // Handle EAP message
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
@@ -307,7 +307,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     }
 
     // Handle EAP message
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);

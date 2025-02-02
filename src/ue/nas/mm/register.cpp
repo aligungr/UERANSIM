@@ -610,7 +610,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
     auto cause = msg.mmCause.value;
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
@@ -768,7 +768,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
     auto cause = msg.mmCause.value;
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
-    if (msg.eapMessage.has_value())
+    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
