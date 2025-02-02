@@ -33,7 +33,7 @@ void NgapTask::createAmfContext(const GnbAmfConfig &conf)
     m_amfCtx[ctx->ctxId] = ctx;
 }
 
-void NgapTask::createUeContext(int ueId)
+void NgapTask::createUeContext(int ueId, int32_t &requestedSliceType)
 {
     auto *ctx = new NgapUeContext(ueId);
     ctx->amfUeNgapId = -1;
@@ -42,7 +42,7 @@ void NgapTask::createUeContext(int ueId)
     m_ueCtx[ctx->ctxId] = ctx;
 
     // Perform AMF selection
-    auto *amf = selectAmf(ueId);
+    auto *amf = selectAmf(ueId, requestedSliceType);
     if (amf == nullptr)
         m_logger->err("AMF selection for UE[%d] failed. Could not find a suitable AMF.", ueId);
     else
