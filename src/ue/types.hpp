@@ -111,6 +111,7 @@ struct UeConfig
     NetworkSlice defaultConfiguredNssai{};
     NetworkSlice configuredNssai{};
     std::optional<std::string> tunName{};
+    std::optional<std::string> tunNetmask{};
 
     struct
     {

@@ -162,6 +162,8 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->imeiSv = yaml::GetString(config, "imeiSv", 16, 16);
     if (yaml::HasField(config, "tunName"))
         result->tunName = yaml::GetString(config, "tunName", 1, 12);
+    if (yaml::HasField(config, "tunNetmask"))
+        result->tunNetmask = yaml::GetString(config, "tunNetmask", 9, 15);
 
     yaml::AssertHasField(config, "integrity");
     yaml::AssertHasField(config, "ciphering");
@@ -360,6 +362,7 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->homeNetworkPublicKeyId = g_refConfig->homeNetworkPublicKeyId;
     c->routingIndicator = g_refConfig->routingIndicator;
     c->tunName = g_refConfig->tunName;
+    c->tunNetmask = g_refConfig->tunNetmask;
     c->hplmn = g_refConfig->hplmn;
     c->configuredNssai = g_refConfig->configuredNssai;
     c->defaultConfiguredNssai = g_refConfig->defaultConfiguredNssai;

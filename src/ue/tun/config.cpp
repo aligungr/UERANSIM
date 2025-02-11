@@ -109,13 +109,19 @@ static const char *NextInterfaceName(const std::string &prefix)
     return nullptr;
 }
 
-static void TunSetIpAndUp(const char *ifName, const char *ipAddr, int mtu)
+static void TunSetIpAndUp(const char *ifName, const char *ipAddr, const char *netmask, int mtu)
 {
     ifreq ifr{};
     memset(&ifr, 0, sizeof(struct ifreq));
 
     sockaddr_in sai{};
     memset(&sai, 0, sizeof(struct sockaddr));
+    
+    sockaddr_in netmask_addr{};
+    memset(&netmask_addr, 0, sizeof(struct sockaddr_in));
+
+    netmask_addr.sin_family = AF_INET;
+    netmask_addr.sin_addr.s_addr = inet_addr(netmask);
 
     int sockFd;
     char *p;
@@ -134,6 +140,11 @@ static void TunSetIpAndUp(const char *ifName, const char *ipAddr, int mtu)
 
     if (ioctl(sockFd, SIOCSIFADDR, &ifr) < 0)
         throw LibError("ioctl(SIOCSIFADDR)", errno);
+
+    memcpy(&ifr.ifr_netmask, &netmask_addr, sizeof(struct sockaddr));
+    if (ioctl(sockFd, SIOCSIFNETMASK, &ifr) < 0)
+	throw LibError("ioctl(SIOCSIFNETMASK)", errno);
+
     if (ioctl(sockFd, SIOCGIFFLAGS, &ifr) < 0)
         throw LibError("ioctl(SIOCGIFFLAGS)", errno);
 
@@ -350,12 +361,12 @@ int AllocateTun(const char *ifPrefix, char **allocatedName)
     return fd;
 }
 
-void ConfigureTun(const char *tunName, const char *ipAddr, int mtu, bool configureRoute)
+void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, int mtu, bool configureRoute)
 {
     // acquire the configuration lock
     const std::lock_guard<std::mutex> lock(configMutex);
 
-    TunSetIpAndUp(tunName, ipAddr, mtu);
+    TunSetIpAndUp(tunName, ipAddr, netmask, mtu);
     if (configureRoute)
     {
         std::string table_name = ROUTING_TABLE_PREFIX + std::string(tunName);
