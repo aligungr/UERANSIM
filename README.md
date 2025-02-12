@@ -11,7 +11,7 @@
 simulator. UE and RAN can be considered as a 5G mobile phone and a base station in basic terms. The project can be used for
 testing 5G Core Network and studying 5G System.
 
-UERANSIM introduces the world's first and only open source 5G-SA UE and gNodeB implementation.
+UERANSIM introduces the world's first open source 5G-SA UE and gNodeB implementation.
 
 **WARNING:** I'm no longer active in the development of UERANSIM. However community contributions are welcomed.
 
