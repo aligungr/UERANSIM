@@ -12,6 +12,8 @@
 #include <gnb/rrc/task.hpp>
 #include <utils/common.hpp>
 #include <utils/random.hpp>
+#include <gnb/ngap/task.hpp>
+
 
 namespace nr::gnb
 {
@@ -54,6 +56,14 @@ void GnbRlsTask::onLoop()
         }
         case NmGnbRlsToRls::SIGNAL_LOST: {
             m_logger->debug("UE[%d] signal lost", w.ueId);
+
+            if (m_base->ngapTask != nullptr) {
+                m_logger->info("Triggering UE Context Release Request for UE[%d]", w.ueId);
+                m_base->ngapTask->sendContextRelease(w.ueId, NgapCause::RadioNetwork_radio_connection_with_ue_lost);
+            } else {
+                m_logger->err("NGAP task not available, cannot send context release");
+            }
+
             break;
         }
         case NmGnbRlsToRls::UPLINK_DATA: {
