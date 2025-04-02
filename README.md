@@ -13,7 +13,7 @@ testing 5G Core Network and studying 5G System.
 
 UERANSIM introduces the world's first open source 5G-SA UE and gNodeB implementation.
 
-**WARNING:** I'm no longer active in the development of UERANSIM. However community contributions are welcomed.
+**_WARNING_:** I'm no longer active in the development of UERANSIM. However community contributions are welcomed.
 
 ## Current Status
 
@@ -54,4 +54,4 @@ Copyright (c) 2025 ALİ GÜNGÖR.
 All source code and related files including documentation and wiki pages are
 dual licensed with [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) and a commercial license.
 
-Commercial usage of UERANSIM is **not** permitted with the GPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
+Closed-source commercial usage of UERANSIM is **not** permitted with the GPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
