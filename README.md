@@ -55,5 +55,5 @@ Copyright (c) 2025 ALİ GÜNGÖR.
 All source code and related files including documentation and wiki pages are
 dual licensed with [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) and a commercial license.
 
-> [!CAUTION]
+> [!WARNING]
 > Closed-source commercial usage of UERANSIM is **not** permitted with the GPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
