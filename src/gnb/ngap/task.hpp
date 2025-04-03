@@ -61,6 +61,7 @@ class NgapTask : public NtsTask
   public:
     explicit NgapTask(TaskBase *base);
     ~NgapTask() override = default;
+    void sendContextRelease(int ueId, NgapCause cause);
 
   protected:
     void onStart() override;
@@ -115,7 +116,6 @@ class NgapTask : public NtsTask
     void receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetupRequest *msg);
     void receiveContextRelease(int amfId, ASN_NGAP_UEContextReleaseCommand *msg);
     void receiveContextModification(int amfId, ASN_NGAP_UEContextModificationRequest *msg);
-    void sendContextRelease(int ueId, NgapCause cause);
 
     /* NAS Node Selection */
     NgapAmfContext *selectAmf(int ueId, int32_t &requestedSliceType);
