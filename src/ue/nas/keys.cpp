@@ -16,7 +16,7 @@ static const int N_RRC_enc_alg = 0x03;
 static const int N_RRC_int_alg = 0x04;
 static const int N_UP_enc_alg = 0x05;
 static const int N_UP_int_alg = 0x06;
-static const int KAKMA_derivation_function_code = 0x6A
+static const int KAKMA_derivation_function_code = 0x6A;
 
 namespace nr::ue::keys
 {

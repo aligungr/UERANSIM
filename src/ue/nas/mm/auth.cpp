@@ -363,7 +363,7 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
-        m_usim->m_nonCurrentNsCtx->keys.kAkma = keys::CalculateAkmaKey(m_usim->m_nonCurrentNsCtx->keys.kAusf, m_base->config->supi.value())
+        m_usim->m_nonCurrentNsCtx->keys.kAkma = keys::CalculateAkmaKey(m_usim->m_nonCurrentNsCtx->keys.kAusf, m_base->config->supi.value());
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
         keys::DeriveKeysSeafAmf(*m_base->config, currentPLmn, *m_usim->m_nonCurrentNsCtx);
