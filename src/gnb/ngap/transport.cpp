@@ -17,6 +17,7 @@
 #include <lib/asn/utils.hpp>
 
 #include <asn/ngap/ASN_NGAP_AMF-UE-NGAP-ID.h>
+#include <asn/ngap/ASN_NGAP_HandoverCommand.h>
 #include <asn/ngap/ASN_NGAP_InitiatingMessage.h>
 #include <asn/ngap/ASN_NGAP_NGAP-PDU.h>
 #include <asn/ngap/ASN_NGAP_ProtocolIE-Field.h>
@@ -53,7 +54,6 @@ static e_ASN_NGAP_Criticality FindCriticalityOfUserIe(ASN_NGAP_NGAP_PDU *pdu, AS
                 procedureCode == ASN_NGAP_ProcedureCode_id_HandoverPreparation)
                 return ASN_NGAP_Criticality_reject;
         }
-
         if (procedureCode == ASN_NGAP_ProcedureCode_id_PDUSessionResourceNotify ||
             procedureCode == ASN_NGAP_ProcedureCode_id_PDUSessionResourceModifyIndication ||
             procedureCode == ASN_NGAP_ProcedureCode_id_RRCInactiveTransitionReport ||
@@ -292,6 +292,9 @@ void NgapTask::handleSctpMessage(int amfId, uint16_t stream, const UniqueBuffer 
         case ASN_NGAP_InitiatingMessage__value_PR_Paging:
             receivePaging(amf->ctxId, &value.choice.Paging);
             break;
+        case ASN_NGAP_InitiatingMessage__value_PR_HandoverRequest:
+            receiveHandoverRequest(amf->ctxId, &value.choice.HandoverRequest);
+            break;
         default:
             m_logger->err("Unhandled NGAP initiating-message received (%d)", value.present);
             break;
@@ -305,6 +308,9 @@ void NgapTask::handleSctpMessage(int amfId, uint16_t stream, const UniqueBuffer 
         case ASN_NGAP_SuccessfulOutcome__value_PR_NGSetupResponse:
             receiveNgSetupResponse(amf->ctxId, &value.choice.NGSetupResponse);
             break;
+        case ASN_NGAP_SuccessfulOutcome__value_PR_HandoverCommand:
+            receiveHandoverCommand(amf->ctxId, &value.choice.HandoverCommand);
+            break;
         default:
             m_logger->err("Unhandled NGAP successful-outcome received (%d)", value.present);
             break;
@@ -317,6 +323,9 @@ void NgapTask::handleSctpMessage(int amfId, uint16_t stream, const UniqueBuffer 
         {
         case ASN_NGAP_UnsuccessfulOutcome__value_PR_NGSetupFailure:
             receiveNgSetupFailure(amf->ctxId, &value.choice.NGSetupFailure);
+            break;
+        case ASN_NGAP_UnsuccessfulOutcome__value_PR_HandoverPreparationFailure:
+            receiveHandoverPreparationFailure(&value.choice.HandoverPreparationFailure);
             break;
         default:
             m_logger->err("Unhandled NGAP unsuccessful-outcome received (%d)", value.present);

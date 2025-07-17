@@ -30,6 +30,7 @@ extern "C"
 
     struct ASN_RRC_RRCSetupRequest;
     struct ASN_RRC_RRCSetupComplete;
+    struct ASN_RRC_RRCReconfigurationComplete;
     struct ASN_RRC_ULInformationTransfer;
 }
 
@@ -78,6 +79,10 @@ class GnbRrcTask : public NtsTask
                       const asn::Unique<ASN_NGAP_TAIListForPaging> &taiList);
 
     void receiveUplinkInformationTransfer(int ueId, const ASN_RRC_ULInformationTransfer &msg);
+
+    /* Handlers for RCC handover message */
+    void handleHandoverCommand(int ueId, const OctetString &rrcContainer);
+    void receiveRrcHandoverConfirm(int ueId, const ASN_RRC_RRCReconfigurationComplete &msg);
 
     /* RRC channel send message */
     void sendRrcMessage(ASN_RRC_BCCH_BCH_Message *msg);

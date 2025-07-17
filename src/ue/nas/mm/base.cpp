@@ -91,6 +91,7 @@ void NasMm::performMmCycle()
         return;
 
     auto currentCell = m_base->shCtx.currentCell.get();
+    m_base->shCtx.currentCell.get<int>([](auto &item) { return item.cellId; });
     Tai currentTai = Tai{currentCell.plmn, currentCell.tac};
 
     /* Perform substate selection in case of primary substate */

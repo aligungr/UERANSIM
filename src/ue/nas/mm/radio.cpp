@@ -214,6 +214,11 @@ void NasMm::handleRrcConnectionRelease()
     switchCmState(ECmState::CM_IDLE);
 }
 
+void NasMm::handleRrcHandoverCommand()
+{
+    // TODO : check if the TAC changed, if thats the case, then we need to perform a registration update
+}
+
 void NasMm::handleRrcEstablishmentFailure()
 {
     m_logger->err("RRC Establishment failure");

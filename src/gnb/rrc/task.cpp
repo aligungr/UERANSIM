@@ -66,9 +66,14 @@ void GnbRrcTask::onLoop()
             releaseConnection(w.ueId);
             break;
         }
-        case NmGnbNgapToRrc::PAGING:
+        case NmGnbNgapToRrc::PAGING: {
             handlePaging(w.uePagingTmsi, w.taiListForPaging);
             break;
+        }
+        case NmGnbNgapToRrc::HANDOVER: {
+            handleHandoverCommand(w.ueId, w.rrcContainer);
+            break;
+        }
         }
         break;
     }

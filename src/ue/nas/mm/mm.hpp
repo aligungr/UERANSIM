@@ -204,6 +204,9 @@ class NasMm
   private: /* Service Access Point */
     void handleRrcEvent(const NmUeRrcToNas &msg);
     void handleNasEvent(const NmUeNasToNas &msg);
+
+  private : /* Handover */
+    void handleRrcHandoverCommand();
 };
 
 } // namespace nr::ue

@@ -8,12 +8,13 @@
 
 #include "task.hpp"
 
+#include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <gnb/gtp/proto.hpp>
 #include <gnb/rls/task.hpp>
+#include <gnb/types.hpp>
+#include <utils/common.hpp>
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
-
-#include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 
 namespace nr::gnb
 {
@@ -112,15 +113,42 @@ void GtpTask::handleSessionCreate(PduSessionResource *session)
 {
     if (!m_ueContexts.count(session->ueId))
     {
-        m_logger->err("PDU session resource could not be created, UE context with ID[%d] not found", session->ueId);
+        m_logger->err("PDU session resource could not be created, "
+                      "UE context with ID[%d] not found",
+                      session->ueId);
+        delete session;
         return;
     }
 
     uint64_t sessionInd = MakeSessionResInd(session->ueId, session->psi);
-    m_pduSessions[sessionInd] = std::unique_ptr<PduSessionResource>(session);
 
+    // Check if session already exists
+    auto it = m_pduSessions.find(sessionInd);
+    if (it != m_pduSessions.end())
+    {
+        auto &dstTunnel = it->second->downTunnel;
+
+        uint32_t oldTeid = dstTunnel.teid;
+        uint32_t newTeid = session->downTunnel.teid;
+
+        // Update existing DL tunnel
+        dstTunnel.teid = newTeid;
+        dstTunnel.address = std::move(session->downTunnel.address); // move to avoid copy
+
+        m_sessionTree.remove(sessionInd, oldTeid);
+        m_sessionTree.insert(sessionInd, newTeid);
+
+        m_logger->warn("PDU session [%016llx] already exists – "
+                       "TEID DL replaced %u → %u",
+                       sessionInd, oldTeid, newTeid);
+
+        delete session;
+        return;
+    }
+
+    // New session
+    m_pduSessions[sessionInd].reset(session);
     m_sessionTree.insert(sessionInd, session->downTunnel.teid);
-
     updateAmbrForUe(session->ueId);
     updateAmbrForSession(sessionInd);
 }
