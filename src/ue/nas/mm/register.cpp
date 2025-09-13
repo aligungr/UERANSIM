@@ -12,6 +12,9 @@
 #include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
 
+//state learner
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
@@ -106,10 +109,17 @@ EProcRc NasMm::sendInitialRegistration(EInitialRegCause regCause)
         request->nasKeySetIdentifier.ksi = m_usim->m_currentNsCtx->ngKsi;
     }
 
+    m_logger->debug("store message RegistrationRequest");
+    state_learner->store_message(*request);
+    state_learner->storedMsgCount[(int)MsgType::registrationRequestIMSI]++;
+    if (state_learner->init_reg)
+        state_learner->init_reg = false;
+    
     // Send the message
-    auto rc = sendNasMessage(*request);
-    if (rc != EProcRc::OK)
-        return rc;
+    // StateLearner
+    // auto rc = sendNasMessage(*request);
+    // if (rc != EProcRc::OK)
+    //     return rc;
 
     // Switch MM state
     switchMmState(EMmSubState::MM_REGISTERED_INITIATED_PS);
@@ -118,6 +128,7 @@ EProcRc NasMm::sendInitialRegistration(EInitialRegCause regCause)
     m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
 
     // Process timers
+    // remove T3510 for not restart UE
     m_timers->t3510.start();
     m_timers->t3502.stop();
     m_timers->t3511.stop();
@@ -239,10 +250,14 @@ EProcRc NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     //    isDefaultNssai ? nas::EDefaultConfiguredNssaiIndication::CREATED_FROM_DEFAULT_CONFIGURED_NSSAI
     //                   : nas::EDefaultConfiguredNssaiIndication::NOT_CREATED_FROM_DEFAULT_CONFIGURED_NSSAI;
 
+    // m_logger->debug("store message RegistrationRequest");
+    // state_learner->store_message(*request);
+    // state_learner->storedMsgCount[(int)MsgType::registrationRequest]++;
+    // StateLearner: don't send
     // Send the message
-    auto rc = sendNasMessage(*request);
-    if (rc != EProcRc::OK)
-        return rc;
+    // auto rc = sendNasMessage(*request);
+    // if (rc != EProcRc::OK)
+    //     return rc;
     m_lastRegistrationRequest = std::move(request);
     m_lastRegWithoutNsc = m_usim->m_currentNsCtx == nullptr;
 
@@ -250,6 +265,7 @@ EProcRc NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
     switchMmState(EMmSubState::MM_REGISTERED_INITIATED_PS);
 
     // Process timers
+    // remove T3510 for not restart UE
     m_timers->t3510.start();
     m_timers->t3502.stop();
     m_timers->t3511.stop();
@@ -259,21 +275,21 @@ EProcRc NasMm::sendMobilityRegistration(ERegUpdateCause updateCause)
 
 void NasMm::receiveRegistrationAccept(const nas::RegistrationAccept &msg)
 {
-    if (m_mmState != EMmState::MM_REGISTERED_INITIATED)
-    {
-        m_logger->warn("Registration Accept ignored since the MM state is not MM_REGISTERED_INITIATED");
-        sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
-        return;
-    }
+    // if (m_mmState != EMmState::MM_REGISTERED_INITIATED)
+    // {
+    //     m_logger->warn("Registration Accept ignored since the MM state is not MM_REGISTERED_INITIATED");
+    //     sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+    //     return;
+    // }
 
     m_logger->debug("Registration accept received");
 
-    if (msg.registrationResult.registrationResult == nas::E5gsRegistrationResult::NON_THREEGPP_ACCESS)
-    {
-        m_logger->err("Non-3GPP registration accept is ignored");
-        sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
-        return;
-    }
+    // if (msg.registrationResult.registrationResult == nas::E5gsRegistrationResult::NON_THREEGPP_ACCESS)
+    // {
+    //     m_logger->err("Non-3GPP registration accept is ignored");
+    //     sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
+    //     return;
+    // }
 
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION ||
@@ -421,8 +437,9 @@ void NasMm::receiveInitialRegistrationAccept(const nas::RegistrationAccept &msg)
 
     if (sendComplete)
     {
-        m_logger->debug("Sending Registration Complete");
-        sendNasMessage(nas::RegistrationComplete{});
+        // StateLearner: don't send message
+        // m_logger->debug("Sending Registration Complete");
+        // sendNasMessage(nas::RegistrationComplete{});
     }
 
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
@@ -572,8 +589,9 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
     // registration update is successfully completed
     m_serCounter = 0;
 
-    if (sendComplete)
-        sendNasMessage(nas::RegistrationComplete{});
+    // StateLearner: don't send massage
+    if (sendComplete){}
+    //     sendNasMessage(nas::RegistrationComplete{});
 
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
     m_logger->info("%s is successful", nas::utils::EnumToString(regType));
@@ -581,12 +599,15 @@ void NasMm::receiveMobilityRegistrationAccept(const nas::RegistrationAccept &msg
 
 void NasMm::receiveRegistrationReject(const nas::RegistrationReject &msg)
 {
-    if (m_mmState != EMmState::MM_REGISTERED_INITIATED)
-    {
-        m_logger->warn("Registration Reject ignored since the MM state is not MM_REGISTERED_INITIATED");
-        sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
-        return;
-    }
+    // if (m_mmState != EMmState::MM_REGISTERED_INITIATED)
+    // {
+    //     m_logger->warn("Registration Reject ignored since the MM state is not MM_REGISTERED_INITIATED");
+    //     sendMmStatus(nas::EMmCause::MESSAGE_NOT_COMPATIBLE_WITH_PROTOCOL_STATE);
+    //     return;
+    // }
+
+    // do not process RegistrationReject
+    return;
 
     auto cause = msg.mmCause.value;
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
@@ -610,7 +631,7 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
     auto cause = msg.mmCause.value;
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
-    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
+    if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
@@ -636,18 +657,19 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
 
     if (regType == nas::ERegistrationType::INITIAL_REGISTRATION)
     {
-        if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
-            cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
-            cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
-            cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
-        {
-            switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-        }
+        // disabled for statelearner
+        // if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        //     cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
+        //     cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+        //     cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+        // {
+        //     switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+        // }
 
-        if (cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
-        {
-            switchUState(E5UState::U2_NOT_UPDATED);
-        }
+        // if (cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+        // {
+        //     switchUState(E5UState::U2_NOT_UPDATED);
+        // }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
@@ -661,11 +683,12 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
             m_usim->m_nonCurrentNsCtx = {};
         }
 
-        if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
-            cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
-        {
-            m_usim->invalidate();
-        }
+        // disabled for statelearner
+        // if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+        //     cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
+        // {
+        //     m_usim->invalidate();
+        // }
 
         if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
             cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
@@ -726,7 +749,8 @@ void NasMm::receiveInitialRegistrationReject(const nas::RegistrationReject &msg)
         {
             if (msg.t3346value.has_value() && nas::utils::HasValue(*msg.t3346value))
             {
-                switchUState(E5UState::U2_NOT_UPDATED);
+                // disabled for statelearner
+                // switchUState(E5UState::U2_NOT_UPDATED);
                 switchMmState(EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
 
                 m_timers->t3346.stop();
@@ -768,7 +792,7 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
     auto cause = msg.mmCause.value;
     auto regType = m_lastRegistrationRequest->registrationType.registrationType;
 
-    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
+    if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
@@ -789,19 +813,21 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         handleAbnormalMobilityRegFailure(regType);
     };
 
-    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
-        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
-        cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
-        cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
-    {
-        switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-    }
+    // disabled for statelearner
+    // if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+    //     cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
+    //     cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+    //     cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+    // {
+    //     switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+    // }
 
-    if (cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED ||
-        cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
-    {
-        switchUState(E5UState::U2_NOT_UPDATED);
-    }
+    // disabled for statelearner
+    // if (cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED ||
+    //     cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK)
+    // {
+    //     switchUState(E5UState::U2_NOT_UPDATED);
+    // }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
         cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
@@ -822,11 +848,12 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         m_usim->m_nonCurrentNsCtx = {};
     }
 
-    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
-        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
-    {
-        m_usim->invalidate();
-    }
+    // disabled for statelearner
+    // if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+    //     cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
+    // {
+    //     m_usim->invalidate();
+    // }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
         cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||
@@ -894,7 +921,8 @@ void NasMm::receiveMobilityRegistrationReject(const nas::RegistrationReject &msg
         {
             if (!hasEmergency())
             {
-                switchUState(E5UState::U2_NOT_UPDATED);
+                // disabled for statelearner
+                // switchUState(E5UState::U2_NOT_UPDATED);
                 switchMmState(EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
             }
 
@@ -968,7 +996,8 @@ void NasMm::handleAbnormalInitialRegFailure(nas::ERegistrationType regType)
         // .. and shall set the 5GS update status to 5U2 NOT UPDATED. The state is changed to
         // 5GMM-DEREGISTERED.ATTEMPTING-REGISTRATION or optionally to 5GMM-DEREGISTERED.PLMN-SEARCH in order to perform
         // a PLMN selection according to 3GPP TS 23.122 [5].
-        switchUState(E5UState::U2_NOT_UPDATED);
+        // disabled for statelearner
+        // switchUState(E5UState::U2_NOT_UPDATED);
         switchMmState(EMmSubState::MM_DEREGISTERED_ATTEMPTING_REGISTRATION);
     }
 }
@@ -997,7 +1026,8 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
             // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE. When timer T3511 expires and the registration update
             // procedure is triggered again"
             m_timers->t3511.start(); // todo
-            switchUState(E5UState::U2_NOT_UPDATED);
+            // disabled for statelearner
+            // switchUState(E5UState::U2_NOT_UPDATED);
             switchMmState(EMmSubState::MM_REGISTERED_ATTEMPTING_REGISTRATION_UPDATE);
         }
 
@@ -1016,7 +1046,8 @@ void NasMm::handleAbnormalMobilityRegFailure(nas::ERegistrationType regType)
     {
         // "The UE shall start timer T3502, shall set the 5GS update status to 5U2 NOT UPDATED."
         m_timers->t3502.start();
-        switchUState(E5UState::U2_NOT_UPDATED);
+        // disabled for statelearner
+        // switchUState(E5UState::U2_NOT_UPDATED);
 
         // "The UE shall delete the list of equivalent PLMNs and shall change to state
         // 5GMM-REGISTERED.ATTEMPTING-REGISTRATION-UPDATE UPDATE"

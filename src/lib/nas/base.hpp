@@ -245,4 +245,83 @@ std::string DecodeBcdString(const OctetView &stream, int length, bool skipFirst)
 
 void EncodeRoutingIndicator(OctetString &stream, const std::string &bcd);
 
+
+//======================================================================================================
+//                                  MUTATION FUNCTIONS FOR FUZZING
+//======================================================================================================
+
+template <typename T, typename U>
+static inline void MutateIe1(T &big, U &little)
+{
+    static_assert(std::is_base_of<InformationElement1, T>::value);
+
+    T::Mutate(big);
+    U::Mutate(little);
+}
+
+template <typename T>
+static inline void MutateIe1(int big, T &little)
+{
+    static_assert(std::is_base_of<InformationElement1, T>::value);
+
+    T::Mutate(little);
+}
+
+template <typename T>
+static inline void MutateIe1(T &big, int little)
+{
+    static_assert(std::is_base_of<InformationElement1, T>::value);
+
+    T::Mutate(big);
+}
+
+template <typename T>
+static inline void MutateIe2(T &ie)
+{
+    static_assert(std::is_base_of<InformationElement2, T>::value);
+    // nothing to mutate for type-2 information elements
+}
+
+
+template <typename T>
+static inline void MutateIe3(T &ie)
+{
+    static_assert(std::is_base_of<InformationElement3, T>::value);
+
+    T::Mutate(ie);
+}
+
+template <typename T>
+static inline void MutateIe4(T &ie)
+{
+    static_assert(std::is_base_of<InformationElement4, T>::value);
+
+    T::Mutate(ie);
+}
+
+
+template <typename T>
+static inline void MutateIe6(T &ie)
+{
+    static_assert(std::is_base_of<InformationElement6, T>::value);
+
+    T::Mutate(ie);
+}
+
+
+
+template <typename T>
+static inline void Mutate2346(T &ie)
+{
+    static_assert(std::is_base_of<InformationElement2, T>::value || std::is_base_of<InformationElement3, T>::value ||
+                  std::is_base_of<InformationElement4, T>::value || std::is_base_of<InformationElement6, T>::value);
+    if constexpr (std::is_base_of<InformationElement2, T>::value)
+        MutateIe2<T>(ie);
+    if constexpr (std::is_base_of<InformationElement3, T>::value)
+        MutateIe3<T>(ie);
+    if constexpr (std::is_base_of<InformationElement4, T>::value)
+        MutateIe4<T>(ie);
+    if constexpr (std::is_base_of<InformationElement6, T>::value)
+        MutateIe6<T>(ie);
+}
 } // namespace nas

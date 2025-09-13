@@ -45,13 +45,14 @@ uint64_t SqnManager::getSqnMs() const
 
 bool SqnManager::checkSqn(uint64_t sqn)
 {
-    uint64_t seq = getSeqFromSqn(sqn);
+    // uint64_t seq = getSeqFromSqn(sqn);
     uint64_t ind = getIndFromSqn(sqn);
 
-    if (seq - getSeqMs() > m_wrappingDelta)
-        return false;
-    if (seq <= getSeqFromSqn(m_sqnArr[ind]))
-        return false;
+    // fuzzing: try to remove sqn check, see if it works
+    // if (seq - getSeqMs() > m_wrappingDelta)
+    //     return false;
+    // if (seq <= getSeqFromSqn(m_sqnArr[ind]))
+    //     return false;
 
     m_sqnArr[ind] = sqn;
     return true;

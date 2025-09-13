@@ -14,6 +14,8 @@
 #include "ie4.hpp"
 #include "ie6.hpp"
 
+#include "nas_mutator.hpp"
+
 namespace nas
 {
 
@@ -130,6 +132,7 @@ struct AuthenticationFailure : PlainMmMessage
 
     AuthenticationFailure();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct AuthenticationReject : PlainMmMessage
@@ -138,6 +141,7 @@ struct AuthenticationReject : PlainMmMessage
 
     AuthenticationReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct AuthenticationRequest : PlainMmMessage
@@ -150,6 +154,7 @@ struct AuthenticationRequest : PlainMmMessage
 
     AuthenticationRequest();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct AuthenticationResponse : PlainMmMessage
@@ -159,6 +164,7 @@ struct AuthenticationResponse : PlainMmMessage
 
     AuthenticationResponse();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct AuthenticationResult : PlainMmMessage
@@ -169,6 +175,7 @@ struct AuthenticationResult : PlainMmMessage
 
     AuthenticationResult();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct ConfigurationUpdateCommand : PlainMmMessage
@@ -193,24 +200,28 @@ struct ConfigurationUpdateCommand : PlainMmMessage
 
     ConfigurationUpdateCommand();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct ConfigurationUpdateComplete : PlainMmMessage
 {
     ConfigurationUpdateComplete();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct DeRegistrationAcceptUeOriginating : PlainMmMessage
 {
     DeRegistrationAcceptUeOriginating();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct DeRegistrationAcceptUeTerminated : PlainMmMessage
 {
     DeRegistrationAcceptUeTerminated();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct DeRegistrationRequestUeOriginating : PlainMmMessage
@@ -221,6 +232,7 @@ struct DeRegistrationRequestUeOriginating : PlainMmMessage
 
     DeRegistrationRequestUeOriginating();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct DeRegistrationRequestUeTerminated : PlainMmMessage
@@ -231,6 +243,7 @@ struct DeRegistrationRequestUeTerminated : PlainMmMessage
 
     DeRegistrationRequestUeTerminated();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct DlNasTransport : PlainMmMessage
@@ -244,6 +257,7 @@ struct DlNasTransport : PlainMmMessage
 
     DlNasTransport();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct FiveGMmStatus : PlainMmMessage
@@ -252,6 +266,7 @@ struct FiveGMmStatus : PlainMmMessage
 
     FiveGMmStatus();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct FiveGSmStatus : SmMessage
@@ -260,6 +275,7 @@ struct FiveGSmStatus : SmMessage
 
     FiveGSmStatus();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct IdentityRequest : PlainMmMessage
@@ -268,6 +284,7 @@ struct IdentityRequest : PlainMmMessage
 
     IdentityRequest();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct IdentityResponse : PlainMmMessage
@@ -276,6 +293,7 @@ struct IdentityResponse : PlainMmMessage
 
     IdentityResponse();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct Notification : PlainMmMessage
@@ -284,6 +302,7 @@ struct Notification : PlainMmMessage
 
     Notification();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct NotificationResponse : PlainMmMessage
@@ -292,6 +311,7 @@ struct NotificationResponse : PlainMmMessage
 
     NotificationResponse();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionAuthenticationCommand : SmMessage
@@ -301,6 +321,7 @@ struct PduSessionAuthenticationCommand : SmMessage
 
     PduSessionAuthenticationCommand();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionAuthenticationComplete : SmMessage
@@ -310,6 +331,7 @@ struct PduSessionAuthenticationComplete : SmMessage
 
     PduSessionAuthenticationComplete();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionAuthenticationResult : SmMessage
@@ -319,6 +341,7 @@ struct PduSessionAuthenticationResult : SmMessage
 
     PduSessionAuthenticationResult();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionEstablishmentAccept : SmMessage
@@ -340,6 +363,7 @@ struct PduSessionEstablishmentAccept : SmMessage
 
     PduSessionEstablishmentAccept();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionEstablishmentReject : SmMessage
@@ -352,6 +376,7 @@ struct PduSessionEstablishmentReject : SmMessage
 
     PduSessionEstablishmentReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionEstablishmentRequest : SmMessage
@@ -367,6 +392,7 @@ struct PduSessionEstablishmentRequest : SmMessage
 
     PduSessionEstablishmentRequest();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionModificationCommand : SmMessage
@@ -382,6 +408,7 @@ struct PduSessionModificationCommand : SmMessage
 
     PduSessionModificationCommand();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionModificationCommandReject : SmMessage
@@ -391,6 +418,7 @@ struct PduSessionModificationCommandReject : SmMessage
 
     PduSessionModificationCommandReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionModificationComplete : SmMessage
@@ -399,6 +427,7 @@ struct PduSessionModificationComplete : SmMessage
 
     PduSessionModificationComplete();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionModificationReject : SmMessage
@@ -409,6 +438,7 @@ struct PduSessionModificationReject : SmMessage
 
     PduSessionModificationReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionModificationRequest : SmMessage
@@ -425,6 +455,7 @@ struct PduSessionModificationRequest : SmMessage
 
     PduSessionModificationRequest();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionReleaseCommand : SmMessage
@@ -436,6 +467,7 @@ struct PduSessionReleaseCommand : SmMessage
 
     PduSessionReleaseCommand();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionReleaseComplete : SmMessage
@@ -445,6 +477,7 @@ struct PduSessionReleaseComplete : SmMessage
 
     PduSessionReleaseComplete();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionReleaseReject : SmMessage
@@ -454,6 +487,7 @@ struct PduSessionReleaseReject : SmMessage
 
     PduSessionReleaseReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct PduSessionReleaseRequest : SmMessage
@@ -463,6 +497,7 @@ struct PduSessionReleaseRequest : SmMessage
 
     PduSessionReleaseRequest();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct RegistrationAccept : PlainMmMessage
@@ -495,6 +530,7 @@ struct RegistrationAccept : PlainMmMessage
 
     RegistrationAccept();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct RegistrationComplete : PlainMmMessage
@@ -503,6 +539,7 @@ struct RegistrationComplete : PlainMmMessage
 
     RegistrationComplete();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct RegistrationReject : PlainMmMessage
@@ -514,6 +551,7 @@ struct RegistrationReject : PlainMmMessage
 
     RegistrationReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct RegistrationRequest : PlainMmMessage
@@ -544,6 +582,7 @@ struct RegistrationRequest : PlainMmMessage
 
     RegistrationRequest();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct SecurityModeCommand : PlainMmMessage
@@ -563,6 +602,7 @@ struct SecurityModeCommand : PlainMmMessage
 
     SecurityModeCommand();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct SecurityModeComplete : PlainMmMessage
@@ -572,6 +612,7 @@ struct SecurityModeComplete : PlainMmMessage
 
     SecurityModeComplete();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct SecurityModeReject : PlainMmMessage
@@ -580,6 +621,7 @@ struct SecurityModeReject : PlainMmMessage
 
     SecurityModeReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct ServiceAccept : PlainMmMessage
@@ -591,6 +633,7 @@ struct ServiceAccept : PlainMmMessage
 
     ServiceAccept();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct ServiceReject : PlainMmMessage
@@ -602,6 +645,7 @@ struct ServiceReject : PlainMmMessage
 
     ServiceReject();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct ServiceRequest : PlainMmMessage
@@ -616,6 +660,7 @@ struct ServiceRequest : PlainMmMessage
 
     ServiceRequest();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 struct UlNasTransport : PlainMmMessage
@@ -631,6 +676,7 @@ struct UlNasTransport : PlainMmMessage
 
     UlNasTransport();
     void onBuild(NasMessageBuilder &b);
+    void onMutate(NasMessageMutator &m); // fuzzing
 };
 
 } // namespace nas

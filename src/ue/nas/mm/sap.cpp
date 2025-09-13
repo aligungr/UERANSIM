@@ -10,8 +10,13 @@
 
 #include <utils/common.hpp>
 
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
+
+// check if the message is a replayed message
+OctetString retransbuf = OctetString();
 
 void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
 {
@@ -30,10 +35,31 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
             m_logger->err("Empty NAS PDU received, ignore it");
             break;
         }
-        OctetView buffer{msg.nasPdu};
-        auto nasMessage = nas::DecodeNasMessage(buffer);
-        if (nasMessage != nullptr)
-            receiveNasMessage(*nasMessage);
+        
+        if (retransbuf.length() == 0 || (retransbuf != msg.nasPdu))
+        {
+            
+            OctetView buffer{msg.nasPdu};
+            auto nasMessage = nas::DecodeNasMessage(buffer);
+            if (nasMessage != nullptr)
+                receiveNasMessage(*nasMessage);
+            
+            if (!state_learner->is_ignored)
+            {
+                retransbuf = msg.nasPdu.copy();
+                m_logger->warn("NAS message received and stored in retransbuf");
+            }
+            else
+            {
+                state_learner->is_ignored = false;
+                m_logger->warn("NAS message ignored for replay detection");
+            }
+        }
+        else
+        {
+            m_logger->warn("Replayed NAS message detected, discarding the message");
+        }
+
         break;
     }
     case NmUeRrcToNas::RRC_CONNECTION_RELEASE: {

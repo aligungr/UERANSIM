@@ -2,7 +2,7 @@
   <a href="https://github.com/aligungr/UERANSIM"><img src="/.github/logo.png" width="75" title="UERANSIM"></a>
 </p>
 <p align="center">
-<img src="https://img.shields.io/badge/UERANSIM-v3.2.7-blue" />
+<img src="https://img.shields.io/badge/UERANSIM-v3.2.6-blue" />
 <img src="https://img.shields.io/badge/3GPP-R15-orange" />
 <img src="https://img.shields.io/badge/License-GPL--3.0-green"/>
 </p>
@@ -11,10 +11,9 @@
 simulator. UE and RAN can be considered as a 5G mobile phone and a base station in basic terms. The project can be used for
 testing 5G Core Network and studying 5G System.
 
-UERANSIM introduces the world's first open source 5G-SA UE and gNodeB implementation.
+UERANSIM introduces the world's first and only open source 5G-SA UE and gNodeB implementation.
 
-> [!IMPORTANT]
-> UERANSIM is no longer actively developed by the maintainer. However community contributions are welcomed.
+**WARNING:** I'm no longer active in the development of UERANSIM. However community contributions are welcomed.
 
 ## Current Status
 
@@ -50,10 +49,9 @@ You can support UERANSIM by:
 
 ## License
 
-Copyright (c) 2025 ALİ GÜNGÖR.
+Copyright (c) 2023 ALİ GÜNGÖR.
 
 All source code and related files including documentation and wiki pages are
 dual licensed with [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) and a commercial license.
 
-> [!WARNING]
-> Closed-source commercial usage of UERANSIM is **not** permitted with the GPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
+Commercial usage of UERANSIM is **not** permitted with the GPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.

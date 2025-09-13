@@ -7,6 +7,8 @@
 //
 
 #include "ie3.hpp"
+// fuzzing
+#include "nas_mutator.hpp"
 
 namespace nas
 {
@@ -25,6 +27,11 @@ IE5gMmCause IE5gMmCause::Decode(const OctetView &stream)
 void IE5gMmCause::Encode(const IE5gMmCause &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.value));
+}
+
+void IE5gMmCause::Mutate(IE5gMmCause &ie)
+{
+    ie.value = (EMmCause)generate_bit(8);
 }
 
 IE5gsTrackingAreaIdentity::IE5gsTrackingAreaIdentity(int mcc, int mnc, bool isLongMnc, const octet3 &trackingAreaCode)
@@ -56,6 +63,13 @@ void IE5gsTrackingAreaIdentity::Encode(const IE5gsTrackingAreaIdentity &ie, Octe
     stream.appendOctet3(ie.trackingAreaCode);
 }
 
+void IE5gsTrackingAreaIdentity::Mutate(IE5gsTrackingAreaIdentity &ie)
+{
+    ie.mcc = generate_int(1000);
+    ie.mnc = generate_int(1000);
+    ie.isLongMnc = generate_bit(1);
+}
+
 IEAuthenticationParameterRand::IEAuthenticationParameterRand(OctetString &&value) : value(std::move(value))
 {
 }
@@ -68,6 +82,11 @@ IEAuthenticationParameterRand IEAuthenticationParameterRand::Decode(const OctetV
 void IEAuthenticationParameterRand::Encode(const IEAuthenticationParameterRand &ie, OctetString &stream)
 {
     stream.append(ie.value);
+}
+
+void IEAuthenticationParameterRand::Mutate(IEAuthenticationParameterRand &ie)
+{
+    mutate_octet_string(ie.value);
 }
 
 IEEpsNasSecurityAlgorithms::IEEpsNasSecurityAlgorithms(EEpsTypeOfIntegrityProtectionAlgorithm integrity,
@@ -87,6 +106,12 @@ IEEpsNasSecurityAlgorithms IEEpsNasSecurityAlgorithms::Decode(const OctetView &s
 void IEEpsNasSecurityAlgorithms::Encode(const IEEpsNasSecurityAlgorithms &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.ciphering), static_cast<int>(ie.integrity));
+}
+
+void IEEpsNasSecurityAlgorithms::Mutate(IEEpsNasSecurityAlgorithms &ie)
+{
+    ie.integrity = (EEpsTypeOfIntegrityProtectionAlgorithm)generate_bit(3);
+    ie.ciphering = (EEpsTypeOfCipheringAlgorithm)generate_bit(3);
 }
 
 IEGprsTimer::IEGprsTimer(int timerValue, EGprsTimerValueUnit timerValueUnit)
@@ -109,6 +134,12 @@ void IEGprsTimer::Encode(const IEGprsTimer &ie, OctetString &stream)
     bits::SetBitRange8<0, 4>(octet, ie.timerValue);
     bits::SetBitAt<5>(octet, static_cast<int>(ie.timerValueUnit));
     stream.appendOctet(octet);
+}
+
+void IEGprsTimer::Mutate(IEGprsTimer &ie)
+{
+    ie.timerValue = generate_bit(5);
+    ie.timerValueUnit = (EGprsTimerValueUnit)generate_bit(3);
 }
 
 IEGprsTimer::IEGprsTimer() : timerValue(0), timerValueUnit()
@@ -136,6 +167,12 @@ void IEIntegrityProtectionMaximumDataRate::Encode(const IEIntegrityProtectionMax
     stream.appendOctet(static_cast<int>(ie.maxRateDownlink));
 }
 
+void IEIntegrityProtectionMaximumDataRate::Mutate(IEIntegrityProtectionMaximumDataRate &ie)
+{
+    ie.maxRateUplink = (EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForUplink)generate_bit(8);
+    ie.maxRateDownlink = (EMaximumDataRatePerUeForUserPlaneIntegrityProtectionForDownlink)generate_bit(8);
+}
+
 IEMaximumNumberOfSupportedPacketFilters::IEMaximumNumberOfSupportedPacketFilters() : value(0)
 {
 }
@@ -161,6 +198,11 @@ void IEMaximumNumberOfSupportedPacketFilters::Encode(const IEMaximumNumberOfSupp
     stream.appendOctet((ie.value & 0b111) << 5);
 }
 
+void IEMaximumNumberOfSupportedPacketFilters::Mutate(IEMaximumNumberOfSupportedPacketFilters &ie)
+{
+    ie.value = generate_bit(11);
+}
+
 IEN1ModeToS1ModeNasTransparentContainer::IEN1ModeToS1ModeNasTransparentContainer(uint8_t value) : sequenceNumber(value)
 {
 }
@@ -176,6 +218,11 @@ void IEN1ModeToS1ModeNasTransparentContainer::Encode(const IEN1ModeToS1ModeNasTr
                                                      OctetString &stream)
 {
     stream.appendOctet(ie.sequenceNumber);
+}
+
+void IEN1ModeToS1ModeNasTransparentContainer::Mutate(IEN1ModeToS1ModeNasTransparentContainer &ie)
+{
+    ie.sequenceNumber = generate_bit(8);
 }
 
 IENasSecurityAlgorithms::IENasSecurityAlgorithms(ETypeOfIntegrityProtectionAlgorithm integrity,
@@ -197,6 +244,12 @@ void IENasSecurityAlgorithms::Encode(const IENasSecurityAlgorithms &ie, OctetStr
     stream.appendOctet(static_cast<int>(ie.ciphering), static_cast<int>(ie.integrity));
 }
 
+void IENasSecurityAlgorithms::Mutate(IENasSecurityAlgorithms &ie)
+{
+    ie.integrity = (ETypeOfIntegrityProtectionAlgorithm)generate_bit(4);
+    ie.ciphering = (ETypeOfCipheringAlgorithm)generate_bit(4);
+}
+
 IEPduSessionIdentity2::IEPduSessionIdentity2(uint8_t value) : value(value)
 {
 }
@@ -213,6 +266,11 @@ void IEPduSessionIdentity2::Encode(const IEPduSessionIdentity2 &ie, OctetString 
     stream.appendOctet(ie.value);
 }
 
+void IEPduSessionIdentity2::Mutate(IEPduSessionIdentity2 &ie)
+{
+    ie.value = generate_bit(8);
+}
+
 IETimeZone::IETimeZone(uint8_t value) : value(value)
 {
 }
@@ -227,6 +285,11 @@ IETimeZone IETimeZone::Decode(const OctetView &stream)
 void IETimeZone::Encode(const IETimeZone &ie, OctetString &stream)
 {
     stream.appendOctet(ie.value);
+}
+
+void IETimeZone::Mutate(IETimeZone &ie)
+{
+    ie.value = generate_bit(8);
 }
 
 IETimeZoneAndTime::IETimeZoneAndTime(VTime time, octet timezone) : time(time), timezone(timezone)
@@ -247,6 +310,12 @@ void IETimeZoneAndTime::Encode(const IETimeZoneAndTime &ie, OctetString &stream)
     stream.appendOctet(ie.timezone);
 }
 
+void IETimeZoneAndTime::Mutate(IETimeZoneAndTime &ie)
+{
+    VTime::Mutate(ie.time);
+    ie.timezone = generate_bit(8);
+}
+
 IE5gSmCause::IE5gSmCause(ESmCause value) : value(value)
 {
 }
@@ -259,6 +328,11 @@ IE5gSmCause IE5gSmCause::Decode(const OctetView &stream)
 void IE5gSmCause::Encode(const IE5gSmCause &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.value));
+}
+
+void IE5gSmCause::Mutate(IE5gSmCause &ie)
+{
+    ie.value = (ESmCause)generate_bit(8);
 }
 
 } // namespace nas

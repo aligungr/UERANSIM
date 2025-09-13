@@ -36,6 +36,14 @@
 #include <asn/ngap/ASN_NGAP_QosFlowPerTNLInformationList.h>
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestList.h>
+// add for sm fuzzing
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceModifyRequest.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceModifyListModReq.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceModifyItemModReq.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceModifyResponse.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceModifyListModRes.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceModifyItemModRes.h>
+#include <asn/ngap/ASN_NGAP_PDUSessionResourceModifyResponseTransfer.h>
 
 namespace nr::gnb
 {
@@ -311,6 +319,42 @@ void NgapTask::receiveSessionResourceReleaseCommand(int amfId, ASN_NGAP_PDUSessi
     sendNgapUeAssociated(ue->ctxId, respPdu);
 
     m_logger->info("PDU session resource(s) released for UE[%d] count[%d]", ue->ctxId, static_cast<int>(psIds.size()));
+}
+
+// pretend to handle session modify request: do nothing but pass NAS message to UE
+void NgapTask::receiveSessionResourceModifyRequest(int amfId, ASN_NGAP_PDUSessionResourceModifyRequest *msg)
+{
+    auto *ue = findUeByNgapIdPair(amfId, ngap_utils::FindNgapIdPair(msg));
+    if (ue == nullptr)
+        return;
+
+    auto *ieModReq = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_PDUSessionResourceModifyListModReq);
+    auto *NasPdu = ieModReq->PDUSessionResourceModifyListModReq.list.array[0]->nAS_PDU;
+    if (NasPdu)
+        deliverDownlinkNas(ue->ctxId, asn::GetOctetString(*NasPdu));
+
+    auto *ieResp = asn::New<ASN_NGAP_PDUSessionResourceModifyResponseIEs>();
+    ieResp->id = ASN_NGAP_ProtocolIE_ID_id_PDUSessionResourceModifyListModRes;
+    ieResp->criticality = ASN_NGAP_Criticality_ignore;
+    ieResp->value.present =
+        ASN_NGAP_PDUSessionResourceModifyResponseIEs__value_PR_PDUSessionResourceModifyListModRes;
+
+    auto *tr = asn::New<ASN_NGAP_PDUSessionResourceModifyResponseTransfer>();
+    OctetString encodedTr = ngap_encode::EncodeS(asn_DEF_ASN_NGAP_PDUSessionResourceModifyResponseTransfer, tr);
+
+    if (encodedTr.length() == 0)
+        throw std::runtime_error("PDUSessionResourceModifyResponseTransfer encoding failed");
+    asn::Free(asn_DEF_ASN_NGAP_PDUSessionResourceModifyResponseTransfer, tr);
+
+    auto *item = asn::New<ASN_NGAP_PDUSessionResourceModifyItemModRes>();
+    item->pDUSessionID = static_cast<ASN_NGAP_PDUSessionID_t>(1);
+    asn::SetOctetString(item->pDUSessionResourceModifyResponseTransfer, encodedTr);
+    asn::SequenceAdd(ieResp->value.choice.PDUSessionResourceModifyListModRes, item);
+
+    auto *respPdu = asn::ngap::NewMessagePdu<ASN_NGAP_PDUSessionResourceModifyResponse>({ieResp});
+    sendNgapUeAssociated(ue->ctxId, respPdu);
+
+    m_logger->info("PDU session resource(s) modify for UE[%d]", ue->ctxId);
 }
 
 } // namespace nr::gnb

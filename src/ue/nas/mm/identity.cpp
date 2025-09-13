@@ -12,6 +12,9 @@
 // STEPHANE
 #include <iostream>
 
+//state learner
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
@@ -54,7 +57,11 @@ void NasMm::receiveIdentityRequest(const nas::IdentityRequest &msg)
         m_logger->err("Requested identity is not available: %d", (int)msg.identityType.value);
     }
 
-    sendNasMessage(resp);
+    m_logger->debug("store message IdentityResponse");
+    state_learner->store_message(resp);
+    state_learner->storedMsgCount[(int)MsgType::identityResponse]++;
+    // StateLearner: don't send
+    // sendNasMessage(resp);
 }
 
 nas::IE5gsMobileIdentity NasMm::getOrGenerateSuci()

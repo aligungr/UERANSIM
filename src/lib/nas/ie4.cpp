@@ -10,6 +10,9 @@
 
 #include <utils/common.hpp>
 
+// fuzzing
+#include "nas_mutator.hpp"
+
 namespace nas
 {
 
@@ -27,6 +30,11 @@ IEDaylightSavingTime IEDaylightSavingTime::Decode(const OctetView &stream, int l
 void IEDaylightSavingTime::Encode(const IEDaylightSavingTime &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.value));
+}
+
+void IEDaylightSavingTime::Mutate(IEDaylightSavingTime &ie)
+{
+    ie.value = (EDaylightSavingTime)generate_bit(2);
 }
 
 IEPduSessionReactivationResult::IEPduSessionReactivationResult(std::bitset<16> psi) : psi(psi)
@@ -67,6 +75,12 @@ void IEPduSessionReactivationResult::Encode(const IEPduSessionReactivationResult
                                       {1, ie.psi[8]}}));
 }
 
+void IEPduSessionReactivationResult::Mutate(IEPduSessionReactivationResult &ie)
+{
+    for (int i=0; i<16; i++)
+        ie.psi[i] = generate_bit(1);
+}
+
 IEPduAddress::IEPduAddress(EPduSessionType sessionType, OctetString &&pduAddressInformation)
     : sessionType(sessionType), pduAddressInformation(std::move(pduAddressInformation))
 {
@@ -84,6 +98,12 @@ void IEPduAddress::Encode(const IEPduAddress &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.sessionType));
     stream.append(ie.pduAddressInformation);
+}
+
+void IEPduAddress::Mutate(IEPduAddress &ie)
+{
+    ie.sessionType = (EPduSessionType)generate_bit(3);
+    mutate_octet_string(ie.pduAddressInformation);
 }
 
 IESNssai::IESNssai(const octet &sst, const std::optional<octet3> &sd, const std::optional<octet> &mappedHplmnSst,
@@ -138,6 +158,17 @@ void IESNssai::Encode(const IESNssai &ie, OctetString &stream)
         stream.appendOctet3(ie.mappedHplmnSd.value());
 }
 
+void IESNssai::Mutate(IESNssai &ie)
+{
+    ie.sst = generate_bit(8);
+    if (generate_bit(1))
+        ie.sd = octet3(generate_bit(24));
+    if (generate_bit(1))
+        ie.mappedHplmnSst = generate_bit(8);
+    if (generate_bit(1))
+        ie.mappedHplmnSd = octet3(generate_bit(24));
+}
+
 IEAdditional5gSecurityInformation::IEAdditional5gSecurityInformation(EHorizontalDerivationParameter hdp,
                                                                      ERetransmissionOfInitialNasMessageRequest rinmr)
     : hdp(hdp), rinmr(rinmr)
@@ -155,6 +186,12 @@ IEAdditional5gSecurityInformation IEAdditional5gSecurityInformation::Decode(cons
 void IEAdditional5gSecurityInformation::Encode(const IEAdditional5gSecurityInformation &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.rinmr) << 1 | static_cast<int>(ie.hdp));
+}
+
+void IEAdditional5gSecurityInformation::Mutate(IEAdditional5gSecurityInformation &ie)
+{
+    ie.hdp = (EHorizontalDerivationParameter)generate_bit(1);
+    ie.rinmr = (ERetransmissionOfInitialNasMessageRequest)generate_bit(1);
 }
 
 IES1UeNetworkCapability IES1UeNetworkCapability::Decode(const OctetView &stream, int length)
@@ -277,6 +314,66 @@ void IES1UeNetworkCapability::Encode(const IES1UeNetworkCapability &ie, OctetStr
                                             ie.b_RestrictEC, ie.b_V2X_PC5, ie.b_multipleDRB));
 }
 
+void IES1UeNetworkCapability::Mutate(IES1UeNetworkCapability &ie)
+{
+    ie.b_EEA0 = generate_bit(1);
+    ie.b_128_EEA1 = generate_bit(1);
+    ie.b_128_EEA2 = generate_bit(1);
+    ie.b_128_EEA3 = generate_bit(1);
+    ie.b_EEA4 = generate_bit(1);
+    ie.b_EEA5 = generate_bit(1);
+    ie.b_EEA6 = generate_bit(1);
+    ie.b_EEA7 = generate_bit(1);
+    ie.b_EIA0 = generate_bit(1);
+    ie.b_128_EIA1 = generate_bit(1);
+    ie.b_128_EIA2 = generate_bit(1);
+    ie.b_128_EIA3 = generate_bit(1);
+    ie.b_EIA4 = generate_bit(1);
+    ie.b_EIA5 = generate_bit(1);
+    ie.b_EIA6 = generate_bit(1);
+    ie.b_EIA7 = generate_bit(1);
+    ie.b_UEA0 = generate_bit(1);
+    ie.b_UEA1 = generate_bit(1);
+    ie.b_UEA2 = generate_bit(1);
+    ie.b_UEA3 = generate_bit(1);
+    ie.b_UEA4 = generate_bit(1);
+    ie.b_UEA5 = generate_bit(1);
+    ie.b_UEA6 = generate_bit(1);
+    ie.b_UEA7 = generate_bit(1);
+    ie.b_UCS2 = generate_bit(1);
+    ie.b_UIA1 = generate_bit(1);
+    ie.b_UIA2 = generate_bit(1);
+    ie.b_UIA3 = generate_bit(1);
+    ie.b_UIA4 = generate_bit(1);
+    ie.b_UIA5 = generate_bit(1);
+    ie.b_UIA6 = generate_bit(1);
+    ie.b_UIA7 = generate_bit(1);
+    ie.b_NF = generate_bit(1);
+    ie.b_1xSR_VCC = generate_bit(1);
+    ie.b_LCS = generate_bit(1);
+    ie.b_LPP = generate_bit(1);
+    ie.b_ACC_CSFB = generate_bit(1);
+    ie.b_H_245_ASH = generate_bit(1);
+    ie.b_ProSe = generate_bit(1);
+    ie.b_ProSe_dd = generate_bit(1);
+    ie.b_ProSe_dc = generate_bit(1);
+    ie.b_Prose_relay = generate_bit(1);
+    ie.b_CP_CIoT = generate_bit(1);
+    ie.b_UP_CIoT = generate_bit(1);
+    ie.b_S1_U_data = generate_bit(1);
+    ie.b_ERw_oPDN = generate_bit(1);
+    ie.b_HC_CP_CIoT = generate_bit(1);
+    ie.b_ePCO = generate_bit(1);
+    ie.b_multipleDRB = generate_bit(1);
+    ie.b_V2X_PC5 = generate_bit(1);
+    ie.b_RestrictEC = generate_bit(1);
+    ie.b_CP_backoff = generate_bit(1);
+    ie.b_DCNR = generate_bit(1);
+    ie.b_N1mode = generate_bit(1);
+    ie.b_SGC = generate_bit(1);
+    ie.b_15_bearers = generate_bit(1);
+}
+
 IES1UeNetworkCapability::IES1UeNetworkCapability()
     : b_EEA0(0), b_128_EEA1(0), b_128_EEA2(0), b_128_EEA3(0), b_EEA4(0), b_EEA5(0), b_EEA6(0), b_EEA7(0), b_EIA0(0),
       b_128_EIA1(0), b_128_EIA2(0), b_128_EIA3(0), b_EIA4(0), b_EIA5(0), b_EIA6(0), b_EIA7(0), b_UEA0(0), b_UEA1(0),
@@ -314,6 +411,12 @@ void IEGprsTimer3::Encode(const IEGprsTimer3 &ie, OctetString &stream)
     stream.appendOctet(octet);
 }
 
+void IEGprsTimer3::Mutate(IEGprsTimer3 &ie)
+{
+    ie.timerValue = generate_bit(5);
+    ie.unit = (EGprsTimerValueUnit3)generate_bit(3);
+}
+
 IEAuthenticationFailureParameter::IEAuthenticationFailureParameter(OctetString &&rawData) : rawData(std::move(rawData))
 {
 }
@@ -330,6 +433,11 @@ void IEAuthenticationFailureParameter::Encode(const IEAuthenticationFailureParam
     stream.append(ie.rawData);
 }
 
+void IEAuthenticationFailureParameter::Mutate(IEAuthenticationFailureParameter &ie)
+{
+    mutate_octet_string(ie.rawData);
+}
+
 IEAbba::IEAbba(OctetString &&rawData) : rawData(std::move(rawData))
 {
 }
@@ -344,6 +452,11 @@ IEAbba IEAbba::Decode(const OctetView &stream, int length)
 void IEAbba::Encode(const IEAbba &ie, OctetString &stream)
 {
     stream.append(ie.rawData);
+}
+
+void IEAbba::Mutate(IEAbba &ie)
+{
+    mutate_octet_string(ie.rawData);
 }
 
 IES1ModeToN1ModeNasTransparentContainer::IES1ModeToN1ModeNasTransparentContainer(
@@ -391,6 +504,19 @@ void IES1ModeToN1ModeNasTransparentContainer::Encode(const IES1ModeToN1ModeNasTr
         stream.appendOctet2(ie.ueSecurityCapabilityEps.value());
 }
 
+void IES1ModeToN1ModeNasTransparentContainer::Mutate(IES1ModeToN1ModeNasTransparentContainer &ie)
+{
+    ie.mac = octet4(generate_bit(32));
+    ie.cipheringAlg = (ETypeOfCipheringAlgorithm)generate_bit(4);
+    ie.integrityProtectionAlg = (ETypeOfIntegrityProtectionAlgorithm)generate_bit(4);
+    ie.keySetIdentifierIn5g = generate_bit(3);
+    ie.tsc = (ETypeOfSecurityContext)generate_bit(1);
+    ie.ncc = generate_bit(3);
+    ie.ueSecurityCapability5g = octet2(generate_bit(16));
+    if (generate_bit(1))
+        ie.ueSecurityCapabilityEps = octet2(generate_bit(16));
+}
+
 IEGprsTimer2 IEGprsTimer2::Decode(const OctetView &stream, int length)
 {
     IEGprsTimer2 r;
@@ -405,6 +531,11 @@ IEGprsTimer2::IEGprsTimer2(octet value) : value(value)
 void IEGprsTimer2::Encode(const IEGprsTimer2 &ie, OctetString &stream)
 {
     stream.appendOctet(ie.value);
+}
+
+void IEGprsTimer2::Mutate(IEGprsTimer2 &ie)
+{
+    ie.value = generate_bit(8);
 }
 
 IE5gSmCapability::IE5gSmCapability(EReflectiveQoS rqos, EMultiHomedIPv6PduSession mh6Pdu) : rqos(rqos), mh6pdu(mh6Pdu)
@@ -426,6 +557,12 @@ IE5gSmCapability IE5gSmCapability::Decode(const OctetView &stream, int length)
 void IE5gSmCapability::Encode(const IE5gSmCapability &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.mh6pdu) << 1 | static_cast<int>(ie.rqos));
+}
+
+void IE5gSmCapability::Mutate(IE5gSmCapability &ie)
+{
+    ie.rqos = (EReflectiveQoS)generate_bit(1);
+    ie.mh6pdu = (EMultiHomedIPv6PduSession)generate_bit(1);
 }
 
 IEUeSecurityCapability::IEUeSecurityCapability()
@@ -513,6 +650,42 @@ void IEUeSecurityCapability::Encode(const IEUeSecurityCapability &ie, OctetStrin
                                             ie.b_EIA5, ie.b_EIA6, ie.b_EIA7));
 }
 
+void IEUeSecurityCapability::Mutate(IEUeSecurityCapability &ie)
+{
+    ie.b_5G_EA0 = generate_bit(1);
+    ie.b_128_5G_EA1 = generate_bit(1);
+    ie.b_128_5G_EA2 = generate_bit(1);
+    ie.b_128_5G_EA3 = generate_bit(1);
+    ie.b_5G_EA4 = generate_bit(1);
+    ie.b_5G_EA5 = generate_bit(1);
+    ie.b_5G_EA6 = generate_bit(1);
+    ie.b_5G_EA7 = generate_bit(1);
+    ie.b_5G_IA0 = generate_bit(1);
+    ie.b_128_5G_IA1 = generate_bit(1);
+    ie.b_128_5G_IA2 = generate_bit(1);
+    ie.b_128_5G_IA3 = generate_bit(1);
+    ie.b_5G_IA4 = generate_bit(1);
+    ie.b_5G_IA5 = generate_bit(1);
+    ie.b_5G_IA6 = generate_bit(1);
+    ie.b_5G_IA7 = generate_bit(1);
+    ie.b_EEA0 = generate_bit(1);
+    ie.b_128_EEA1 = generate_bit(1);
+    ie.b_128_EEA2 = generate_bit(1);
+    ie.b_128_EEA3 = generate_bit(1);
+    ie.b_EEA4 = generate_bit(1);
+    ie.b_EEA5 = generate_bit(1);
+    ie.b_EEA6 = generate_bit(1);
+    ie.b_EEA7 = generate_bit(1);
+    ie.b_EIA0 = generate_bit(1);
+    ie.b_128_EIA1 = generate_bit(1);
+    ie.b_128_EIA2 = generate_bit(1);
+    ie.b_128_EIA3 = generate_bit(1);
+    ie.b_EIA4 = generate_bit(1);
+    ie.b_EIA5 = generate_bit(1);
+    ie.b_EIA6 = generate_bit(1);
+    ie.b_EIA7 = generate_bit(1);
+}
+
 IESessionAmbr::IESessionAmbr(EUnitForSessionAmbr unitForSessionAmbrForDownlink, const octet2 &sessionAmbrForDownlink,
                              EUnitForSessionAmbr unitForSessionAmbrForUplink, const octet2 &sessionAmbrForUplink)
     : unitForSessionAmbrForDownlink(unitForSessionAmbrForDownlink), sessionAmbrForDownlink(sessionAmbrForDownlink),
@@ -538,6 +711,14 @@ void IESessionAmbr::Encode(const IESessionAmbr &ie, OctetString &stream)
     stream.appendOctet2(ie.sessionAmbrForUplink);
 }
 
+void IESessionAmbr::Mutate(IESessionAmbr &ie)
+{
+    ie.unitForSessionAmbrForDownlink = (EUnitForSessionAmbr)generate_bit(8);
+    ie.sessionAmbrForDownlink = octet2(generate_bit(16));
+    ie.unitForSessionAmbrForUplink = (EUnitForSessionAmbr)generate_bit(8);
+    ie.sessionAmbrForUplink = octet2(generate_bit(16));
+}
+
 IEAuthenticationParameterAutn::IEAuthenticationParameterAutn(OctetString &&value) : value(std::move(value))
 {
 }
@@ -552,6 +733,11 @@ IEAuthenticationParameterAutn IEAuthenticationParameterAutn::Decode(const OctetV
 void IEAuthenticationParameterAutn::Encode(const IEAuthenticationParameterAutn &ie, OctetString &stream)
 {
     stream.append(ie.value);
+}
+
+void IEAuthenticationParameterAutn::Mutate(IEAuthenticationParameterAutn &ie)
+{
+    mutate_octet_string(ie.value);
 }
 
 IE5gsUpdateType::IE5gsUpdateType(ESmsRequested smsRequested, ENgRanRadioCapabilityUpdate ngRanRcu)
@@ -571,6 +757,12 @@ void IE5gsUpdateType::Encode(const IE5gsUpdateType &ie, OctetString &stream)
 {
     stream.appendOctet(
         bits::Ranged8({{6, 0}, {1, static_cast<int>(ie.ngRanRcu)}, {1, static_cast<int>(ie.smsRequested)}}));
+}
+
+void IE5gsUpdateType::Mutate(IE5gsUpdateType &ie)
+{
+    ie.smsRequested = (ESmsRequested)generate_bit(1);
+    ie.ngRanRcu = (ENgRanRadioCapabilityUpdate)generate_bit(1);
 }
 
 IEUplinkDataStatus::IEUplinkDataStatus(std::bitset<16> psi) : psi(psi)
@@ -611,6 +803,13 @@ void IEUplinkDataStatus::Encode(const IEUplinkDataStatus &ie, OctetString &strea
                                       {1, ie.psi[8]}}));
 }
 
+void IEUplinkDataStatus::Mutate(IEUplinkDataStatus &ie)
+{
+    for (int i=0; i<16; i++)
+        ie.psi[i] = generate_bit(1);
+
+}
+
 IEAdditionalInformation::IEAdditionalInformation(OctetString &&rawData) : rawData(std::move(rawData))
 {
 }
@@ -625,6 +824,11 @@ IEAdditionalInformation IEAdditionalInformation::Decode(const OctetView &stream,
 void IEAdditionalInformation::Encode(const IEAdditionalInformation &ie, OctetString &stream)
 {
     stream.append(ie.rawData);
+}
+
+void IEAdditionalInformation::Mutate(IEAdditionalInformation &ie)
+{
+    mutate_octet_string(ie.rawData);
 }
 
 IEAuthenticationResponseParameter::IEAuthenticationResponseParameter(OctetString &&rawData)
@@ -642,6 +846,12 @@ IEAuthenticationResponseParameter IEAuthenticationResponseParameter::Decode(cons
 void IEAuthenticationResponseParameter::Encode(const IEAuthenticationResponseParameter &ie, OctetString &stream)
 {
     stream.append(ie.rawData);
+}
+
+void IEAuthenticationResponseParameter::Mutate(IEAuthenticationResponseParameter &ie)
+{
+    // TODO: not mutate for now
+    // mutate_octet_string(ie.rawData);
 }
 
 IEUeStatus::IEUeStatus(EEmmRegistrationStatus s1ModeReg, E5gMmRegistrationStatus n1ModeReg)
@@ -664,6 +874,12 @@ void IEUeStatus::Encode(const IEUeStatus &ie, OctetString &stream)
     stream.appendOctet(static_cast<int>(ie.s1ModeReg) | (static_cast<int>(ie.n1ModeReg) << 1));
 }
 
+void IEUeStatus::Mutate(IEUeStatus &ie)
+{
+    ie.s1ModeReg = (EEmmRegistrationStatus)generate_bit(1);
+    ie.n1ModeReg = (E5gMmRegistrationStatus)generate_bit(1);
+}
+
 IE5gsRegistrationResult::IE5gsRegistrationResult(ESmsOverNasTransportAllowed smsOverNasAllowed,
                                                  E5gsRegistrationResult registrationResult)
     : registrationResult(registrationResult), smsOverNasAllowed(smsOverNasAllowed)
@@ -683,6 +899,12 @@ IE5gsRegistrationResult IE5gsRegistrationResult::Decode(const OctetView &stream,
 void IE5gsRegistrationResult::Encode(const IE5gsRegistrationResult &ie, OctetString &stream)
 {
     stream.appendOctet((static_cast<int>(ie.smsOverNasAllowed) << 3) | static_cast<int>(ie.registrationResult));
+}
+
+void IE5gsRegistrationResult::Mutate(IE5gsRegistrationResult &ie)
+{
+    ie.registrationResult = (E5gsRegistrationResult)generate_bit(3);
+    ie.smsOverNasAllowed = (ESmsOverNasTransportAllowed)generate_bit(1);
 }
 
 IENetworkName::IENetworkName(uint8_t numOfSpareBits, EAddCountryInitials addCi, ECodingScheme codingScheme,
@@ -710,6 +932,14 @@ void IENetworkName::Encode(const IENetworkName &ie, OctetString &stream)
     stream.append(ie.textString);
 }
 
+void IENetworkName::Mutate(IENetworkName &ie)
+{
+    ie.numOfSpareBits = generate_bit(3);
+    ie.addCi = (EAddCountryInitials)generate_bit(1);
+    ie.codingScheme = (ECodingScheme)generate_bit(3);
+    mutate_octet_string(ie.textString);
+}
+
 IEUesUsageSetting::IEUesUsageSetting(EUesUsageSetting value) : value(value)
 {
 }
@@ -724,6 +954,11 @@ IEUesUsageSetting IEUesUsageSetting::Decode(const OctetView &stream, int length)
 void IEUesUsageSetting::Encode(const IEUesUsageSetting &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.value));
+}
+
+void IEUesUsageSetting::Mutate(IEUesUsageSetting &ie)
+{
+    ie.value = (EUesUsageSetting)generate_bit(1);
 }
 
 IEIntraN1ModeNasTransparentContainer::IEIntraN1ModeNasTransparentContainer(
@@ -764,6 +999,17 @@ void IEIntraN1ModeNasTransparentContainer::Encode(const IEIntraN1ModeNasTranspar
     stream.appendOctet(ie.sequenceNumber);
 }
 
+void IEIntraN1ModeNasTransparentContainer::Mutate(IEIntraN1ModeNasTransparentContainer &ie)
+{
+    ie.mac = octet4(generate_bit(32));
+    ie.cipheringAlg = (ETypeOfCipheringAlgorithm)generate_bit(4);
+    ie.integrityProtectionAlg = (ETypeOfIntegrityProtectionAlgorithm)generate_bit(4);
+    ie.keySetIdentifierIn5g = generate_bit(3);
+    ie.tsc = (ETypeOfSecurityContext)generate_bit(1);
+    ie.kacf = (EKeyAmfChangeFlag)generate_bit(1);
+    ie.sequenceNumber = generate_bit(8);
+}
+
 IEAllowedPduSessionStatus::IEAllowedPduSessionStatus(std::bitset<16> psi) : psi(psi)
 {
 }
@@ -800,6 +1046,12 @@ void IEAllowedPduSessionStatus::Encode(const IEAllowedPduSessionStatus &ie, Octe
                                       {1, ie.psi[10]},
                                       {1, ie.psi[9]},
                                       {1, ie.psi[8]}}));
+}
+
+void IEAllowedPduSessionStatus::Mutate(IEAllowedPduSessionStatus &ie)
+{
+    for (int i=0; i<16; i++)
+        ie.psi[i] = generate_bit(1);
 }
 
 IEPduSessionStatus::IEPduSessionStatus(std::bitset<16> psi) : psi(psi)
@@ -840,6 +1092,12 @@ void IEPduSessionStatus::Encode(const IEPduSessionStatus &ie, OctetString &strea
                                       {1, ie.psi[8]}}));
 }
 
+void IEPduSessionStatus::Mutate(IEPduSessionStatus &ie)
+{
+    for (int i=0; i<16; i++)
+        ie.psi[i] = generate_bit(1);
+}
+
 IE5gsDrxParameters::IE5gsDrxParameters(EDrxValue value) : value(value)
 {
 }
@@ -854,6 +1112,11 @@ IE5gsDrxParameters IE5gsDrxParameters::Decode(const OctetView &stream, int lengt
 void IE5gsDrxParameters::Encode(const IE5gsDrxParameters &ie, OctetString &stream)
 {
     stream.appendOctet(static_cast<int>(ie.value));
+}
+
+void IE5gsDrxParameters::Mutate(IE5gsDrxParameters &ie)
+{
+    ie.value = (EDrxValue)generate_bit(4);
 }
 
 IE5gMmCapability::IE5gMmCapability(EEpcNasSupported s1Mode, EHandoverAttachSupported hoAttach,
@@ -884,6 +1147,13 @@ void IE5gMmCapability::Encode(const IE5gMmCapability &ie, OctetString &stream)
     stream.appendOctet(octet);
 }
 
+void IE5gMmCapability::Mutate(IE5gMmCapability &ie)
+{
+    ie.s1Mode = (EEpcNasSupported)generate_bit(1);
+    ie.hoAttach = (EHandoverAttachSupported)generate_bit(1);
+    ie.lpp = (ELtePositioningProtocolCapability)generate_bit(1);
+}
+
 IESmPduDnRequestContainer::IESmPduDnRequestContainer(OctetString &&dnSpecificIdentity)
     : dnSpecificIdentity(std::move(dnSpecificIdentity))
 {
@@ -899,6 +1169,11 @@ IESmPduDnRequestContainer IESmPduDnRequestContainer::Decode(const OctetView &str
 void IESmPduDnRequestContainer::Encode(const IESmPduDnRequestContainer &ie, OctetString &stream)
 {
     stream.append(ie.dnSpecificIdentity);
+}
+
+void IESmPduDnRequestContainer::Mutate(IESmPduDnRequestContainer &ie)
+{
+    mutate_octet_string(ie.dnSpecificIdentity);
 }
 
 IE5gsNetworkFeatureSupport::IE5gsNetworkFeatureSupport(
@@ -951,6 +1226,20 @@ void IE5gsNetworkFeatureSupport::Encode(const IE5gsNetworkFeatureSupport &ie, Oc
             bits::Ranged8({{6, 0}, {1, static_cast<int>(ie.mcsi.value())}, {1, static_cast<int>(ie.emcn3.value())}}));
 }
 
+void IE5gsNetworkFeatureSupport::Mutate(IE5gsNetworkFeatureSupport &ie)
+{
+    ie.imsVoPs3gpp = (EImsVoPs3gpp)generate_bit(1);
+    ie.imsVoPsN3gpp = (EImsVoPsN3gpp)generate_bit(1);
+    ie.emc = (EEmergencyServiceSupport3gppIndicator)generate_bit(2);
+    ie.emf = (EEmergencyServiceFallback3gppIndicator)generate_bit(2);
+    ie.iwkN26 = (EInterworkingWithoutN26InterfaceIndicator)generate_bit(1);
+    ie.mpsi = (EMpsIndicator)generate_bit(1);
+    if (generate_bit(1))
+        ie.emcn3 = (EEmergencyServiceSupportNon3gppIndicator)generate_bit(1);
+    if (generate_bit(1))
+        ie.mcsi = (EMcsIndicator)generate_bit(1);
+}
+
 IEDnn::IEDnn(OctetString &&apn) : apn(std::move(apn))
 {
 }
@@ -975,6 +1264,11 @@ void IEDnn::Encode(const IEDnn &ie, OctetString &stream)
     stream.append(ie.apn);
 }
 
+void IEDnn::Mutate(IEDnn &ie)
+{
+    mutate_octet_string(ie.apn);
+}
+
 IENssai::IENssai(std::vector<IESNssai> &&sNssais) : sNssais(std::move(sNssais))
 {
 }
@@ -990,6 +1284,12 @@ void IENssai::Encode(const IENssai &ie, OctetString &stream)
 {
     for (auto &x : ie.sNssais)
         EncodeIe4(x, stream);
+}
+
+void IENssai::Mutate(IENssai &ie)
+{
+    for (auto &x : ie.sNssais)
+        IESNssai::Mutate(x);
 }
 
 IEPlmnList::IEPlmnList(std::vector<VPlmn> &&plmns) : plmns(std::move(plmns))
@@ -1009,6 +1309,12 @@ void IEPlmnList::Encode(const IEPlmnList &ie, OctetString &stream)
         VPlmn::Encode(x, stream);
 }
 
+void IEPlmnList::Mutate(IEPlmnList &ie)
+{
+    for (auto &x : ie.plmns)
+        VPlmn::Mutate(x);
+}
+
 IEEmergencyNumberList::IEEmergencyNumberList(OctetString &&rawData) : rawData(std::move(rawData))
 {
 }
@@ -1023,6 +1329,11 @@ IEEmergencyNumberList IEEmergencyNumberList::Decode(const OctetView &stream, int
 void IEEmergencyNumberList::Encode(const IEEmergencyNumberList &ie, OctetString &stream)
 {
     stream.append(ie.rawData);
+}
+
+void IEEmergencyNumberList::Mutate(IEEmergencyNumberList &ie)
+{
+    mutate_octet_string(ie.rawData);
 }
 
 IERejectedNssai::IERejectedNssai(std::vector<VRejectedSNssai> &&list) : list(std::move(list))
@@ -1042,6 +1353,12 @@ void IERejectedNssai::Encode(const IERejectedNssai &ie, OctetString &stream)
         VRejectedSNssai::Encode(x, stream);
 }
 
+void IERejectedNssai::Mutate(IERejectedNssai &ie)
+{
+    for (auto &x : ie.list)
+        VRejectedSNssai::Mutate(x);
+}
+
 IEServiceAreaList::IEServiceAreaList(std::vector<VPartialServiceAreaList> &&list) : list(std::move(list))
 {
 }
@@ -1057,6 +1374,12 @@ void IEServiceAreaList::Encode(const IEServiceAreaList &ie, OctetString &stream)
 {
     for (auto &x : ie.list)
         VPartialServiceAreaList::Encode(x, stream);
+}
+
+void IEServiceAreaList::Mutate(IEServiceAreaList &ie)
+{
+    for (auto &x : ie.list)
+        VPartialServiceAreaList::Mutate(x);
 }
 
 IE5gsTrackingAreaIdentityList::IE5gsTrackingAreaIdentityList(std::vector<VPartialTrackingAreaIdentityList> &&list)
@@ -1075,6 +1398,12 @@ void IE5gsTrackingAreaIdentityList::Encode(const IE5gsTrackingAreaIdentityList &
 {
     for (auto &x : ie.list)
         VPartialTrackingAreaIdentityList::Encode(x, stream);
+}
+
+void IE5gsTrackingAreaIdentityList::Mutate(IE5gsTrackingAreaIdentityList &ie)
+{
+    for (auto &x : ie.list)
+        VPartialTrackingAreaIdentityList::Mutate(x);
 }
 
 Json ToJson(const IEPduAddress &v)

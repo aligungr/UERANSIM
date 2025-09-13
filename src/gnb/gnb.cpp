@@ -16,6 +16,9 @@
 
 #include <lib/app/cli_base.hpp>
 
+// gnb socket
+#include <gnb/app/socket.hpp>
+
 namespace nr::gnb
 {
 
@@ -35,6 +38,10 @@ GNodeB::GNodeB(GnbConfig *config, app::INodeListener *nodeListener, NtsTask *cli
     base->rlsTask = new GnbRlsTask(base);
 
     taskBase = base;
+
+    // start gnb socket
+    gnb_socket = new GNBSocket{base};
+    gnb_socket->startThread();
 }
 
 GNodeB::~GNodeB()
@@ -56,6 +63,8 @@ GNodeB::~GNodeB()
     delete taskBase->logBase;
 
     delete taskBase;
+
+    delete gnb_socket;
 }
 
 void GNodeB::start()

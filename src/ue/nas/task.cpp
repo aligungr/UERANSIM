@@ -68,13 +68,14 @@ void NasTask::onLoop()
             mm->handleNasEvent(w);
             break;
         }
-        case NmUeNasToNas::NAS_TIMER_EXPIRE: {
-            if (w.timer->isMmTimer())
-                mm->handleNasEvent(w);
-            else
-                sm->handleNasEvent(w);
-            break;
-        }
+        // comment below to disable all timers
+        // case NmUeNasToNas::NAS_TIMER_EXPIRE: {
+        //     if (w.timer->isMmTimer())
+        //         mm->handleNasEvent(w);
+        //     else
+        //         sm->handleNasEvent(w);
+        //     break;
+        // }
         default:
             break;
         }

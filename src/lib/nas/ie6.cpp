@@ -8,6 +8,10 @@
 
 #include "ie6.hpp"
 
+// fuzzing
+#include "nas_mutator.hpp"
+#include <ue/app/state_learner.hpp>
+
 namespace nas
 {
 
@@ -28,6 +32,12 @@ void IEQoSFlowDescriptions::Encode(const IEQoSFlowDescriptions &ie, OctetString 
         VQoSFlowDescription::Encode(x, stream);
 }
 
+void IEQoSFlowDescriptions::Mutate(IEQoSFlowDescriptions &ie)
+{
+    for (auto &x : ie.list)
+        VQoSFlowDescription::Mutate(x);
+}
+
 IEPayloadContainer::IEPayloadContainer(OctetString &&data) : data(std::move(data))
 {
 }
@@ -40,6 +50,11 @@ IEPayloadContainer IEPayloadContainer::Decode(const OctetView &stream, int lengt
 void IEPayloadContainer::Encode(const IEPayloadContainer &ie, OctetString &stream)
 {
     stream.append(ie.data);
+}
+
+void IEPayloadContainer::Mutate(IEPayloadContainer &ie)
+{
+    mutate_octet_string(ie.data);
 }
 
 IEExtendedEmergencyNumberList::IEExtendedEmergencyNumberList(OctetString &&data) : data(std::move(data))
@@ -56,6 +71,11 @@ void IEExtendedEmergencyNumberList::Encode(const IEExtendedEmergencyNumberList &
     stream.append(ie.data);
 }
 
+void IEExtendedEmergencyNumberList::Mutate(IEExtendedEmergencyNumberList &ie)
+{
+    mutate_octet_string(ie.data);
+}
+
 IEEpsNasMessageContainer::IEEpsNasMessageContainer(OctetString &&data) : data(std::move(data))
 {
 }
@@ -70,6 +90,11 @@ void IEEpsNasMessageContainer::Encode(const IEEpsNasMessageContainer &ie, OctetS
     stream.append(ie.data);
 }
 
+void IEEpsNasMessageContainer::Mutate(IEEpsNasMessageContainer &ie)
+{
+    mutate_octet_string(ie.data);
+}
+
 IENasMessageContainer::IENasMessageContainer(OctetString &&data) : data(std::move(data))
 {
 }
@@ -82,6 +107,11 @@ IENasMessageContainer IENasMessageContainer::Decode(const OctetView &stream, int
 void IENasMessageContainer::Encode(const IENasMessageContainer &ie, OctetString &stream)
 {
     stream.append(ie.data);
+}
+
+void IENasMessageContainer::Mutate(IENasMessageContainer &ie)
+{
+    mutate_octet_string(ie.data);
 }
 
 IEExtendedProtocolConfigurationOptions::IEExtendedProtocolConfigurationOptions(
@@ -109,6 +139,13 @@ void IEExtendedProtocolConfigurationOptions::Encode(const IEExtendedProtocolConf
     stream.append(ie.options);
 }
 
+void IEExtendedProtocolConfigurationOptions::Mutate(IEExtendedProtocolConfigurationOptions &ie)
+{
+    ie.configurationProtocol = static_cast<EConfigurationProtocol>(generate_bit(3));
+    ie.extension = generate_bit(1);
+    mutate_octet_string(ie.options);
+}
+
 IEPduSessionReactivationResultErrorCause::IEPduSessionReactivationResultErrorCause(
     std::vector<VPduSessionReactivationResultErrorCause> &&values)
     : values(std::move(values))
@@ -130,6 +167,12 @@ void IEPduSessionReactivationResultErrorCause::Encode(const IEPduSessionReactiva
         VPduSessionReactivationResultErrorCause::Encode(x, stream);
 }
 
+void IEPduSessionReactivationResultErrorCause::Mutate(IEPduSessionReactivationResultErrorCause &ie)
+{
+    for (auto &x : ie.values)
+        VPduSessionReactivationResultErrorCause::Mutate(x);
+}
+
 IELadnIndication::IELadnIndication(std::vector<IEDnn> &&values) : values(std::move(values))
 {
 }
@@ -145,6 +188,12 @@ void IELadnIndication::Encode(const IELadnIndication &ie, OctetString &stream)
 {
     for (auto &x : ie.values)
         Encode2346(x, stream);
+}
+
+void IELadnIndication::Mutate(IELadnIndication &ie)
+{
+    for (auto &x : ie.values)
+        Mutate2346(x);
 }
 
 VLadn::VLadn(IEDnn &&dnn, IE5gsTrackingAreaIdentityList &&trackingAreaIdentityList)
@@ -163,6 +212,12 @@ VLadn VLadn::Decode(const OctetView &stream)
     return VLadn{DecodeIe2346<IEDnn>(stream), DecodeIe2346<IE5gsTrackingAreaIdentityList>(stream)};
 }
 
+void VLadn::Mutate(VLadn &value)
+{
+    Mutate2346(value.dnn);
+    Mutate2346(value.trackingAreaIdentityList);
+}
+
 IELadnInformation::IELadnInformation(std::vector<VLadn> &&ladnList) : ladnList(std::move(ladnList))
 {
 }
@@ -178,6 +233,12 @@ void IELadnInformation::Encode(const IELadnInformation &ie, OctetString &stream)
 {
     for (auto &x : ie.ladnList)
         VLadn::Encode(x, stream);
+}
+
+void IELadnInformation::Mutate(IELadnInformation &ie)
+{
+    for (auto &x : ie.ladnList)
+        VLadn::Mutate(x);
 }
 
 IEOperatorDefinedAccessCategoryDefinitions::IEOperatorDefinedAccessCategoryDefinitions(
@@ -201,6 +262,12 @@ void IEOperatorDefinedAccessCategoryDefinitions::Encode(const IEOperatorDefinedA
         VOperatorDefinedAccessCategoryDefinition::Encode(x, stream);
 }
 
+void IEOperatorDefinedAccessCategoryDefinitions::Mutate(IEOperatorDefinedAccessCategoryDefinitions &ie)
+{
+    for (auto &x : ie.values)
+        VOperatorDefinedAccessCategoryDefinition::Mutate(x);
+}
+
 IEMappedEpsBearerContexts::IEMappedEpsBearerContexts(OctetString &&data) : data(std::move(data))
 {
 }
@@ -215,6 +282,11 @@ void IEMappedEpsBearerContexts::Encode(const IEMappedEpsBearerContexts &ie, Octe
     stream.append(ie.data);
 }
 
+void IEMappedEpsBearerContexts::Mutate(IEMappedEpsBearerContexts &ie)
+{
+    mutate_octet_string(ie.data);
+}
+
 IEQoSRules::IEQoSRules(OctetString &&data) : data(std::move(data))
 {
 }
@@ -227,6 +299,11 @@ IEQoSRules IEQoSRules::Decode(const OctetView &stream, int length)
 void IEQoSRules::Encode(const IEQoSRules &ie, OctetString &stream)
 {
     stream.append(ie.data);
+}
+
+void IEQoSRules::Mutate(IEQoSRules &ie)
+{
+    mutate_octet_string(ie.data);
 }
 
 IESorTransparentContainer IESorTransparentContainer::Decode(const OctetView &stream, int length)
@@ -284,6 +361,32 @@ void IESorTransparentContainer::Encode(const IESorTransparentContainer &ie, Octe
             for (auto &x : ie.piat)
                 VPlmnIdAccessTech::Encode(x, stream);
         }
+    }
+}
+
+void IESorTransparentContainer::Mutate(IESorTransparentContainer &ie)
+{
+    ie.sorDataType = static_cast<ESorDataType>(generate_bit(1));
+
+    if (ie.sorDataType == ESorDataType::STEERING_OF_ROAMING_INFORMATION)
+    {
+        ie.listIndication = static_cast<ESorListIndication>(generate_bit(1));
+        ie.listType = static_cast<ESorListType>(generate_bit(1));
+        ie.ack = static_cast<EAcknowledgement>(generate_bit(1));
+        mutate_octet_string(ie.sorMacIAusf);
+        ie.counterSor = octet2(generate_bit(16));
+
+        if (ie.listType == ESorListType::SECURED_PACKET)
+            mutate_octet_string(ie.securedPacket);
+        else
+        {
+            for (auto &x : ie.piat)
+                VPlmnIdAccessTech::Mutate(x);
+        }
+    }
+    else
+    {
+        mutate_octet_string(ie.sorMacIUe);
     }
 }
 
@@ -431,6 +534,103 @@ IE5gsMobileIdentity IE5gsMobileIdentity::Decode(const OctetView &stream, int len
     return result;
 }
 
+void IE5gsMobileIdentity::Mutate(IE5gsMobileIdentity &ie)
+{
+    // fuzzing: mutate type and further mutate based on type
+    int if_mutate = generate_bit(1);
+    ie.type = static_cast<EIdentityType>(generate_bit(3));
+    switch (ie.type)
+    {
+    case EIdentityType::SUCI: {
+        ie.supiFormat = static_cast<ESupiFormat>(generate_bit(3));
+        if (ie.supiFormat == ESupiFormat::NETWORK_SPECIFIC_IDENTIFIER)
+        {
+            mutate_string(ie.value);
+        }
+        else
+        {
+            if (if_mutate)
+            {
+                ie.imsi.plmn.mcc = generate_int(1000);
+                ie.imsi.plmn.mnc = generate_int(1000);
+                ie.imsi.plmn.isLongMnc = generate_bit(1);
+
+                mutate_string(ie.imsi.routingIndicator);
+                ie.imsi.protectionSchemaId = generate_bit(4);
+                ie.imsi.homeNetworkPublicKeyIdentifier = generate_bit(8);
+                mutate_string(ie.imsi.schemeOutput);
+            }
+            else
+            {
+                // get SUCI
+                ie = nr::ue::state_learner->getOrGenerateId(EIdentityType::SUCI);
+            }
+        }
+        break;
+    }
+    case EIdentityType::GUTI: {
+        if (if_mutate)
+        {
+            ie.gutiOrTmsi.plmn.mcc = generate_int(1000);
+            ie.gutiOrTmsi.plmn.mnc = generate_int(1000);
+            ie.gutiOrTmsi.plmn.isLongMnc = generate_bit(1);
+            ie.gutiOrTmsi.amfRegionId = generate_bit(8);
+            ie.gutiOrTmsi.amfSetId = generate_bit(10);
+            ie.gutiOrTmsi.amfPointer = generate_bit(6);
+            ie.gutiOrTmsi.tmsi = octet4(generate_bit(32));
+        }
+        else
+        {
+            // get GUTI
+            ie = nr::ue::state_learner->getOrGenerateId(EIdentityType::GUTI);
+        }
+        break;
+    }
+    case EIdentityType::IMEI: {
+        if (if_mutate)
+        {
+            mutate_string(ie.value);
+        }
+        else
+        {
+            // get IMEI
+            ie = nr::ue::state_learner->getOrGenerateId(EIdentityType::IMEI);
+        }
+        break;
+    }
+    case EIdentityType::TMSI: {
+        if (if_mutate)
+        {
+            ie.gutiOrTmsi.amfSetId = generate_bit(10);
+            ie.gutiOrTmsi.amfPointer = generate_bit(6);
+            ie.gutiOrTmsi.tmsi = octet4(generate_bit(32));
+        }
+        else
+        {
+            // get TMSI
+            ie = nr::ue::state_learner->getOrGenerateId(EIdentityType::TMSI);
+        }
+        break;
+    }
+    case EIdentityType::IMEISV: {
+        if (if_mutate)
+        {
+            mutate_string(ie.value);
+        }
+        else
+        {
+            // get IMEISV
+            ie = nr::ue::state_learner->getOrGenerateId(EIdentityType::IMEISV);
+        }
+        break;
+    }
+    case EIdentityType::NO_IDENTITY:
+        break;
+    default:
+        break;
+    }
+}
+
 IEEapMessage IEEapMessage::Decode(const OctetView &stream, int length)
 {
     IEEapMessage r;
@@ -441,6 +641,11 @@ IEEapMessage IEEapMessage::Decode(const OctetView &stream, int length)
 void IEEapMessage::Encode(const IEEapMessage &ie, OctetString &stream)
 {
     eap::EncodeEapPdu(stream, *ie.eap);
+}
+
+void IEEapMessage::Mutate(IEEapMessage &ie)
+{
+    // fuzzing: Not mutate EAP message for now
 }
 
 Json ToJson(const IE5gsMobileIdentity &v)

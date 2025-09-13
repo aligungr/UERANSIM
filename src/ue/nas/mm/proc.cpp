@@ -181,7 +181,8 @@ void NasMm::invokeProcedures()
     if (m_mmSubState == EMmSubState::MM_REGISTERED_NORMAL_SERVICE ||
         m_mmSubState == EMmSubState::MM_REGISTERED_LIMITED_SERVICE)
     {
-        m_sm->establishRequiredSessions();
+        // CoreLearner: do not send PDU Session Establishment Request here.
+        // m_sm->establishRequiredSessions();
     }
 }
 

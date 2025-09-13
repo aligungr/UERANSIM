@@ -270,12 +270,12 @@ void NasMm::handleRadioLinkFailure()
 
 void NasMm::localReleaseConnection(bool treatBarred)
 {
-    if (m_cmState != ECmState::CM_IDLE)
-        m_logger->info("Performing local release of NAS connection");
+    // if (m_cmState != ECmState::CM_IDLE)
+    //     m_logger->info("Performing local release of NAS connection");
 
-    auto w = std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::LOCAL_RELEASE_CONNECTION);
-    w->treatBarred = treatBarred;
-    m_base->rrcTask->push(std::move(w));
+    // auto w = std::make_unique<NmUeNasToRrc>(NmUeNasToRrc::LOCAL_RELEASE_CONNECTION);
+    // w->treatBarred = treatBarred;
+    // m_base->rrcTask->push(std::move(w));
 }
 
 void NasMm::handlePaging(const std::vector<GutiMobileIdentity> &tmsiIds)

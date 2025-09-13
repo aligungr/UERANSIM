@@ -23,6 +23,7 @@ struct IE5gMmCause : InformationElement3
 
     static IE5gMmCause Decode(const OctetView &stream);
     static void Encode(const IE5gMmCause &ie, OctetString &stream);
+    static void Mutate(IE5gMmCause &ie);
 };
 
 struct IE5gsTrackingAreaIdentity : InformationElement3
@@ -38,6 +39,7 @@ struct IE5gsTrackingAreaIdentity : InformationElement3
 
     static IE5gsTrackingAreaIdentity Decode(const OctetView &stream);
     static void Encode(const IE5gsTrackingAreaIdentity &ie, OctetString &stream);
+    static void Mutate(IE5gsTrackingAreaIdentity &ie);
 };
 
 struct IEAuthenticationParameterRand : InformationElement3
@@ -49,6 +51,7 @@ struct IEAuthenticationParameterRand : InformationElement3
 
     static IEAuthenticationParameterRand Decode(const OctetView &stream);
     static void Encode(const IEAuthenticationParameterRand &ie, OctetString &stream);
+    static void Mutate(IEAuthenticationParameterRand &ie);
 };
 
 struct IEEpsNasSecurityAlgorithms : InformationElement3
@@ -62,6 +65,7 @@ struct IEEpsNasSecurityAlgorithms : InformationElement3
 
     static IEEpsNasSecurityAlgorithms Decode(const OctetView &stream);
     static void Encode(const IEEpsNasSecurityAlgorithms &ie, OctetString &stream);
+    static void Mutate(IEEpsNasSecurityAlgorithms &ie);
 };
 
 struct IEGprsTimer : InformationElement3
@@ -74,6 +78,7 @@ struct IEGprsTimer : InformationElement3
 
     static IEGprsTimer Decode(const OctetView &stream);
     static void Encode(const IEGprsTimer &ie, OctetString &stream);
+    static void Mutate(IEGprsTimer &ie);
 };
 
 struct IEIntegrityProtectionMaximumDataRate : InformationElement3
@@ -88,6 +93,7 @@ struct IEIntegrityProtectionMaximumDataRate : InformationElement3
 
     static IEIntegrityProtectionMaximumDataRate Decode(const OctetView &stream);
     static void Encode(const IEIntegrityProtectionMaximumDataRate &ie, OctetString &stream);
+    static void Mutate(IEIntegrityProtectionMaximumDataRate &ie);
 };
 
 struct IEMaximumNumberOfSupportedPacketFilters : InformationElement3
@@ -99,6 +105,7 @@ struct IEMaximumNumberOfSupportedPacketFilters : InformationElement3
 
     static IEMaximumNumberOfSupportedPacketFilters Decode(const OctetView &stream);
     static void Encode(const IEMaximumNumberOfSupportedPacketFilters &ie, OctetString &stream);
+    static void Mutate(IEMaximumNumberOfSupportedPacketFilters &ie);
 };
 
 struct IEN1ModeToS1ModeNasTransparentContainer : InformationElement3
@@ -110,6 +117,7 @@ struct IEN1ModeToS1ModeNasTransparentContainer : InformationElement3
 
     static IEN1ModeToS1ModeNasTransparentContainer Decode(const OctetView &stream);
     static void Encode(const IEN1ModeToS1ModeNasTransparentContainer &ie, OctetString &stream);
+    static void Mutate(IEN1ModeToS1ModeNasTransparentContainer &ie);
 };
 
 struct IENasSecurityAlgorithms : InformationElement3
@@ -122,6 +130,7 @@ struct IENasSecurityAlgorithms : InformationElement3
 
     static IENasSecurityAlgorithms Decode(const OctetView &stream);
     static void Encode(const IENasSecurityAlgorithms &ie, OctetString &stream);
+    static void Mutate(IENasSecurityAlgorithms &ie);
 };
 
 struct IEPduSessionIdentity2 : InformationElement3
@@ -133,6 +142,7 @@ struct IEPduSessionIdentity2 : InformationElement3
 
     static IEPduSessionIdentity2 Decode(const OctetView &stream);
     static void Encode(const IEPduSessionIdentity2 &ie, OctetString &stream);
+    static void Mutate(IEPduSessionIdentity2 &ie);
 };
 
 struct IETimeZone : InformationElement3
@@ -144,6 +154,7 @@ struct IETimeZone : InformationElement3
 
     static IETimeZone Decode(const OctetView &stream);
     static void Encode(const IETimeZone &ie, OctetString &stream);
+    static void Mutate(IETimeZone &ie);
 };
 
 struct IETimeZoneAndTime : InformationElement3
@@ -156,6 +167,7 @@ struct IETimeZoneAndTime : InformationElement3
 
     static IETimeZoneAndTime Decode(const OctetView &stream);
     static void Encode(const IETimeZoneAndTime &ie, OctetString &stream);
+    static void Mutate(IETimeZoneAndTime &ie);
 };
 
 struct IE5gSmCause : InformationElement3
@@ -167,6 +179,7 @@ struct IE5gSmCause : InformationElement3
 
     static IE5gSmCause Decode(const OctetView &stream);
     static void Encode(const IE5gSmCause &ie, OctetString &stream);
+    static void Mutate(IE5gSmCause &ie);
 };
 
 } // namespace nas

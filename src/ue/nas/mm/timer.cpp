@@ -69,7 +69,8 @@ void NasMm::onTimerExpire(UeTimer &timer)
                 // connection, if any, shall be released locally if the initial registration request is not for
                 // emergency services..
                 switchMmState(EMmSubState::MM_DEREGISTERED_PS);
-                switchUState(E5UState::U2_NOT_UPDATED);
+                // disabled for statelearner
+                // switchUState(E5UState::U2_NOT_UPDATED);
 
                 if (m_lastRegistrationRequest->registrationType.registrationType !=
                     nas::ERegistrationType::EMERGENCY_REGISTRATION)
@@ -169,8 +170,9 @@ void NasMm::onTimerExpire(UeTimer &timer)
             {
                 logExpired();
                 m_logger->debug("Retransmitting De-registration Request due to T3521 expiry");
-
-                sendNasMessage(*m_lastDeregistrationRequest);
+                
+                // StateLearner: Not send
+                // sendNasMessage(*m_lastDeregistrationRequest);
                 m_timers->t3521.start(false);
             }
         }

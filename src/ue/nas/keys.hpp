@@ -76,9 +76,4 @@ OctetString CalculateResStar(const OctetString &key, const std::string &snn, con
  */
 OctetString CalculateAuts(const OctetString &sqn, const OctetString &ak, const OctetString &macS);
 
-/*
- * Derives K_AKMA from K_AUSF and SUPI according to 3GPP TS 33.535
- */
- OctetString CalculateAkmaKey(const OctetString &kAusf, const Supi &supi);
-
 } // namespace nr::ue::keys

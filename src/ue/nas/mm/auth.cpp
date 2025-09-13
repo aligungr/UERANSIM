@@ -11,6 +11,9 @@
 #include <lib/nas/utils.hpp>
 #include <ue/nas/keys.hpp>
 
+//state learner
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
@@ -49,7 +52,12 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         nas::AuthenticationResponse resp;
         resp.eapMessage = nas::IEEapMessage{};
         resp.eapMessage->eap = std::move(eap);
-        sendNasMessage(resp);
+        // StateLearner: not send message
+        // sendNasMessage(resp);
+
+        m_logger->debug("store_message AuthenticationResponse (eapFailure)");
+        state_learner->store_message(resp);
+        state_learner->storedMsgCount[(int)MsgType::authenticationResponse]++;
     };
 
     auto sendAuthFailure = [this](nas::EMmCause cause) {
@@ -65,12 +73,16 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
         // Send Authentication Failure
         nas::AuthenticationFailure resp{};
         resp.mmCause.value = cause;
-        sendNasMessage(resp);
+        // StateLearner: not send message
+        // sendNasMessage(resp);
+        // m_logger->debug("store_message AuthenticationFailure");
+        // state_learner->store_message(resp);
+        // state_learner->storedMsgCount[(int)MsgType::authenticationFailure]++;
     };
 
     // ========================== Check the received message syntactically ==========================
 
-    if (!msg.eapMessage.has_value() || !msg.eapMessage->eap)
+    if (!msg.eapMessage.has_value())
     {
         sendMmStatus(nas::EMmCause::SEMANTICALLY_INCORRECT_MESSAGE);
         return;
@@ -218,7 +230,11 @@ void NasMm::receiveAuthenticationRequestEap(const nas::AuthenticationRequest &ms
             resp.eapMessage = nas::IEEapMessage{};
             resp.eapMessage->eap = std::unique_ptr<eap::EapAkaPrime>(akaPrimeResponse);
 
-            sendNasMessage(resp);
+            m_logger->debug("store_message AuthenticationResponse (EAP-AKA')");
+            state_learner->store_message(resp);
+            state_learner->storedMsgCount[(int)MsgType::authenticationResponse]++;
+            // StateLearner: not send message
+            // sendNasMessage(resp);
         }
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
@@ -285,8 +301,12 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
             resp.authenticationFailureParameter = nas::IEAuthenticationFailureParameter{};
             resp.authenticationFailureParameter->rawData = std::move(*auts);
         }
-
-        sendNasMessage(resp);
+        
+        // m_logger->debug("store_message authenticationFailure (5gAka)");
+        // state_learner->store_message(resp);
+        // state_learner->storedMsgCount[(int)MsgType::authenticationFailure]++;
+        // StateLearner: not send message
+        // sendNasMessage(resp);
     };
 
     // ========================== Check the received parameters syntactically ==========================
@@ -319,16 +339,17 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         return;
     }
 
-    if ((m_usim->m_currentNsCtx && m_usim->m_currentNsCtx->ngKsi == msg.ngKSI.ksi) ||
-        (m_usim->m_nonCurrentNsCtx && m_usim->m_nonCurrentNsCtx->ngKsi == msg.ngKSI.ksi))
-    {
-        if (networkFailingTheAuthCheck(true))
-            return;
+    // State Learner: remove ngKSI check
+    // if ((m_usim->m_currentNsCtx && m_usim->m_currentNsCtx->ngKsi == msg.ngKSI.ksi) ||
+    //     (m_usim->m_nonCurrentNsCtx && m_usim->m_nonCurrentNsCtx->ngKsi == msg.ngKSI.ksi))
+    // {
+    //     if (networkFailingTheAuthCheck(true))
+    //         return;
 
-        m_timers->t3520.start();
-        sendFailure(nas::EMmCause::NGKSI_ALREADY_IN_USE);
-        return;
-    }
+    //     m_timers->t3520.start();
+    //     sendFailure(nas::EMmCause::NGKSI_ALREADY_IN_USE);
+    //     return;
+    // }
 
     // ============================================ Others ============================================
 
@@ -363,7 +384,6 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         m_usim->m_nonCurrentNsCtx->tsc = msg.ngKSI.tsc;
         m_usim->m_nonCurrentNsCtx->ngKsi = msg.ngKSI.ksi;
         m_usim->m_nonCurrentNsCtx->keys.kAusf = keys::CalculateKAusfFor5gAka(milenage.ck, milenage.ik, snn, sqnXorAk);
-        m_usim->m_nonCurrentNsCtx->keys.kAkma = keys::CalculateAkmaKey(m_usim->m_nonCurrentNsCtx->keys.kAusf, m_base->config->supi.value());
         m_usim->m_nonCurrentNsCtx->keys.abba = msg.abba.rawData.copy();
 
         keys::DeriveKeysSeafAmf(*m_base->config, currentPLmn, *m_usim->m_nonCurrentNsCtx);
@@ -376,7 +396,11 @@ void NasMm::receiveAuthenticationRequest5gAka(const nas::AuthenticationRequest &
         resp.authenticationResponseParameter = nas::IEAuthenticationResponseParameter{};
         resp.authenticationResponseParameter->rawData = m_usim->m_resStar.copy();
 
-        sendNasMessage(resp);
+        m_logger->debug("store message authenticationResponse (5GAka)");
+        state_learner->store_message(resp);
+        state_learner->storedMsgCount[(int)MsgType::authenticationResponse]++;
+        // StateLearner: not send message
+        // sendNasMessage(resp);
     }
     else if (autnCheck == EAutnValidationRes::MAC_FAILURE)
     {
@@ -427,7 +451,7 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
     m_usim->m_resStar = {};
     m_timers->t3516.stop();
 
-    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
+    if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
@@ -435,16 +459,17 @@ void NasMm::receiveAuthenticationReject(const nas::AuthenticationReject &msg)
             m_logger->warn("Network sent EAP with inconvenient type in AuthenticationReject, ignoring EAP IE.");
     }
 
-    // The UE shall set the update status to 5U3 ROAMING NOT ALLOWED,
-    switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
-    // Delete the stored 5G-GUTI, TAI list, last visited registered TAI and ngKSI. The USIM shall be considered invalid
-    // until switching off the UE or the UICC containing the USIM is removed
+    // disabled for statelearner
+    // // The UE shall set the update status to 5U3 ROAMING NOT ALLOWED,
+    // switchUState(E5UState::U3_ROAMING_NOT_ALLOWED); 
+    // // Delete the stored 5G-GUTI, TAI list, last visited registered TAI and ngKSI. The USIM shall be considered invalid
+    // // until switching off the UE or the UICC containing the USIM is removed
     m_storage->storedGuti->clear();
     m_storage->lastVisitedRegisteredTai->clear();
     m_storage->taiList->clear();
     m_usim->m_currentNsCtx = {};
     m_usim->m_nonCurrentNsCtx = {};
-    m_usim->invalidate();
+    // m_usim->invalidate();
     // The UE shall abort any 5GMM signalling procedure, stop any of the timers T3510, T3516, T3517, T3519 or T3521 (if
     // they were running) ..
     m_timers->t3510.stop();
@@ -480,7 +505,7 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetStrin
     if (receivedAMF.get(0).bit(7) != 1)
     {
         m_logger->err("AUTN validation SEP-BIT failure. expected: 1, received: 0");
-        return EAutnValidationRes::AMF_SEPARATION_BIT_FAILURE;
+        // return EAutnValidationRes::AMF_SEPARATION_BIT_FAILURE;
     }
 
     // Derive AK and MAC
@@ -491,7 +516,8 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetStrin
     m_logger->debug("SQN-MS [%s]", m_usim->m_sqnMng->getSqn().toHexString().c_str());
 
     // Verify that the received sequence number SQN is in the correct range
-    bool sqn_ok = m_usim->m_sqnMng->checkSqn(receivedSQN);
+    // bool sqn_ok = m_usim->m_sqnMng->checkSqn(receivedSQN);
+    m_usim->m_sqnMng->checkSqn(receivedSQN);
 
     // Re-execute the milenage calculation (if case of sqn is changed with the received value)
     milenage = calculateMilenage(receivedSQN, rand, false);
@@ -501,11 +527,12 @@ EAutnValidationRes NasMm::validateAutn(const OctetString &rand, const OctetStrin
     {
         m_logger->err("AUTN validation MAC mismatch. expected [%s] received [%s]", milenage.mac_a.toHexString().c_str(),
                       receivedMAC.toHexString().c_str());
-        return EAutnValidationRes::MAC_FAILURE;
+        // return EAutnValidationRes::MAC_FAILURE;
     }
 
-    if(!sqn_ok)
-        return EAutnValidationRes::SYNCHRONISATION_FAILURE;
+    // Core Learner: remove sqn check
+    // if(!sqn_ok)
+    //     return EAutnValidationRes::SYNCHRONISATION_FAILURE;
 
     return EAutnValidationRes::OK;
 }
@@ -523,23 +550,24 @@ crypto::milenage::Milenage NasMm::calculateMilenage(const OctetString &sqn, cons
 
 bool NasMm::networkFailingTheAuthCheck(bool hasChance)
 {
-    if (hasChance && m_nwConsecutiveAuthFailure++ < 3)
-        return false;
+    return false;
+    // if (hasChance && m_nwConsecutiveAuthFailure++ < 3)
+    //     return false;
 
-    // NOTE: Normally if we should check if the UE has an emergency. If it has, it should consider as network passed the
-    //  auth check, instead of performing the actions in the following lines. But it's difficult to maintain and
-    //  implement this behaviour. Therefore we would expect other solutions for an emergency case. Such as
-    //  - Network initiates a Security Mode Command with IA0 and EA0
-    //  - UE performs emergency registration after releasing the connection
-    // END
+    // // NOTE: Normally if we should check if the UE has an emergency. If it has, it should consider as network passed the
+    // //  auth check, instead of performing the actions in the following lines. But it's difficult to maintain and
+    // //  implement this behaviour. Therefore we would expect other solutions for an emergency case. Such as
+    // //  - Network initiates a Security Mode Command with IA0 and EA0
+    // //  - UE performs emergency registration after releasing the connection
+    // // END
 
-    m_logger->err("Network failing the authentication check");
+    // m_logger->err("Network failing the authentication check");
 
-    if (m_cmState == ECmState::CM_CONNECTED)
-        localReleaseConnection(true);
+    // if (m_cmState == ECmState::CM_CONNECTED)
+    //     localReleaseConnection(true);
 
-    m_timers->t3520.stop();
-    return true;
+    // m_timers->t3520.stop();
+    // return true;
 }
 
 } // namespace nr::ue

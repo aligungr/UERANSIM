@@ -13,6 +13,9 @@
 #include "rls/task.hpp"
 #include "rrc/task.hpp"
 
+// state learner
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
@@ -33,6 +36,9 @@ UserEquipment::UserEquipment(UeConfig *config, app::IUeController *ueController,
     base->rlsTask = new UeRlsTask(base);
 
     taskBase = base;
+
+    // start state learner
+    state_learner = new UeStateLearner{base};
 }
 
 UserEquipment::~UserEquipment()
@@ -50,6 +56,8 @@ UserEquipment::~UserEquipment()
     delete taskBase->logBase;
 
     delete taskBase;
+
+    delete state_learner;
 }
 
 void UserEquipment::start()

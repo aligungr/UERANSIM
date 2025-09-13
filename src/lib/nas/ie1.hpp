@@ -26,6 +26,7 @@ struct IE5gsIdentityType : InformationElement1
 
     static IE5gsIdentityType Decode(int val);
     static int Encode(const IE5gsIdentityType &ie);
+    static void Mutate(IE5gsIdentityType &ie);
 };
 
 struct IE5gsRegistrationType : InformationElement1
@@ -38,6 +39,7 @@ struct IE5gsRegistrationType : InformationElement1
 
     static IE5gsRegistrationType Decode(int val);
     static int Encode(const IE5gsRegistrationType &ie);
+    static void Mutate(IE5gsRegistrationType &ie);
 };
 
 struct IEAccessType : InformationElement1
@@ -49,6 +51,7 @@ struct IEAccessType : InformationElement1
 
     static IEAccessType Decode(int val);
     static int Encode(const IEAccessType &ie);
+    static void Mutate(IEAccessType &ie);
 };
 
 struct IEAllowedSscMode : InformationElement1
@@ -62,6 +65,7 @@ struct IEAllowedSscMode : InformationElement1
 
     static IEAllowedSscMode Decode(int val);
     static int Encode(const IEAllowedSscMode &ie);
+    static void Mutate(IEAllowedSscMode &ie);
 };
 
 struct IEAlwaysOnPduSessionIndication : InformationElement1
@@ -73,6 +77,7 @@ struct IEAlwaysOnPduSessionIndication : InformationElement1
 
     static IEAlwaysOnPduSessionIndication Decode(int val);
     static int Encode(const IEAlwaysOnPduSessionIndication &ie);
+    static void Mutate(IEAlwaysOnPduSessionIndication &ie);
 };
 
 struct IEAlwaysOnPduSessionRequested : InformationElement1
@@ -84,6 +89,7 @@ struct IEAlwaysOnPduSessionRequested : InformationElement1
 
     static IEAlwaysOnPduSessionRequested Decode(int val);
     static int Encode(const IEAlwaysOnPduSessionRequested &ie);
+    static void Mutate(IEAlwaysOnPduSessionRequested &ie);
 };
 
 struct IEConfigurationUpdateIndication : InformationElement1
@@ -96,6 +102,7 @@ struct IEConfigurationUpdateIndication : InformationElement1
 
     static IEConfigurationUpdateIndication Decode(int val);
     static int Encode(const IEConfigurationUpdateIndication &ie);
+    static void Mutate(IEConfigurationUpdateIndication &ie);
 };
 
 struct IEDeRegistrationType : InformationElement1
@@ -110,6 +117,7 @@ struct IEDeRegistrationType : InformationElement1
 
     static IEDeRegistrationType Decode(int val);
     static int Encode(const IEDeRegistrationType &ie);
+    static void Mutate(IEDeRegistrationType &ie);
 };
 
 struct IEImeiSvRequest : InformationElement1
@@ -121,6 +129,7 @@ struct IEImeiSvRequest : InformationElement1
 
     static IEImeiSvRequest Decode(int val);
     static int Encode(const IEImeiSvRequest &ie);
+    static void Mutate(IEImeiSvRequest &ie);
 };
 
 struct IEMicoIndication : InformationElement1
@@ -132,6 +141,7 @@ struct IEMicoIndication : InformationElement1
 
     static IEMicoIndication Decode(int val);
     static int Encode(const IEMicoIndication &ie);
+    static void Mutate(IEMicoIndication &ie);
 };
 
 struct IENasKeySetIdentifier : InformationElement1
@@ -146,6 +156,7 @@ struct IENasKeySetIdentifier : InformationElement1
 
     static IENasKeySetIdentifier Decode(int val);
     static int Encode(const IENasKeySetIdentifier &ie);
+    static void Mutate(IENasKeySetIdentifier &ie);
 };
 
 struct IENetworkSlicingIndication : InformationElement1
@@ -159,6 +170,7 @@ struct IENetworkSlicingIndication : InformationElement1
 
     static IENetworkSlicingIndication Decode(int val);
     static int Encode(const IENetworkSlicingIndication &ie);
+    static void Mutate(IENetworkSlicingIndication &ie);
 };
 
 struct IENssaiInclusionMode : InformationElement1
@@ -170,6 +182,7 @@ struct IENssaiInclusionMode : InformationElement1
 
     static IENssaiInclusionMode Decode(int val);
     static int Encode(const IENssaiInclusionMode &ie);
+    static void Mutate(IENssaiInclusionMode &ie);
 };
 
 struct IEPayloadContainerType : InformationElement1
@@ -181,6 +194,7 @@ struct IEPayloadContainerType : InformationElement1
 
     static IEPayloadContainerType Decode(int val);
     static int Encode(const IEPayloadContainerType &ie);
+    static void Mutate(IEPayloadContainerType &ie);
 };
 
 struct IEPduSessionType : InformationElement1
@@ -192,6 +206,7 @@ struct IEPduSessionType : InformationElement1
 
     static IEPduSessionType Decode(int val);
     static int Encode(const IEPduSessionType &ie);
+    static void Mutate(IEPduSessionType &ie);
 };
 
 struct IERequestType : InformationElement1
@@ -203,6 +218,7 @@ struct IERequestType : InformationElement1
 
     static IERequestType Decode(int val);
     static int Encode(const IERequestType &ie);
+    static void Mutate(IERequestType &ie);
 };
 
 struct IEServiceType : InformationElement1
@@ -214,6 +230,7 @@ struct IEServiceType : InformationElement1
 
     static IEServiceType Decode(int val);
     static int Encode(const IEServiceType &ie);
+    static void Mutate(IEServiceType &ie);
 };
 
 struct IESmsIndication : InformationElement1
@@ -225,6 +242,7 @@ struct IESmsIndication : InformationElement1
 
     static IESmsIndication Decode(int val);
     static int Encode(const IESmsIndication &ie);
+    static void Mutate(IESmsIndication &ie);
 };
 
 struct IESscMode : InformationElement1
@@ -236,6 +254,7 @@ struct IESscMode : InformationElement1
 
     static IESscMode Decode(int val);
     static int Encode(const IESscMode &ie);
+    static void Mutate(IESscMode &ie);
 };
 
 } // namespace nas

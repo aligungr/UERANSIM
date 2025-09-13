@@ -31,6 +31,9 @@
 #include <asn/ngap/ASN_NGAP_SliceSupportItem.h>
 #include <asn/ngap/ASN_NGAP_SupportedTAItem.h>
 
+// gnb socket
+#include <gnb/app/socket.hpp>
+
 namespace nr::gnb
 {
 
@@ -96,6 +99,10 @@ void NgapTask::handleAssociationShutdown(int amfId)
 
     m_logger->err("Association terminated for AMF[%d]", amfId);
     m_logger->debug("Removing AMF context[%d]", amfId);
+
+    // notify AMF is down
+    gnb_socket->notify_response("AMF is down");
+    exit(1);
 
     amf->state = EAmfState::NOT_CONNECTED;
 
@@ -227,11 +234,18 @@ void NgapTask::receiveErrorIndication(int amfId, ASN_NGAP_ErrorIndication *msg)
         return;
     }
 
+    // notify error indication
+
     auto *ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_Cause);
     if (ie)
+    {
         m_logger->err("Error indication received. Cause: %s", ngap_utils::CauseToString(ie->Cause).c_str());
+        gnb_socket->notify_response("Error indication:" + ngap_utils::CauseToString(ie->Cause));}
     else
+    {
         m_logger->err("Error indication received.");
+        gnb_socket->notify_response("Error indication");
+    }
 }
 
 void NgapTask::sendErrorIndication(int amfId, NgapCause cause, int ueId)

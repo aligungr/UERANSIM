@@ -10,6 +10,9 @@
 
 #include <utils/octet_string.hpp>
 
+// fuzzing
+#include "nas_mutator.hpp"
+
 namespace nas
 {
 
@@ -80,6 +83,13 @@ VPlmn VPlmn::Decode(const OctetView &stream)
     return VPlmn{mcc, mnc, longMnc};
 }
 
+void VPlmn::Mutate(VPlmn &value)
+{
+    value.mcc = generate_int(1000);
+    value.mnc = generate_int(1000);
+    value.isLongMnc = generate_bit(1);
+}
+
 VPlmn::VPlmn(int mcc, int mnc, bool isLongMnc) : mcc(mcc), mnc(mnc), isLongMnc(isLongMnc)
 {
 }
@@ -97,6 +107,12 @@ VQoSFlowParameter VQoSFlowParameter::Decode(const OctetView &stream)
     uint8_t contentLength = stream.read();
     OctetString content = stream.readOctetString(contentLength);
     return VQoSFlowParameter{identifier, std::move(content)};
+}
+
+void VQoSFlowParameter::Mutate(VQoSFlowParameter &value)
+{
+    value.identifier = generate_bit(8);
+    mutate_octet_string(value.content);
 }
 
 VQoSFlowParameter::VQoSFlowParameter(uint8_t identifier, OctetString content)
@@ -126,6 +142,18 @@ VQoSFlowDescription VQoSFlowDescription::Decode(const OctetView &stream)
     return VQoSFlowDescription{qfi, (EQoSOperationCode)opCode, numOfParameters, eBit, std::move(parametersList)};
 }
 
+void VQoSFlowDescription::Mutate(VQoSFlowDescription &value)
+{
+    value.qfi = generate_bit(6);
+    value.opCode = (EQoSOperationCode)generate_bit(3);
+    value.numOfParameters = generate_bit(6);
+    value.eBit = generate_bit(1);
+    
+    int count = value.parameterList.size();
+    for (int i = 0; i < count; i++)
+        VQoSFlowParameter::Mutate(*value.parameterList[i].get());
+}
+
 VQoSFlowDescription::VQoSFlowDescription(int qfi, EQoSOperationCode opCode, int numOfParameters, bool eBit,
                                          std::vector<std::unique_ptr<VQoSFlowParameter>> parameterList)
     : qfi(qfi), opCode(opCode), numOfParameters(numOfParameters), eBit(eBit), parameterList(std::move(parameterList))
@@ -143,6 +171,12 @@ VTrackingAreaIdentity VTrackingAreaIdentity::Decode(const OctetView &stream)
     VPlmn plmn = VPlmn::Decode(stream);
     octet3 tac = stream.read3();
     return VTrackingAreaIdentity{plmn, tac};
+}
+
+void VTrackingAreaIdentity::Mutate(VTrackingAreaIdentity &value)
+{
+    VPlmn::Mutate(value.plmn);
+    value.tac = octet3(generate_bit(24));
 }
 
 VTrackingAreaIdentity::VTrackingAreaIdentity(const VPlmn &plmn, const octet3 &tac) : plmn(plmn), tac(tac)
@@ -174,6 +208,16 @@ VTime VTime::Decode(const OctetView &stream)
     time.minute = stream.read();
     time.second = stream.read();
     return time;
+}
+
+void VTime::Mutate(VTime &value)
+{
+    value.year = generate_bit(8);
+    value.month = generate_bit(8);
+    value.day = generate_bit(8);
+    value.hour = generate_bit(8);
+    value.minute = generate_bit(8);
+    value.second = generate_bit(8);
 }
 
 VTime::VTime(const octet &year, const octet &month, const octet &day, const octet &hour, const octet &minute,
@@ -209,6 +253,14 @@ VRejectedSNssai VRejectedSNssai::Decode(const OctetView &stream)
     if (length >= 2)
         res.sd = stream.read3();
     return res;
+}
+
+void VRejectedSNssai::Mutate(VRejectedSNssai &value)
+{
+    value.cause = (ERejectedSNssaiCause)generate_int(16);
+    value.sst = generate_bit(8);
+    if (generate_bit(1))
+        value.sd = octet3(generate_bit(24));
 }
 
 VRejectedSNssai::VRejectedSNssai(ERejectedSNssaiCause cause, octet sst, const std::optional<octet3> &sd)
@@ -263,6 +315,28 @@ VPartialServiceAreaList VPartialServiceAreaList::Decode(const OctetView &stream)
     return res;
 }
 
+void VPartialServiceAreaList::Mutate(VPartialServiceAreaList &value)
+{
+    value.present = generate_bit(2);
+    switch (value.present)
+    {
+    case 0b00:
+        VPartialServiceAreaList00::Mutate(value.list00.value());
+        break;
+    case 0b01:
+        VPartialServiceAreaList01::Mutate(value.list01.value());
+        break;
+    case 0b10:
+        VPartialServiceAreaList10::Mutate(value.list10.value());
+        break;
+    case 0b11:
+        VPartialServiceAreaList11::Mutate(value.list11.value());
+        break;
+    default:
+        break;
+    }
+}
+
 VPartialServiceAreaList::VPartialServiceAreaList() : present(0b00)
 {
 }
@@ -291,6 +365,16 @@ VPartialServiceAreaList00 VPartialServiceAreaList00::Decode(const OctetView &str
     return VPartialServiceAreaList00{allowed, plmn, std::move(tacs)};
 }
 
+void VPartialServiceAreaList00::Mutate(VPartialServiceAreaList00 &value)
+{
+    value.allowedType = (EAllowedType)generate_bit(1);
+    VPlmn::Mutate(value.plmn);
+    value.tacs.clear();
+    int count = generate_int(32);
+    for (int i = 0; i < count; i++)
+        value.tacs.push_back(octet3(generate_bit(24)));
+}
+
 VPartialServiceAreaList00::VPartialServiceAreaList00(EAllowedType allowedType, const VPlmn &plmn,
                                                      std::vector<octet3> &&tacs)
     : allowedType(allowedType), plmn(plmn), tacs(std::move(tacs))
@@ -309,6 +393,13 @@ VPartialServiceAreaList01 VPartialServiceAreaList01::Decode(const OctetView &str
     auto octet = stream.read();
     auto allowed = static_cast<EAllowedType>(octet.bit(7));
     return VPartialServiceAreaList01{allowed, VPlmn::Decode(stream), stream.read3()};
+}
+
+void VPartialServiceAreaList01::Mutate(VPartialServiceAreaList01 &value)
+{
+    value.allowedType = (EAllowedType)generate_bit(1);
+    VPlmn::Mutate(value.plmn);
+    value.tac = (octet3(generate_bit(24)));
 }
 
 VPartialServiceAreaList01::VPartialServiceAreaList01(EAllowedType allowedType, const VPlmn &plmn, const octet3 &tac)
@@ -337,6 +428,16 @@ VPartialServiceAreaList10 VPartialServiceAreaList10::Decode(const OctetView &str
     return VPartialServiceAreaList10{allowed, std::move(list)};
 }
 
+void VPartialServiceAreaList10::Mutate(VPartialServiceAreaList10 &value)
+{
+    value.allowedType = (EAllowedType)generate_bit(1);
+    value.tais.clear();
+    int count = generate_int(32);
+    for (int i = 0; i < count; i++)
+        value.tais.push_back(VTrackingAreaIdentity(VPlmn(generate_int(1000), generate_int(1000), generate_bit(1)),
+                                                   octet3(generate_bit(24))));
+}
+
 VPartialServiceAreaList10::VPartialServiceAreaList10(EAllowedType allowedType,
                                                      std::vector<VTrackingAreaIdentity> &&tais)
     : allowedType(allowedType), tais(std::move(tais))
@@ -354,6 +455,12 @@ VPartialServiceAreaList11 VPartialServiceAreaList11::Decode(const OctetView &str
     auto octet = stream.read();
     auto allowed = static_cast<EAllowedType>(octet.bit(7));
     return VPartialServiceAreaList11{allowed, VPlmn::Decode(stream)};
+}
+
+void VPartialServiceAreaList11::Mutate(VPartialServiceAreaList11 &value)
+{
+    value.allowedType = (EAllowedType)generate_bit(1);
+    VPlmn::Mutate(value.plmn);
 }
 
 VPartialServiceAreaList11::VPartialServiceAreaList11(EAllowedType allowedType, const VPlmn &plmn)
@@ -470,6 +577,11 @@ VPartialTrackingAreaIdentityList VPartialTrackingAreaIdentityList::Decode(const 
     return res;
 }
 
+void VPartialTrackingAreaIdentityList::Mutate(VPartialTrackingAreaIdentityList &value)
+{
+    value.present = generate_bit(2);
+}
+
 VPartialTrackingAreaIdentityList::VPartialTrackingAreaIdentityList() : present(0b00)
 {
 }
@@ -484,6 +596,12 @@ void VPduSessionReactivationResultErrorCause::Encode(const VPduSessionReactivati
 VPduSessionReactivationResultErrorCause VPduSessionReactivationResultErrorCause::Decode(const OctetView &stream)
 {
     return VPduSessionReactivationResultErrorCause{stream.readI(), static_cast<EMmCause>(stream.readI())};
+}
+
+void VPduSessionReactivationResultErrorCause::Mutate(VPduSessionReactivationResultErrorCause &value)
+{
+    value.pduSessionId = generate_bit(8);
+    value.causeValue = (EMmCause)generate_bit(8);
 }
 
 VPduSessionReactivationResultErrorCause::VPduSessionReactivationResultErrorCause(int pduSessionId, EMmCause causeValue)
@@ -523,6 +641,15 @@ VOperatorDefinedAccessCategoryDefinition VOperatorDefinedAccessCategoryDefinitio
                                                     std::move(criteria), standardizedAccessCategory};
 }
 
+void VOperatorDefinedAccessCategoryDefinition::Mutate(VOperatorDefinedAccessCategoryDefinition &value)
+{
+    value.precedence = generate_bit(8);
+    value.operatorDefinedAccessCategoryNumber = generate_bit(5);
+    value.psac = (EPresenceOfStandardizedAccessCategory)generate_bit(1);
+    mutate_octet_string(value.criteria);
+    value.standardizedAccessCategory = generate_bit(5);
+}
+
 VOperatorDefinedAccessCategoryDefinition::VOperatorDefinedAccessCategoryDefinition(
     const octet &precedence, uint8_t operatorDefinedAccessCategoryNumber, EPresenceOfStandardizedAccessCategory psac,
     OctetString &&criteria, uint8_t standardizedAccessCategory)
@@ -546,6 +673,12 @@ VPlmnIdAccessTech VPlmnIdAccessTech::Decode(const OctetView &stream)
 {
     auto plmn = VPlmn::Decode(stream);
     return VPlmnIdAccessTech{plmn, stream.read2()};
+}
+
+void VPlmnIdAccessTech::Mutate(VPlmnIdAccessTech &value)
+{
+    VPlmn::Mutate(value.plmnId);
+    value.accessTechnologyIdentifier = octet2(generate_bit(16));
 }
 
 } // namespace nas

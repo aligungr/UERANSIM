@@ -16,7 +16,6 @@
 #include <ue/nts.hpp>
 #include <ue/types.hpp>
 #include <utils/nts.hpp>
-
 namespace nr::ue
 {
 
@@ -32,6 +31,7 @@ class NasTask : public NtsTask
     Usim *usim;
 
     friend class UeCmdHandler;
+    friend class UeStateLearner;
 
   public:
     explicit NasTask(TaskBase *base);

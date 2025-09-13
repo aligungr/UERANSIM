@@ -164,7 +164,8 @@ void NasMm::receiveConfigurationUpdate(const nas::ConfigurationUpdateCommand &ms
     if (msg.configurationUpdateIndication.has_value() &&
         msg.configurationUpdateIndication->ack == nas::EAcknowledgement::REQUESTED)
     {
-        sendNasMessage(nas::ConfigurationUpdateComplete{});
+        // StateLearner: don't send
+        // sendNasMessage(nas::ConfigurationUpdateComplete{});
     }
 
     // "If the CONFIGURATION UPDATE COMMAND message indicates "registration requested" in the Configuration update

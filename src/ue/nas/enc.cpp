@@ -11,6 +11,11 @@
 #include <lib/crypt/crypt.hpp>
 #include <stdexcept>
 
+//state learner
+#include <ue/app/state_learner.hpp>
+
+bool FLAG_REPLAY;
+octet prev_sqn;
 namespace nr::ue::nas_enc
 {
 
@@ -75,6 +80,19 @@ static std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, O
     auto intAlg = ctx.integrity;
     auto encAlg = ctx.ciphering;
 
+    if (msgType == nas::EMessageType::SECURITY_MODE_COMPLETE)
+    {
+        if (FLAG_REPLAY) 
+        {
+            ctx.uplinkCount.sqn = prev_sqn;
+            count = ctx.uplinkCount;
+        }
+        else 
+        {
+            prev_sqn = ctx.uplinkCount.sqn;
+        }
+    }
+
     auto encryptedData =
         bypassCiphering ? plainNasMessage.copy() : EncryptData(encAlg, count, is3gppAccess, plainNasMessage, encKey);
     auto mac = ComputeMac(intAlg, count, is3gppAccess, true, intKey, encryptedData);
@@ -86,7 +104,8 @@ static std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, O
     secured->sequenceNumber = count.sqn;
     secured->plainNasMessage = std::move(encryptedData);
 
-    ctx.countOnEncrypt();
+    if (!FLAG_REPLAY) // do replay msg
+        ctx.countOnEncrypt();    
 
     return secured;
 }
@@ -132,6 +151,12 @@ std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, const na
     nas::EncodeNasMessage(msg, stream);
 
     return Encrypt(ctx, std::move(stream), msgType, bypassCiphering, noCipheredHeader);
+}
+
+std::unique_ptr<nas::SecuredMmMessage> EncryptMMPDU(NasSecurityContext &ctx, nas::EMessageType msgType, OctetString &&pdu,
+                                                    bool bypassCiphering, bool noCipheredHeader)
+{
+    return Encrypt(ctx, std::move(pdu), msgType, bypassCiphering, noCipheredHeader);
 }
 
 std::unique_ptr<nas::NasMessage> Decrypt(NasSecurityContext &ctx, const nas::SecuredMmMessage &msg)

@@ -75,6 +75,8 @@ class NasMm
     friend class UeCmdHandler;
     friend class NasSm;
     friend class NasTask;
+    // state learner
+    friend class UeStateLearner;
 
   public:
     NasMm(TaskBase *base, NasTimers *timers);
@@ -100,6 +102,7 @@ class NasMm
 
   private: /* Messaging */
     EProcRc sendNasMessage(const nas::PlainMmMessage &msg);
+    EProcRc sendNasMessageFromPDU(OctetString &&pdu); // for fuzzing
     void receiveNasMessage(const nas::NasMessage &msg);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);

@@ -13,6 +13,8 @@
 #include <lib/nas/utils.hpp>
 #include <ue/nas/mm/mm.hpp>
 
+// state learner
+#include <ue/app/state_learner.hpp>
 namespace nr::ue
 {
 
@@ -67,8 +69,7 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
     m.pduSessionId = nas::IEPduSessionIdentity2{};
     m.pduSessionId->value = psi;
 
-    if (msg.messageType == nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST ||
-        msg.messageType == nas::EMessageType::PDU_SESSION_MODIFICATION_REQUEST)
+    if (msg.messageType == nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST) 
     {
         m.requestType = nas::IERequestType{};
         m.requestType->requestType =
@@ -84,31 +85,88 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
         }
     }
 
+    if (msg.messageType == nas::EMessageType::PDU_SESSION_MODIFICATION_REQUEST){
+        m.requestType = nas::IERequestType{};
+        m.requestType->requestType =
+            session->isEmergency ? nas::ERequestType::INITIAL_EMERGENCY_REQUEST : nas::ERequestType::EXISTING_PDU_SESSION;
+
+        if (!session->isEmergency)
+        {
+            if (session->sNssai.has_value())
+                m.sNssai = nas::utils::SNssaiFrom(*session->sNssai);
+
+            if (session->apn.has_value())
+                m.dnn = nas::utils::DnnFromApn(*session->apn);
+        }
+    }
+
+    // track SM message type
+    state_learner->smMsgType = msg.messageType;
     m_mm->deliverUlTransport(m, MapMsgTypeToHint(msg.messageType));
 }
 
 void NasSm::receiveSmMessage(const nas::SmMessage &msg)
 {
+    std::string msg_name = "";
     switch (msg.messageType)
     {
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
+        msg_name = "pduSessionEstablishmentAccept";
+        printf("reply SmMessage: pduSessionEstablishmentAccept\n");
         receiveEstablishmentAccept((const nas::PduSessionEstablishmentAccept &)msg);
         break;
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
+        msg_name = "pduSessionEstablishmentReject";
+        printf("reply SmMessage: pduSessionEstablishmentReject\n");
         receiveEstablishmentReject((const nas::PduSessionEstablishmentReject &)msg);
         break;
     case nas::EMessageType::PDU_SESSION_RELEASE_REJECT:
+        msg_name = "pduSessionReleaseReject";
+        printf("reply SmMessage: pduSessionReleaseReject\n");
         receiveReleaseReject((const nas::PduSessionReleaseReject &)msg);
         break;
     case nas::EMessageType::PDU_SESSION_RELEASE_COMMAND:
+        msg_name = "pduSessionReleaseCommand";
+        printf("reply SmMessage: pduSessionReleaseCommand\n");
         receiveReleaseCommand((const nas::PduSessionReleaseCommand &)msg);
         break;
     case nas::EMessageType::FIVEG_SM_STATUS:
+        msg_name = "gsmStatus";
+        printf("reply SmMessage: gsmStatus\n");
         receiveSmStatus((const nas::FiveGSmStatus &)msg);
+        break;
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_COMMAND:
+        msg_name = "pduSessionModificationCommand";
+        printf("reply SmMessage: pduSessionModificationCommand\n");
+        break;
+    case nas::EMessageType::PDU_SESSION_MODIFICATION_REJECT:
+        msg_name = "pduSessionModificationReject";
+        printf("reply SmMessage: pduSessionModificationReject\n");
         break;
     default:
         m_logger->err("Unhandled NAS SM message received: %d", (int)msg.messageType);
         break;
+    }
+
+    if (!state_learner->enableFuzzing)
+        state_learner->notify_response(msg_name);
+    else
+    {
+        if (state_learner->response != nullptr)
+        {
+            if (msg_name != "gsmStatus")
+            {
+                state_learner->response->ret_type = msg_name;
+                OctetString pdu;
+                nas::EncodeNasMessage(msg, pdu);
+                state_learner->response->ret_msg = pdu.toHexString();
+                printf("receiveMmMessage: %s\n", state_learner->response->ret_msg.c_str());
+            }
+        }
+        else
+        {
+            throw std::runtime_error("Response struct is null");
+        }
     }
 }
 

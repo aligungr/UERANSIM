@@ -16,7 +16,6 @@ static const int N_RRC_enc_alg = 0x03;
 static const int N_RRC_int_alg = 0x04;
 static const int N_UP_enc_alg = 0x05;
 static const int N_UP_int_alg = 0x06;
-static const int KAKMA_derivation_function_code = 0x6A;
 
 namespace nr::ue::keys
 {
@@ -154,14 +153,5 @@ OctetString CalculateAuts(const OctetString &sqn, const OctetString &ak, const O
     auts.append(macS);
     return auts;
 }
-
-OctetString CalculateAkmaKey(const OctetString &kAusf, const Supi &supi)
-{
-    OctetString inputParams[1];
-    inputParams[0] = crypto::EncodeKdfString(supi.value);
-
-    return crypto::CalculateKdfKey(kAusf, KAKMA_derivation_function_code, inputParams, 1);
-}
-
 
 } // namespace nr::ue::keys

@@ -15,6 +15,9 @@
 
 #include <asn/rrc/ASN_RRC_EstablishmentCause.h>
 
+//state learner
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
@@ -64,11 +67,12 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
 
     auto &smMessage = ((nas::SmMessage &)*nasMessage);
 
-    if (msg.pduSessionId && (int)msg.pduSessionId->value != smMessage.pduSessionId)
-    {
-        m_logger->err("PSI mismatch in DL NAS Transport, ignoring received message");
-        return;
-    }
+    // fuzzing: ignore this check
+    // if (msg.pduSessionId && (int)msg.pduSessionId->value != smMessage.pduSessionId)
+    // {
+    //     m_logger->err("PSI mismatch in DL NAS Transport, ignoring received message");
+    //     return;
+    // }
 
     if (msg.mmCause)
     {
@@ -119,38 +123,48 @@ EProcRc NasMm::deliverUlTransport(const nas::UlNasTransport &msg, ENasTransportH
     // 5.4.5.2.6 Abnormal cases in the UE
     // "The UE shall not send the UL NAS TRANSPORT message when the UE is in non-allowed area or
     // is not in allowed area and .."
-    if (isInNonAllowedArea() && !isHighPriority())
-    {
-        // "1) the Payload container type IE is set to "N1 SM information", the Request type IE is set to "initial
-        // request", "existing PDU session" or "modification request" and the UE is not configured for high priority
-        // access in selected PLMN;" or
-        // "2) the Payload container type IE is set to "SMS" and the UE is not configured for high priority access in
-        // selected PLMN."
-        if ((msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::N1_SM_INFORMATION &&
-             (msg.requestType && (msg.requestType->requestType == nas::ERequestType::INITIAL_REQUEST ||
-                                  msg.requestType->requestType == nas::ERequestType::EXISTING_PDU_SESSION ||
-                                  msg.requestType->requestType == nas::ERequestType::MODIFICATION_REQUEST))) ||
-            msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::SMS)
-        {
-            m_logger->err("Ul Nas Transport procedure canceled, UE is not in allowed area");
-            return EProcRc::STAY;
-        }
-    }
+    // CoreLearner: cancel this check
+    // if (isInNonAllowedArea() && !isHighPriority())
+    // {
+    //     // "1) the Payload container type IE is set to "N1 SM information", the Request type IE is set to "initial
+    //     // request", "existing PDU session" or "modification request" and the UE is not configured for high priority
+    //     // access in selected PLMN;" or
+    //     // "2) the Payload container type IE is set to "SMS" and the UE is not configured for high priority access in
+    //     // selected PLMN."
+    //     if ((msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::N1_SM_INFORMATION &&
+    //          (msg.requestType && (msg.requestType->requestType == nas::ERequestType::INITIAL_REQUEST ||
+    //                               msg.requestType->requestType == nas::ERequestType::EXISTING_PDU_SESSION ||
+    //                               msg.requestType->requestType == nas::ERequestType::MODIFICATION_REQUEST))) ||
+    //         msg.payloadContainerType.payloadContainerType == nas::EPayloadContainerType::SMS)
+    //     {
+    //         m_logger->err("Ul Nas Transport procedure canceled, UE is not in allowed area");
+    //         return EProcRc::STAY;
+    //     }
+    // }
 
     // Perform UAC for PDU session establishment and modification
-    if (hint == ENasTransportHint::PDU_SESSION_ESTABLISHMENT_REQUEST ||
-        hint == ENasTransportHint::PDU_SESSION_MODIFICATION_REQUEST)
-    {
-        if (performUac() != EUacResult::ALLOWED)
-        {
-            return EProcRc::STAY;
-        }
-    }
+    // CoreLearner: cancel UAC
+    // if (hint == ENasTransportHint::PDU_SESSION_ESTABLISHMENT_REQUEST ||
+    //     hint == ENasTransportHint::PDU_SESSION_MODIFICATION_REQUEST)
+    // {
+    //     if (performUac() != EUacResult::ALLOWED)
+    //     {
+    //         return EProcRc::STAY;
+    //     }
+    // }
+
+    auto copy = nas::utils::DeepCopyMsg(msg);
+    m_logger->debug("store message UlNasTransport");
+    state_learner->store_message((nas::UlNasTransport &) *copy);
+    // state_learner->storedMsgCount[(int)MsgType::ulNasTransport]++;s
+    // reset sm message type
+    state_learner->smMsgType = (nas::EMessageType)0;
 
     // Send the UL NAS Transport Message
-    auto rc = sendNasMessage(msg);
-    if (rc != EProcRc::OK)
-        return rc;
+    // State Learner: not send the message here
+    // auto rc = sendNasMessage(msg);
+    // if (rc != EProcRc::OK)
+    //     return rc;
 
     return EProcRc::OK;
 }

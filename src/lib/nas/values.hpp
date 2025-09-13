@@ -40,6 +40,7 @@ struct VPlmn
 
     static void Encode(const VPlmn &value, OctetString &stream);
     static VPlmn Decode(const OctetView &stream);
+    static void Mutate(VPlmn &value);
 };
 
 struct VQoSFlowParameter
@@ -51,6 +52,7 @@ struct VQoSFlowParameter
 
     static void Encode(const VQoSFlowParameter &value, OctetString &stream);
     static VQoSFlowParameter Decode(const OctetView &stream);
+    static void Mutate(VQoSFlowParameter &value);
 };
 
 struct VQoSFlowDescription
@@ -66,6 +68,7 @@ struct VQoSFlowDescription
 
     static void Encode(const VQoSFlowDescription &value, OctetString &stream);
     static VQoSFlowDescription Decode(const OctetView &stream);
+    static void Mutate(VQoSFlowDescription &value);
 };
 
 struct VTrackingAreaIdentity
@@ -78,6 +81,7 @@ struct VTrackingAreaIdentity
 
     static void Encode(const VTrackingAreaIdentity &value, OctetString &stream);
     static VTrackingAreaIdentity Decode(const OctetView &stream);
+    static void Mutate(VTrackingAreaIdentity &value);
 };
 
 struct VTime
@@ -96,6 +100,7 @@ struct VTime
 
     static void Encode(const VTime &value, OctetString &stream);
     static VTime Decode(const OctetView &stream);
+    static void Mutate(VTime &value);
 };
 
 struct VRejectedSNssai
@@ -110,6 +115,7 @@ struct VRejectedSNssai
 
     static void Encode(const VRejectedSNssai &value, OctetString &stream);
     static VRejectedSNssai Decode(const OctetView &stream);
+    static void Mutate(VRejectedSNssai &value);
 };
 
 struct VPartialServiceAreaList00
@@ -122,6 +128,7 @@ struct VPartialServiceAreaList00
 
     static void Encode(const VPartialServiceAreaList00 &value, OctetString &stream);
     static VPartialServiceAreaList00 Decode(const OctetView &stream);
+    static void Mutate(VPartialServiceAreaList00 &value);
 };
 
 struct VPartialServiceAreaList01
@@ -134,6 +141,7 @@ struct VPartialServiceAreaList01
 
     static void Encode(const VPartialServiceAreaList01 &value, OctetString &stream);
     static VPartialServiceAreaList01 Decode(const OctetView &stream);
+    static void Mutate(VPartialServiceAreaList01 &value);
 };
 
 struct VPartialServiceAreaList10
@@ -145,6 +153,7 @@ struct VPartialServiceAreaList10
 
     static void Encode(const VPartialServiceAreaList10 &value, OctetString &stream);
     static VPartialServiceAreaList10 Decode(const OctetView &stream);
+    static void Mutate(VPartialServiceAreaList10 &value);
 };
 
 struct VPartialServiceAreaList11
@@ -156,6 +165,7 @@ struct VPartialServiceAreaList11
 
     static void Encode(const VPartialServiceAreaList11 &value, OctetString &stream);
     static VPartialServiceAreaList11 Decode(const OctetView &stream);
+    static void Mutate(VPartialServiceAreaList11 &value);
 };
 
 struct VPartialServiceAreaList
@@ -170,6 +180,7 @@ struct VPartialServiceAreaList
 
     static void Encode(const VPartialServiceAreaList &value, OctetString &stream);
     static VPartialServiceAreaList Decode(const OctetView &stream);
+    static void Mutate(VPartialServiceAreaList &value);
 };
 
 struct VPartialTrackingAreaIdentityList00
@@ -215,6 +226,7 @@ struct VPartialTrackingAreaIdentityList
 
     static void Encode(const VPartialTrackingAreaIdentityList &value, OctetString &stream);
     static VPartialTrackingAreaIdentityList Decode(const OctetView &stream);
+    static void Mutate(VPartialTrackingAreaIdentityList &value);
 };
 
 struct VPduSessionReactivationResultErrorCause
@@ -226,6 +238,7 @@ struct VPduSessionReactivationResultErrorCause
 
     static void Encode(const VPduSessionReactivationResultErrorCause &value, OctetString &stream);
     static VPduSessionReactivationResultErrorCause Decode(const OctetView &stream);
+    static void Mutate(VPduSessionReactivationResultErrorCause &value);
 };
 
 struct VOperatorDefinedAccessCategoryDefinition
@@ -242,6 +255,7 @@ struct VOperatorDefinedAccessCategoryDefinition
 
     static void Encode(const VOperatorDefinedAccessCategoryDefinition &value, OctetString &stream);
     static VOperatorDefinedAccessCategoryDefinition Decode(const OctetView &stream);
+    static void Mutate(VOperatorDefinedAccessCategoryDefinition &value);
 };
 
 struct VPlmnIdAccessTech
@@ -253,6 +267,7 @@ struct VPlmnIdAccessTech
 
     static void Encode(const VPlmnIdAccessTech &value, OctetString &stream);
     static VPlmnIdAccessTech Decode(const OctetView &stream);
+    static void Mutate(VPlmnIdAccessTech &value);
 };
 
 } // namespace nas

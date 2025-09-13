@@ -34,6 +34,7 @@ extern "C"
     struct ASN_NGAP_OverloadStop;
     struct ASN_NGAP_PDUSessionResourceReleaseCommand;
     struct ASN_NGAP_Paging;
+    struct ASN_NGAP_PDUSessionResourceModifyRequest; // add for fuzzing
 }
 
 namespace nr::gnb
@@ -71,7 +72,7 @@ class NgapTask : public NtsTask
     /* Utility functions */
     void createAmfContext(const GnbAmfConfig &config);
     NgapAmfContext *findAmfContext(int ctxId);
-    void createUeContext(int ueId, int32_t &requestedSliceType);
+    void createUeContext(int ueId);
     NgapUeContext *findUeContext(int ctxId);
     NgapUeContext *findUeByRanId(int64_t ranUeNgapId);
     NgapUeContext *findUeByAmfId(int64_t amfUeNgapId);
@@ -98,7 +99,7 @@ class NgapTask : public NtsTask
     bool handleSctpStreamId(int amfId, int stream, const ASN_NGAP_NGAP_PDU &pdu);
 
     /* NAS transport */
-    void handleInitialNasTransport(int ueId, OctetString &nasPdu, int64_t rrcEstablishmentCause,
+    void handleInitialNasTransport(int ueId, const OctetString &nasPdu, int64_t rrcEstablishmentCause,
                                    const std::optional<GutiMobileIdentity> &sTmsi);
     void handleUplinkNasTransport(int ueId, const OctetString &nasPdu);
     void receiveDownlinkNasTransport(int amfId, ASN_NGAP_DownlinkNASTransport *msg);
@@ -110,6 +111,7 @@ class NgapTask : public NtsTask
     void receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSessionResourceSetupRequest *msg);
     void receiveSessionResourceReleaseCommand(int amfId, ASN_NGAP_PDUSessionResourceReleaseCommand *msg);
     std::optional<NgapCause> setupPduSessionResource(NgapUeContext *ue, PduSessionResource *resource);
+    void receiveSessionResourceModifyRequest(int amfId, ASN_NGAP_PDUSessionResourceModifyRequest *msg); // add for fuzzing
 
     /* UE context management */
     void receiveInitialContextSetup(int amfId, ASN_NGAP_InitialContextSetupRequest *msg);
@@ -118,7 +120,7 @@ class NgapTask : public NtsTask
     void sendContextRelease(int ueId, NgapCause cause);
 
     /* NAS Node Selection */
-    NgapAmfContext *selectAmf(int ueId, int32_t &requestedSliceType);
+    NgapAmfContext *selectAmf(int ueId);
     NgapAmfContext *selectNewAmfForReAllocation(int ueId, int initiatedAmfId, int amfSetId);
 
     /* Radio resource control */

@@ -26,6 +26,8 @@
 #include <utils/yaml_utils.hpp>
 #include <yaml-cpp/yaml.h>
 
+#include <ue/app/state_learner.hpp>
+
 static app::CliServer *g_cliServer = nullptr;
 static nr::ue::UeConfig *g_refConfig = nullptr;
 static ConcurrentMap<std::string, nr::ue::UserEquipment *> g_ueMap{};
@@ -39,6 +41,7 @@ static struct Options
     std::string imsi{};
     int count{};
     int tempo{};
+    int port{};
 } g_options{};
 
 struct NwUeControllerCmd : NtsMessage
@@ -162,8 +165,6 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->imeiSv = yaml::GetString(config, "imeiSv", 16, 16);
     if (yaml::HasField(config, "tunName"))
         result->tunName = yaml::GetString(config, "tunName", 1, 12);
-    if (yaml::HasField(config, "tunNetmask"))
-        result->tunNetmask = yaml::GetString(config, "tunNetmask", 9, 15);
 
     yaml::AssertHasField(config, "integrity");
     yaml::AssertHasField(config, "ciphering");
@@ -266,6 +267,7 @@ static void ReadOptions(int argc, char **argv)
                                       std::nullopt};
     opt::OptionItem itemDisableRouting = {'r', "no-routing-config",
                                           "Do not auto configure routing for UE TUN interface", std::nullopt};
+    opt::OptionItem itemTestPort = {'p', "test-port", "Port number to connect to the tester", "port"};
 
     desc.items.push_back(itemConfigFile);
     desc.items.push_back(itemImsi);
@@ -273,6 +275,7 @@ static void ReadOptions(int argc, char **argv)
     desc.items.push_back(itemTempo);
     desc.items.push_back(itemDisableCmd);
     desc.items.push_back(itemDisableRouting);
+    desc.items.push_back(itemTestPort);
 
     opt::OptionsResult opt{argc, argv, desc, false, nullptr};
 
@@ -310,6 +313,18 @@ static void ReadOptions(int argc, char **argv)
     }
 
     g_options.disableCmd = opt.hasFlag(itemDisableCmd);
+
+    if (opt.hasFlag(itemTestPort))
+    {
+        int inPort = utils::ParseInt(opt.getOption(itemTestPort));
+        if (inPort < 1024 || inPort > 65535)
+            throw std::runtime_error("Invalid test port number");
+        g_options.port = inPort;
+    }
+    else
+    {
+        g_options.port = 45678;
+    }
 }
 
 static std::string LargeSum(std::string a, std::string b)
@@ -362,7 +377,6 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->homeNetworkPublicKeyId = g_refConfig->homeNetworkPublicKeyId;
     c->routingIndicator = g_refConfig->routingIndicator;
     c->tunName = g_refConfig->tunName;
-    c->tunNetmask = g_refConfig->tunNetmask;
     c->hplmn = g_refConfig->hplmn;
     c->configuredNssai = g_refConfig->configuredNssai;
     c->defaultConfiguredNssai = g_refConfig->defaultConfiguredNssai;
@@ -532,6 +546,11 @@ int main(int argc, char **argv)
     {
         g_ueMap.invokeForeach([](const auto &ue) { ue.second->start(); });
     }
+
+    nr::ue::port = g_options.port;
+
+    // start state learner thread
+    nr::ue::state_learner->startThread();
 
     while (true)
         Loop();

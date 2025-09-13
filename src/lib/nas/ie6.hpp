@@ -28,6 +28,7 @@ struct IEQoSFlowDescriptions : InformationElement6
 
     static IEQoSFlowDescriptions Decode(const OctetView &stream, int length);
     static void Encode(const IEQoSFlowDescriptions &ie, OctetString &stream);
+    static void Mutate(IEQoSFlowDescriptions &ie);
 };
 
 struct IEPayloadContainer : InformationElement6
@@ -39,6 +40,7 @@ struct IEPayloadContainer : InformationElement6
 
     static IEPayloadContainer Decode(const OctetView &stream, int length);
     static void Encode(const IEPayloadContainer &ie, OctetString &stream);
+    static void Mutate(IEPayloadContainer &ie);
 };
 
 struct IEExtendedEmergencyNumberList : InformationElement6
@@ -50,6 +52,7 @@ struct IEExtendedEmergencyNumberList : InformationElement6
 
     static IEExtendedEmergencyNumberList Decode(const OctetView &stream, int length);
     static void Encode(const IEExtendedEmergencyNumberList &ie, OctetString &stream);
+    static void Mutate(IEExtendedEmergencyNumberList &ie);
 };
 
 struct IEEpsNasMessageContainer : InformationElement6
@@ -61,6 +64,7 @@ struct IEEpsNasMessageContainer : InformationElement6
 
     static IEEpsNasMessageContainer Decode(const OctetView &stream, int length);
     static void Encode(const IEEpsNasMessageContainer &ie, OctetString &stream);
+    static void Mutate(IEEpsNasMessageContainer &ie);
 };
 
 struct IENasMessageContainer : InformationElement6
@@ -72,6 +76,7 @@ struct IENasMessageContainer : InformationElement6
 
     static IENasMessageContainer Decode(const OctetView &stream, int length);
     static void Encode(const IENasMessageContainer &ie, OctetString &stream);
+    static void Mutate(IENasMessageContainer &ie);
 };
 
 struct IEExtendedProtocolConfigurationOptions : InformationElement6
@@ -86,6 +91,7 @@ struct IEExtendedProtocolConfigurationOptions : InformationElement6
 
     static IEExtendedProtocolConfigurationOptions Decode(const OctetView &stream, int length);
     static void Encode(const IEExtendedProtocolConfigurationOptions &ie, OctetString &stream);
+    static void Mutate(IEExtendedProtocolConfigurationOptions &ie);
 };
 
 struct IEPduSessionReactivationResultErrorCause : InformationElement6
@@ -97,6 +103,7 @@ struct IEPduSessionReactivationResultErrorCause : InformationElement6
 
     static IEPduSessionReactivationResultErrorCause Decode(const OctetView &stream, int length);
     static void Encode(const IEPduSessionReactivationResultErrorCause &ie, OctetString &stream);
+    static void Mutate(IEPduSessionReactivationResultErrorCause &ie);
 };
 
 struct IELadnIndication : InformationElement6
@@ -108,6 +115,7 @@ struct IELadnIndication : InformationElement6
 
     static IELadnIndication Decode(const OctetView &stream, int length);
     static void Encode(const IELadnIndication &ie, OctetString &stream);
+    static void Mutate(IELadnIndication &ie);
 };
 
 // Placed here because of the fwd decl issues.
@@ -120,7 +128,8 @@ struct VLadn
 
     static void Encode(const VLadn &value, OctetString &stream);
     static VLadn Decode(const OctetView &stream);
-};
+    static void Mutate(VLadn &value);
+};  
 
 struct IELadnInformation : InformationElement6
 {
@@ -131,6 +140,7 @@ struct IELadnInformation : InformationElement6
 
     static IELadnInformation Decode(const OctetView &stream, int length);
     static void Encode(const IELadnInformation &ie, OctetString &stream);
+    static void Mutate(IELadnInformation &ie);
 };
 
 struct IEOperatorDefinedAccessCategoryDefinitions : InformationElement6
@@ -142,6 +152,7 @@ struct IEOperatorDefinedAccessCategoryDefinitions : InformationElement6
 
     static IEOperatorDefinedAccessCategoryDefinitions Decode(const OctetView &stream, int length);
     static void Encode(const IEOperatorDefinedAccessCategoryDefinitions &ie, OctetString &stream);
+    static void Mutate(IEOperatorDefinedAccessCategoryDefinitions &ie);
 };
 
 struct IEMappedEpsBearerContexts : InformationElement6
@@ -153,6 +164,7 @@ struct IEMappedEpsBearerContexts : InformationElement6
 
     static IEMappedEpsBearerContexts Decode(const OctetView &stream, int length);
     static void Encode(const IEMappedEpsBearerContexts &ie, OctetString &stream);
+    static void Mutate(IEMappedEpsBearerContexts &ie);
 };
 
 struct IEQoSRules : InformationElement6
@@ -164,6 +176,7 @@ struct IEQoSRules : InformationElement6
 
     static IEQoSRules Decode(const OctetView &stream, int length);
     static void Encode(const IEQoSRules &ie, OctetString &stream);
+    static void Mutate(IEQoSRules &ie);
 };
 
 struct IESorTransparentContainer : InformationElement6
@@ -180,6 +193,7 @@ struct IESorTransparentContainer : InformationElement6
 
     static IESorTransparentContainer Decode(const OctetView &stream, int length);
     static void Encode(const IESorTransparentContainer &ie, OctetString &stream);
+    static void Mutate(IESorTransparentContainer &ie);
 };
 
 struct IE5gsMobileIdentity : InformationElement6
@@ -194,6 +208,7 @@ struct IE5gsMobileIdentity : InformationElement6
 
     static IE5gsMobileIdentity Decode(const OctetView &stream, int length);
     static void Encode(const IE5gsMobileIdentity &ie, OctetString &stream);
+    static void Mutate(IE5gsMobileIdentity &ie);
 };
 
 struct IEEapMessage : InformationElement6
@@ -202,6 +217,7 @@ struct IEEapMessage : InformationElement6
 
     static IEEapMessage Decode(const OctetView &stream, int length);
     static void Encode(const IEEapMessage &ie, OctetString &stream);
+    static void Mutate(IEEapMessage &ie);
 };
 
 Json ToJson(const IE5gsMobileIdentity &v);

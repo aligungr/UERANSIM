@@ -302,6 +302,8 @@ void NasMm::switchUState(E5UState state)
 
 void NasMm::onSwitchMmState(EMmState oldState, EMmState newState, EMmSubState oldSubState, EMmSubState newSubSate)
 {
+    // state learner: do nothing
+    return;
     // "The UE shall mark the 5G NAS security context on the USIM or in the non-volatile memory as invalid when the UE
     // initiates an initial registration procedure as described in subclause 5.5.1.2 or when the UE leaves state
     // 5GMM-DEREGISTERED for any other state except 5GMM-NULL."
@@ -367,7 +369,8 @@ void NasMm::onSwitchCmState(ECmState oldState, ECmState newState)
                 regType == nas::ERegistrationType::EMERGENCY_REGISTRATION)
             {
                 switchMmState(EMmSubState::MM_DEREGISTERED_PS);
-                switchUState(E5UState::U2_NOT_UPDATED);
+                // disabled for statelearner
+                // switchUState(E5UState::U2_NOT_UPDATED);
 
                 handleAbnormalInitialRegFailure(regType);
             }

@@ -16,6 +16,8 @@ namespace nr::ue::nas_enc
 
 std::unique_ptr<nas::SecuredMmMessage> Encrypt(NasSecurityContext &ctx, const nas::PlainMmMessage &msg,
                                                bool bypassCiphering, bool noCipheredHeader);
+std::unique_ptr<nas::SecuredMmMessage> EncryptMMPDU(NasSecurityContext &ctx, nas::EMessageType msgType, OctetString &&pdu,
+                                                    bool bypassCiphering, bool noCipheredHeader); // fuzzing
 std::unique_ptr<nas::NasMessage> Decrypt(NasSecurityContext &ctx, const nas::SecuredMmMessage &msg);
 
 uint32_t ComputeMac(nas::ETypeOfIntegrityProtectionAlgorithm alg, NasCount count, bool is3gppAccess, bool isUplink,

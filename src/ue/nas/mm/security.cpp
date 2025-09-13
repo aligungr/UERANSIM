@@ -11,6 +11,9 @@
 #include <ue/nas/enc.hpp>
 #include <ue/nas/keys.hpp>
 
+//state learner
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
@@ -53,9 +56,10 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
     m_logger->debug("Security Mode Command received");
 
     auto reject = [this](nas::EMmCause cause) {
-        nas::SecurityModeReject resp;
-        resp.mmCause.value = cause;
-        sendNasMessage(resp);
+        // StateLearner: not send
+        // nas::SecurityModeReject resp;
+        // resp.mmCause.value = cause;
+        // sendNasMessage(resp);
         m_logger->err("Rejecting Security Mode Command with cause [%s]", nas::utils::EnumToString(cause));
     };
 
@@ -227,7 +231,7 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
 
     // ============================ Handle EAP-Success message if any. ============================
 
-    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
+    if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::SUCCESS)
             receiveEapSuccessMessage(*msg.eapMessage->eap);
@@ -267,8 +271,12 @@ void NasMm::receiveSecurityModeCommand(const nas::SecurityModeCommand &msg)
         nas::EncodeNasMessage(*m_lastRegistrationRequest, resp.nasMessageContainer->data);
     }
 
+    m_logger->debug("store message SecurityModeComplete");
+    state_learner->store_message(resp);
+    state_learner->storedMsgCount[(int)MsgType::securityModeComplete]++;
+    // StateLearner: not send
     // Send response
-    sendNasMessage(resp);
+    // sendNasMessage(resp);
 }
 
 nas::IEUeSecurityCapability NasMm::createSecurityCapabilityIe()

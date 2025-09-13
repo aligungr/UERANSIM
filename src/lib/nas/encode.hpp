@@ -16,4 +16,6 @@ namespace nas
 void EncodeNasMessage(const NasMessage &msg, OctetString &stream);
 std::unique_ptr<NasMessage> DecodeNasMessage(const OctetView &stream);
 
+void MutateNasMessage(const NasMessage &msg); // fuzzing
+
 } // namespace nas

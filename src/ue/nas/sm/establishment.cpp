@@ -13,6 +13,8 @@
 #include <ue/app/task.hpp>
 #include <ue/nas/mm/mm.hpp>
 
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
@@ -41,17 +43,18 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     m_logger->debug("Sending PDU Session Establishment Request");
 
     /* Control the protocol state */
-    if (m_mm->m_rmState != ERmState::RM_REGISTERED)
-    {
-        m_logger->err("PDU session establishment could not be triggered, UE is not registered");
-        return;
-    }
+    // CoreLearner: remove state here
+    // if (m_mm->m_rmState != ERmState::RM_REGISTERED)
+    // {
+    //     m_logger->err("PDU session establishment could not be triggered, UE is not registered");
+    //     return;
+    // }
 
-    if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() && !m_mm->isHighPriority())
-    {
-        m_logger->err("PDU session establishment could not be triggered, non allowed service condition");
-        return;
-    }
+    // if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() && !m_mm->isHighPriority())
+    // {
+    //     m_logger->err("PDU session establishment could not be triggered, non allowed service condition");
+    //     return;
+    // }
 
     /* Control the received config */
     if (config.type != nas::EPduSessionType::IPV4)
@@ -134,6 +137,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
 
 void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept &msg)
 {
+    // state_learner->notify_response("PDUSessionEstablishmentAccept");
     m_logger->debug("PDU Session Establishment Accept received");
 
     if (!checkPtiAndPsi(msg))
@@ -179,6 +183,7 @@ void NasSm::receiveEstablishmentAccept(const nas::PduSessionEstablishmentAccept 
 
 void NasSm::receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg)
 {
+    // state_learner->notify_response("PDUSessionEstablishmentReject");
     m_logger->err("PDU Session Establishment Reject received [%s]", nas::utils::EnumToString(msg.smCause.value));
 
     if (!checkPtiAndPsi(msg))

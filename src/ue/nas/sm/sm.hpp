@@ -34,6 +34,7 @@ class NasSm
     friend class UeCmdHandler;
     friend class NasMm;
     friend class NasTask;
+    friend class UeStateLearner;
 
   public:
     NasSm(TaskBase *base, NasTimers *timers);

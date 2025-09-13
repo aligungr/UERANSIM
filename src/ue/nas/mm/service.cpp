@@ -11,11 +11,15 @@
 #include <lib/nas/utils.hpp>
 #include <ue/nas/sm/sm.hpp>
 
+//state learner
+#include <ue/app/state_learner.hpp>
+
 namespace nr::ue
 {
 
 EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
 {
+    // State learner: remove condition below
     // "The procedure shall only be initiated by the UE when the following conditions are fulfilled ..."
     if (m_mmState == EMmState::MM_REGISTERED_INITIATED || m_mmState == EMmState::MM_DEREGISTERED_INITIATED)
     {
@@ -196,10 +200,15 @@ EProcRc NasMm::sendServiceRequest(EServiceReqCause reqCause)
     request->pduSessionStatus = nas::IEPduSessionStatus{};
     request->pduSessionStatus->psi = m_sm->getPduSessionStatus();
 
+
+    m_logger->debug("store message ServiceRequest");
+    state_learner->store_message(*request);
+    state_learner->storedMsgCount[(int)MsgType::serviceRequest]++;
     // Send the message and process the timers
-    auto rc = sendNasMessage(*request);
-    if (rc != EProcRc::OK)
-        return rc;
+    // StateLearner: don't send the message here
+    // auto rc = sendNasMessage(*request);
+    // if (rc != EProcRc::OK)
+    //     return rc;
     m_lastServiceRequest = std::move(request);
     m_lastServiceReqCause = reqCause;
     m_timers->t3517.start();
@@ -255,7 +264,7 @@ void NasMm::receiveServiceAccept(const nas::ServiceAccept &msg)
     }
 
     // Handle EAP message
-    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
+    if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
@@ -307,7 +316,7 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
     }
 
     // Handle EAP message
-    if (msg.eapMessage.has_value() && msg.eapMessage->eap)
+    if (msg.eapMessage.has_value())
     {
         if (msg.eapMessage->eap->code == eap::ECode::FAILURE)
             receiveEapFailureMessage(*msg.eapMessage->eap);
@@ -317,15 +326,16 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
 
     /* Handle MM Cause */
 
-    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
-        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
-        cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
-        cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
-        switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
+    // disabled for statelearner
+    // if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+    //     cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED || cause == nas::EMmCause::PLMN_NOT_ALLOWED ||
+    //     cause == nas::EMmCause::TA_NOT_ALLOWED || cause == nas::EMmCause::ROAMING_NOT_ALLOWED_IN_TA ||
+    //     cause == nas::EMmCause::NO_SUITIBLE_CELLS_IN_TA || cause == nas::EMmCause::N1_MODE_NOT_ALLOWED)
+    //     switchUState(E5UState::U3_ROAMING_NOT_ALLOWED);
 
-    if (cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK ||
-        cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
-        switchUState(E5UState::U2_NOT_UPDATED);
+    // if (cause == nas::EMmCause::UE_IDENTITY_CANNOT_BE_DERIVED_FROM_NETWORK ||
+    //     cause == nas::EMmCause::SERVING_NETWORK_NOT_AUTHORIZED)
+    //     switchUState(E5UState::U2_NOT_UPDATED);
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
         cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||
@@ -379,11 +389,12 @@ void NasMm::receiveServiceReject(const nas::ServiceReject &msg)
         }
     }
 
-    if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
-        cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
-    {
-        m_usim->invalidate();
-    }
+    // disabled for statelearner
+    // if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
+    //     cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED)
+    // {
+    //     m_usim->invalidate();
+    // }
 
     if (cause == nas::EMmCause::ILLEGAL_UE || cause == nas::EMmCause::ILLEGAL_ME ||
         cause == nas::EMmCause::FIVEG_SERVICES_NOT_ALLOWED ||

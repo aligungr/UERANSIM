@@ -10,6 +10,9 @@
 
 #include <stdexcept>
 
+// fuzzing
+#include <ue/app/state_learner.hpp>
+
 namespace nas
 {
 
@@ -23,6 +26,14 @@ static void EncodeViaBuilder(T &msg, OctetString &stream)
         f(stream);
     for (auto &f : builder.optionalEncoders)
         f(stream);
+}
+
+// fuzzing
+template <typename T>
+static void MutateViaMutator(T &msg)
+{
+    NasMessageMutator mutator{};
+    msg.onMutate(mutator);
 }
 
 static void EncodeMm(PlainMmMessage &msg, OctetString &stream)
@@ -116,6 +127,172 @@ static void EncodeMm(PlainMmMessage &msg, OctetString &stream)
         EncodeViaBuilder((DlNasTransport &)msg, stream);
         break;
     default:
+        // printf("invalid NAS message type: %d\n", msg.messageType);
+        throw std::runtime_error("invalid NAS message type");
+    }
+}
+
+// need to define before MutateMm()
+static void MutateSm(SmMessage &msg)
+{
+    // 1/5 chance to mutate pti or pduSessionId
+    if (generate_int(5) == 0)
+    {
+        msg.pti = generate_bit(32);
+    }
+    if (generate_int(5) == 0)
+    {
+        msg.pduSessionId = generate_bit(32);
+    }
+    
+    switch (msg.messageType)
+    {
+    case EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST:
+        MutateViaMutator((PduSessionEstablishmentRequest &)msg);
+        break;
+    case EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
+        MutateViaMutator((PduSessionEstablishmentAccept &)msg);
+        break;
+    case EMessageType::PDU_SESSION_ESTABLISHMENT_REJECT:
+        MutateViaMutator((PduSessionEstablishmentReject &)msg);
+        break;
+    case EMessageType::PDU_SESSION_AUTHENTICATION_COMMAND:
+        MutateViaMutator((PduSessionAuthenticationCommand &)msg);
+        break;
+    case EMessageType::PDU_SESSION_AUTHENTICATION_COMPLETE:
+        MutateViaMutator((PduSessionAuthenticationComplete &)msg);
+        break;
+    case EMessageType::PDU_SESSION_AUTHENTICATION_RESULT:
+        MutateViaMutator((PduSessionAuthenticationResult &)msg);
+        break;
+    case EMessageType::PDU_SESSION_MODIFICATION_REQUEST:
+        MutateViaMutator((PduSessionModificationRequest &)msg);
+        break;
+    case EMessageType::PDU_SESSION_MODIFICATION_REJECT:
+        MutateViaMutator((PduSessionModificationReject &)msg);
+        break;
+    case EMessageType::PDU_SESSION_MODIFICATION_COMMAND:
+        MutateViaMutator((PduSessionModificationCommand &)msg);
+        break;
+    case EMessageType::PDU_SESSION_MODIFICATION_COMPLETE:
+        MutateViaMutator((PduSessionModificationComplete &)msg);
+        break;
+    case EMessageType::PDU_SESSION_MODIFICATION_COMMAND_REJECT:
+        MutateViaMutator((PduSessionModificationCommandReject &)msg);
+        break;
+    case EMessageType::PDU_SESSION_RELEASE_REQUEST:
+        MutateViaMutator((PduSessionReleaseRequest &)msg);
+        break;
+    case EMessageType::PDU_SESSION_RELEASE_REJECT:
+        MutateViaMutator((PduSessionReleaseReject &)msg);
+        break;
+    case EMessageType::PDU_SESSION_RELEASE_COMMAND:
+        MutateViaMutator((PduSessionReleaseCommand &)msg);
+        break;
+    case EMessageType::PDU_SESSION_RELEASE_COMPLETE:
+        MutateViaMutator((PduSessionReleaseComplete &)msg);
+        break;
+    case EMessageType::FIVEG_SM_STATUS:
+        MutateViaMutator((FiveGSmStatus &)msg);
+        break;
+    default:
+        throw std::runtime_error("invalid NAS message type");
+    }
+}
+
+// fuzzing
+static void MutateMm(PlainMmMessage &msg)
+{
+    switch (msg.messageType)
+    {
+    case EMessageType::REGISTRATION_REQUEST:
+        MutateViaMutator((RegistrationRequest &)msg);
+        break;
+    case EMessageType::REGISTRATION_ACCEPT:
+        MutateViaMutator((RegistrationAccept &)msg);
+        break;
+    case EMessageType::REGISTRATION_COMPLETE:
+        MutateViaMutator((RegistrationComplete &)msg);
+        break;
+    case EMessageType::REGISTRATION_REJECT:
+        MutateViaMutator((RegistrationReject &)msg);
+        break;
+    case EMessageType::DEREGISTRATION_REQUEST_UE_ORIGINATING:
+        MutateViaMutator((DeRegistrationRequestUeOriginating &)msg);
+        break;
+    case EMessageType::DEREGISTRATION_ACCEPT_UE_ORIGINATING:
+        MutateViaMutator((DeRegistrationAcceptUeOriginating &)msg);
+        break;
+    case EMessageType::DEREGISTRATION_REQUEST_UE_TERMINATED:
+        MutateViaMutator((DeRegistrationRequestUeTerminated &)msg);
+        break;
+    case EMessageType::DEREGISTRATION_ACCEPT_UE_TERMINATED:
+        MutateViaMutator((DeRegistrationAcceptUeTerminated &)msg);
+        break;
+    case EMessageType::SERVICE_REQUEST:
+        MutateViaMutator((ServiceRequest &)msg);
+        break;
+    case EMessageType::SERVICE_REJECT:
+        MutateViaMutator((ServiceReject &)msg);
+        break;
+    case EMessageType::SERVICE_ACCEPT:
+        MutateViaMutator((ServiceAccept &)msg);
+        break;
+    case EMessageType::CONFIGURATION_UPDATE_COMMAND:
+        MutateViaMutator((ConfigurationUpdateCommand &)msg);
+        break;
+    case EMessageType::CONFIGURATION_UPDATE_COMPLETE:
+        MutateViaMutator((ConfigurationUpdateComplete &)msg);
+        break;
+    case EMessageType::AUTHENTICATION_REQUEST:
+        MutateViaMutator((AuthenticationRequest &)msg);
+        break;
+    case EMessageType::AUTHENTICATION_RESPONSE:
+        MutateViaMutator((AuthenticationResponse &)msg);
+        break;
+    case EMessageType::AUTHENTICATION_REJECT:
+        MutateViaMutator((AuthenticationReject &)msg);
+        break;
+    case EMessageType::AUTHENTICATION_FAILURE:
+        MutateViaMutator((AuthenticationFailure &)msg);
+        break;
+    case EMessageType::AUTHENTICATION_RESULT:
+        MutateViaMutator((AuthenticationResult &)msg);
+        break;
+    case EMessageType::IDENTITY_REQUEST:
+        MutateViaMutator((IdentityRequest &)msg);
+        break;
+    case EMessageType::IDENTITY_RESPONSE:
+        MutateViaMutator((IdentityResponse &)msg);
+        break;
+    case EMessageType::SECURITY_MODE_COMMAND:
+        MutateViaMutator((SecurityModeCommand &)msg);
+        break;
+    case EMessageType::SECURITY_MODE_COMPLETE:
+        MutateViaMutator((SecurityModeComplete &)msg);
+        break;
+    case EMessageType::SECURITY_MODE_REJECT:
+        MutateViaMutator((SecurityModeReject &)msg);
+        break;
+    case EMessageType::FIVEG_MM_STATUS:
+        MutateViaMutator((FiveGMmStatus &)msg);
+        break;
+    case EMessageType::NOTIFICATION:
+        MutateViaMutator((Notification &)msg);
+        break;
+    case EMessageType::NOTIFICATION_RESPONSE:
+        MutateViaMutator((NotificationResponse &)msg);
+        break;
+    case EMessageType::UL_NAS_TRANSPORT:{
+        UlNasTransport &ul = (UlNasTransport &)msg;
+        if (ul.payloadContainerType.payloadContainerType == EPayloadContainerType::N1_SM_INFORMATION)
+            MutateSm((SmMessage &) *DecodeNasMessage(OctetView{ul.payloadContainer.data}));
+        MutateViaMutator(ul);
+        break;}
+    case EMessageType::DL_NAS_TRANSPORT:
+        MutateViaMutator((DlNasTransport &)msg);
+        break;
+    default:
         throw std::runtime_error("invalid NAS message type");
     }
 }
@@ -205,6 +382,18 @@ void EncodeNasMessage(const NasMessage &msg, OctetString &stream)
         EncodeSm((SmMessage &)msg, stream);
 }
 
+void MutateNasMessage(const NasMessage &msg)
+{
+    if (msg.epd == EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES)
+    {
+        auto &mm = (MmMessage &)msg;
+        
+        MutateMm((PlainMmMessage &)mm);
+    }
+    else
+        MutateSm((SmMessage &)msg);
+}
+
 static SecuredMmMessage *DecodeSecuredMmMessage(const OctetView &stream, ESecurityHeaderType sht)
 {
     auto *p = new SecuredMmMessage();
@@ -232,8 +421,15 @@ static T *DecodeViaBuilder(const OctetView &stream)
             builder.optionalDecoders[iei](stream);
         else if (builder.optionalDecoders.count((iei >> 4) & 0xF))
             builder.optionalDecoders[(iei >> 4) & 0xF](stream);
+        // fuzzing: notify error to stop mutation on certain message
         else
+        {
+            if (nr::ue::state_learner->dec_before_mut) {
+                nr::ue::state_learner->notify_response("decode error");
+                std::this_thread::sleep_for(std::chrono::milliseconds(100)); // sleep before crash to make sure the message is received
+            }
             throw std::runtime_error("Bad constructed NAS message");
+        }
     }
 
     return p;
