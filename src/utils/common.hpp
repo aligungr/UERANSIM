@@ -35,7 +35,6 @@ int ParseInt(const char *str);
 bool TryParseInt(const std::string &str, int &output);
 bool TryParseInt(const char *str, int &output);
 void Sleep(int ms);
-bool IsRoot();
 bool IsNumeric(const std::string &str);
 void AssertNodeName(const std::string &str);
 void Trim(std::string &str);
