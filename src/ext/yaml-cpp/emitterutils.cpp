@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
+#include <cstdint>
 
 #include "emitterutils.h"
 #include "exp.h"

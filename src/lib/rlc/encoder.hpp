@@ -9,6 +9,7 @@
 #pragma once
 
 #include "utils.hpp"
+#include <cstdint>
 
 namespace rlc
 {
