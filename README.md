@@ -56,4 +56,4 @@ All source code and related files including documentation and wiki pages are
 dual licensed with [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.en.html) and a commercial license.
 
 > [!WARNING]
-> Closed-source commercial usage of UERANSIM is **not** permitted with the AGPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
+> Closed-source commercial usage of UERANSIM may **not** be permitted with the AGPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
