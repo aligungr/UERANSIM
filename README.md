@@ -4,7 +4,7 @@
 <p align="center">
 <img src="https://img.shields.io/badge/UERANSIM-v3.2.7-blue" />
 <img src="https://img.shields.io/badge/3GPP-R15-orange" />
-<img src="https://img.shields.io/badge/License-GPL--3.0-green"/>
+<img src="https://img.shields.io/badge/License-AGPL--3.0-green"/>
 </p>
 
 **UERANSIM** <small>(pronounced "ju-i ræn sɪm")</small>, is the open source state-of-the-art 5G UE and RAN (gNodeB)
@@ -53,7 +53,7 @@ You can support UERANSIM by:
 Copyright (c) 2025 ALİ GÜNGÖR.
 
 All source code and related files including documentation and wiki pages are
-dual licensed with [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html) and a commercial license.
+dual licensed with [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.en.html) and a commercial license.
 
 > [!WARNING]
-> Closed-source commercial usage of UERANSIM is **not** permitted with the GPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
+> Closed-source commercial usage of UERANSIM is **not** permitted with the AGPL-3.0. If that license is not compatable with your use case, please contact [ueransim@gmail.com](mailto:ueransim@gmail.com) to buy a commercial license.
