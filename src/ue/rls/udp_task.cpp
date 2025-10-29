@@ -20,6 +20,8 @@ static constexpr const int BUFFER_SIZE = 16384;
 static constexpr const int LOOP_PERIOD = 1000;
 static constexpr const int RECEIVE_TIMEOUT = 200;
 static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE_TIMEOUT)'dan büyük olmalı
+static bool firstWindow = true;                        // for the first heartbeat sent
+static uint64_t firstWindowStart = 0;                  // for the first heartbeat sent
 
 namespace nr::ue
 {
@@ -127,9 +129,11 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
 void RlsUdpTask::onSignalChangeOrLost(int cellId)
 {
     int dbm = INT32_MIN;
+    m_logger->debug("[RLS]Signal changed for cell[%d]", cellId);
     if (m_cellIdToSti.count(cellId))
     {
         auto sti = m_cellIdToSti[cellId];
+        m_logger->debug("ACK received for cellId=%d → sti=%u", cellId, sti);
         dbm = m_cells[sti].dbm;
     }
 
@@ -142,28 +146,42 @@ void RlsUdpTask::onSignalChangeOrLost(int cellId)
 void RlsUdpTask::heartbeatCycle(uint64_t time, const Vector3 &simPos)
 {
     std::set<std::pair<uint64_t, int>> toRemove;
-
     for (auto &cell : m_cells)
     {
         auto delta = time - cell.second.lastSeen;
         if (delta > HEARTBEAT_THRESHOLD)
             toRemove.insert({cell.first, cell.second.cellId});
     }
-
     for (auto cell : toRemove)
     {
         m_cells.erase(cell.first);
         m_cellIdToSti.erase(cell.second);
     }
-
     for (auto cell : toRemove)
         onSignalChangeOrLost(cell.second);
 
-    for (auto &addr : m_searchSpace)
+    if (firstWindow && !m_searchSpace.empty())
     {
-        rls::RlsHeartBeat msg{m_shCtx->sti};
-        msg.simPos = simPos;
-        sendRlsPdu(addr, msg);
+        if (firstWindowStart == 0) // first time sending heartbeat
+            firstWindowStart = time;
+
+        // HB only to the first gNB
+        rls::RlsHeartBeat hb{m_shCtx->sti};
+        hb.simPos = simPos;
+        sendRlsPdu(m_searchSpace.front(), hb);
+
+        if (time - firstWindowStart >= 500)
+            firstWindow = false; // window is closed
+    }
+    else
+    {
+        // normal diffusion
+        for (auto &addr : m_searchSpace)
+        {
+            rls::RlsHeartBeat msg{m_shCtx->sti};
+            msg.simPos = simPos;
+            sendRlsPdu(addr, msg);
+        }
     }
 }
 

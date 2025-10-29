@@ -276,6 +276,7 @@ struct GtpUeContext
 {
     const int ueId;
     AggregateMaximumBitRate ueAmbr{};
+    std::map<int, std::unique_ptr<PduSessionResource>> pduSessions;
 
     explicit GtpUeContext(const int ueId) : ueId(ueId)
     {

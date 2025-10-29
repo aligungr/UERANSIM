@@ -65,6 +65,8 @@ void RlsControlTask::onLoop()
             handleUplinkRrcDelivery(w.cellId, w.pduId, w.rrcChannel, std::move(w.data));
             break;
         case NmUeRlsToRls::ASSIGN_CURRENT_CELL:
+            m_logger->debug("[CTL] ASSIGN_CURRENT_CELL -> %d (prev %d)", w.cellId, m_servingCell);
+
             m_servingCell = w.cellId;
             break;
         default:
@@ -146,6 +148,7 @@ void RlsControlTask::handleRlsMessage(int cellId, rls::RlsMessage &msg)
 
 void RlsControlTask::handleSignalChange(int cellId, int dbm)
 {
+    m_logger->debug("[CTL] SIGNAL_CHANGED cell=%d dBm=%d", cellId, dbm);
     auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::SIGNAL_CHANGED);
     w->cellId = cellId;
     w->dbm = dbm;

@@ -42,7 +42,8 @@ namespace nr::gnb
 {
 
 RlsUdpTask::RlsUdpTask(TaskBase *base, uint64_t sti, Vector3 phyLocation)
-    : m_server{}, m_ctlTask{}, m_sti{sti}, m_phyLocation{phyLocation}, m_lastLoop{}, m_stiToUe{}, m_ueMap{}, m_newIdCounter{}
+    : m_server{}, m_ctlTask{}, m_sti{sti}, m_phyLocation{phyLocation}, m_lastLoop{}, m_stiToUe{},
+      m_ueMap{}, m_newIdCounter{}
 {
     m_logger = base->logBase->makeUniqueLogger("rls-udp");
 
@@ -90,6 +91,11 @@ void RlsUdpTask::onQuit()
     delete m_server;
 }
 
+int RlsUdpTask::reserveNewUeId()
+{
+    return m_newIdCounter;
+}
+
 void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg)
 {
     if (msg->msgType == rls::EMessageType::HEARTBEAT)
@@ -100,7 +106,6 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
             // if the simulated signal strength is such low, then ignore this message
             return;
         }
-
         if (m_stiToUe.count(msg->sti))
         {
             int ueId = m_stiToUe[msg->sti];
