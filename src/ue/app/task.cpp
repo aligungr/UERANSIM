@@ -8,10 +8,12 @@
 
 #include "task.hpp"
 #include "cmd_handler.hpp"
+#include <unistd.h>
 #include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
 #include <ue/tun/tun.hpp>
+#include <ue/tap/tap.hpp>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -41,6 +43,15 @@ void UeAppTask::onQuit()
             tunTask = nullptr;
         }
     }
+    for (auto &tapTask : m_tapTasks)
+    {
+        if (tapTask != nullptr)
+        {
+            tapTask->quit();
+            delete tapTask;
+            tapTask = nullptr;
+        }
+    }
 }
 
 void UeAppTask::onLoop()
@@ -63,7 +74,7 @@ void UeAppTask::onLoop()
             break;
         }
         case NmUeTunToApp::TUN_ERROR: {
-            m_logger->err("TUN failure [%s]", w.error.c_str());
+            m_logger->err("TUN/TAP failure [%s]", w.error.c_str());
             break;
         }
         }
@@ -79,12 +90,20 @@ void UeAppTask::onLoop()
         }
         case NmUeNasToApp::DOWNLINK_DATA_DELIVERY: {
             auto *tunTask = m_tunTasks[w.psi];
+            auto *tapTask = m_tapTasks[w.psi];
             if (tunTask)
             {
                 auto m = std::make_unique<NmAppToTun>(NmAppToTun::DATA_PDU_DELIVERY);
                 m->psi = w.psi;
                 m->data = std::move(w.data);
                 tunTask->push(std::move(m));
+            }
+            else if (tapTask)
+            {
+                auto m = std::make_unique<NmAppToTun>(NmAppToTun::DATA_PDU_DELIVERY);
+                m->psi = w.psi;
+                m->data = std::move(w.data);
+                tapTask->push(std::move(m));
             }
             break;
         }
@@ -122,7 +141,10 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
     {
         auto *session = msg.pduSession;
 
-        setupTunInterface(session);
+        if (session->sessionType == nas::EPduSessionType::ETHERNET)
+            setupTapInterface(session);
+        else
+            setupTunInterface(session);
         return;
     }
 
@@ -133,6 +155,12 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
             m_tunTasks[msg.psi]->quit();
             delete m_tunTasks[msg.psi];
             m_tunTasks[msg.psi] = nullptr;
+        }
+        if (m_tapTasks[msg.psi] != nullptr)
+        {
+            m_tapTasks[msg.psi]->quit();
+            delete m_tapTasks[msg.psi];
+            m_tapTasks[msg.psi] = nullptr;
         }
 
         return;
@@ -147,6 +175,7 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
 
 void UeAppTask::setupTunInterface(const PduSession *pduSession)
 {
+
     if (!utils::IsRoot())
     {
         m_logger->err("TUN interface could not be setup. Permission denied. Please run the UE with 'sudo'");
@@ -209,6 +238,53 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
                    allocatedName.c_str(), ipAddress.c_str());
+}
+
+void UeAppTask::setupTapInterface(const PduSession *pduSession)
+{
+    if (!utils::IsRoot())
+    {
+        m_logger->err("TAP interface could not be setup. Permission denied. Please run the UE with 'sudo'");
+        return;
+    }
+
+    int psi = pduSession->psi;
+    if (psi == 0 || psi > 15)
+    {
+        m_logger->err("Connection could not setup. Invalid PSI.");
+        return;
+    }
+
+    if (m_tapTasks[psi] != nullptr)
+    {
+        m_logger->err("Connection could not setup. TAP task for specified PSI is non-null.");
+        return;
+    }
+
+    std::string error{}, allocatedName{};
+    std::string requestedName = cons::TapNamePrefix;
+
+    int fd = tap::TapAllocate(requestedName.c_str(), allocatedName, error);
+    if (fd == 0 || error.length() > 0)
+    {
+        m_logger->err("TAP allocation failure [%s]", error.c_str());
+        return;
+    }
+
+    bool r = tap::TapConfigure(allocatedName, cons::TunMtu, error);
+    if (!r || error.length() > 0)
+    {
+        m_logger->err("TAP configuration failure [%s]", error.c_str());
+        ::close(fd);
+        return;
+    }
+
+    auto *task = new TapTask(m_base, psi, fd);
+    m_tapTasks[psi] = task;
+    task->start();
+
+    m_logger->info("Connection setup for Ethernet PDU session[%d] is successful, TAP interface[%s] is up.", 
+                   pduSession->psi, allocatedName.c_str());
 }
 
 } // namespace nr::ue

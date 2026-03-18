@@ -180,12 +180,6 @@ void GtpTask::handleUeContextDelete(int ueId)
 
 void GtpTask::handleUplinkData(int ueId, int psi, OctetString &&pdu)
 {
-    const uint8_t *data = pdu.data();
-
-    // ignore non IPv4 packets
-    if ((data[0] >> 4 & 0xF) != 4)
-        return;
-
     uint64_t sessionInd = MakeSessionResInd(ueId, psi);
 
     if (!m_pduSessions.count(sessionInd))
@@ -195,6 +189,15 @@ void GtpTask::handleUplinkData(int ueId, int psi, OctetString &&pdu)
     }
 
     auto &pduSession = m_pduSessions[sessionInd];
+
+    // For IPv4 sessions, filter non-IPv4 packets (IP version in first nibble). Ethernet sessions carry raw L2 frames.
+    if (pduSession->sessionType == PduSessionType::IPv4)
+    {
+        if (pdu.length() < 1)
+            return;
+        if ((pdu.data()[0] >> 4 & 0xF) != 4)
+            return;
+    }
 
     if (m_rateLimiter->allowUplinkPacket(sessionInd, static_cast<int64_t>(pdu.length())))
     {

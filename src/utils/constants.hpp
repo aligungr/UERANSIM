@@ -30,6 +30,9 @@ struct cons
     static constexpr const char *TunNetmask = "255.255.0.0";
     static constexpr const int TunMtu = 1400;
 
+    // TAP interface (Ethernet PDU sessions)
+    static constexpr const char *TapNamePrefix = "uesimtap";
+
     // Constraints
     static constexpr const int MinNodeName = 3;
     static constexpr const int MaxNodeName = 1024;

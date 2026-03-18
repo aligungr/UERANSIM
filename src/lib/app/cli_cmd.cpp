@@ -127,10 +127,11 @@ static opt::OptionsDescription DefaultDesc(const std::string &subCommand, const 
 static opt::OptionsDescription DescForPsEstablish(const std::string &subCommand, const CmdEntry &entry)
 {
     std::string example1 = "IPv4 --sst 1 --sd 1 --dnn internet";
-    std::string example2 = "IPv4 --emergency";
+    std::string example2 = "Ethernet --sst 1 --sd 1 --dnn internet";
+    std::string example3 = "IPv4 --emergency";
 
     auto res = opt::OptionsDescription{
-        {},  {}, entry.descriptionText, {}, subCommand, {entry.usageText}, {example1, example2}, entry.helpIfEmpty,
+        {},  {}, entry.descriptionText, {}, subCommand, {entry.usageText}, {example1, example2, example3}, entry.helpIfEmpty,
         true};
 
     res.items.emplace_back(std::nullopt, "sst", "SST value of the PDU session", "value");
@@ -289,8 +290,10 @@ static std::unique_ptr<UeCliCommand> UeCliParseImpl(const std::string &subCmd, c
         if (options.positionalCount() > 15)
             CMD_ERR("Only one PDU session type is expected")
         std::string type = options.getPositional(0);
-        if (type != "IPv4" && type != "ipv4" && type != "IPV4" && type != "Ipv4" && type != "IpV4")
-            CMD_ERR("Only IPv4 is supported for now")
+        if (type != "IPv4" && type != "ipv4" && type != "IPV4" && type != "Ipv4" && type != "IpV4" &&
+            type != "Ethernet" && type != "ethernet" && type != "ETHERNET" && type != "Ethernet" && type != "EtherNet")
+            CMD_ERR("Only IPv4 and Ethernet are supported")
+        cmd->sessionTypeStr = type;
         cmd->isEmergency = options.hasFlag('e', "emergency");
         if (cmd->isEmergency)
         {
