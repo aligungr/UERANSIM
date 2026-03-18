@@ -91,6 +91,7 @@ void NasSm::sendEstablishmentRequest(const SessionConfig &config)
     ps->apn = config.apn;
     ps->sNssai = config.sNssai;
     ps->isEmergency = config.isEmergency;
+    ps->framedRoutes = config.framedRoutes;
     ps->authorizedQoSRules = {};
     ps->sessionAmbr = {};
     ps->authorizedQoSFlowDescriptions = {};

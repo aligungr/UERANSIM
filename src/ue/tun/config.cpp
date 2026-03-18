@@ -320,6 +320,43 @@ static void AddIpRoutes(const std::string &if_name, const std::string &table_nam
     std::string output = ExecStrict(cmd.str());
 }
 
+static bool ParseCidr(const std::string &cidr, std::string &networkAddr, int &prefixLen, std::string &firstIp)
+{
+    auto slashPos = cidr.find('/');
+    if (slashPos == std::string::npos)
+        return false;
+
+    networkAddr = cidr.substr(0, slashPos);
+    try
+    {
+        prefixLen = std::stoi(cidr.substr(slashPos + 1));
+    }
+    catch (...)
+    {
+        return false;
+    }
+
+    if (prefixLen < 1 || prefixLen > 30)
+        return false;
+
+    struct in_addr addr{};
+    if (inet_aton(networkAddr.c_str(), &addr) == 0)
+        return false;
+
+    uint32_t ip = ntohl(addr.s_addr);
+    uint32_t mask = prefixLen == 0 ? 0 : (0xFFFFFFFFu << (32 - prefixLen));
+    uint32_t network = ip & mask;
+    uint32_t first = network + 1;
+
+    struct in_addr firstAddr{};
+    firstAddr.s_addr = htonl(first);
+    char buf[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &firstAddr, buf, sizeof(buf));
+    firstIp = buf;
+
+    return true;
+}
+
 namespace nr::ue::tun
 {
 
@@ -376,6 +413,36 @@ void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, 
         AddNewIpRules(ipAddr, table_name);
         RemoveExistingIpRoutes(tunName, table_name);
         AddIpRoutes(tunName, table_name);
+    }
+}
+
+void ConfigureFramedRoutes(const char *tunName, const std::vector<std::string> &routes, bool configureRoute)
+{
+    const std::lock_guard<std::mutex> lock(configMutex);
+
+    std::string table_name = ROUTING_TABLE_PREFIX + std::string(tunName);
+
+    for (const auto &cidr : routes)
+    {
+        std::string networkAddr;
+        std::string firstIp;
+        int prefixLen = 0;
+
+        if (!ParseCidr(cidr, networkAddr, prefixLen, firstIp))
+            throw LibError("Invalid framed route CIDR: " + cidr);
+
+        std::stringstream addrCmd;
+        addrCmd << "ip addr add " << firstIp << "/" << prefixLen << " dev " << tunName;
+        ExecStrict(addrCmd.str());
+
+        if (configureRoute)
+        {
+            AddNewIpRules(firstIp, table_name);
+
+            std::stringstream routeCmd;
+            routeCmd << "ip route add " << networkAddr << "/" << prefixLen << " dev " << tunName << " table " << table_name;
+            ExecStrict(routeCmd.str());
+        }
     }
 }
 

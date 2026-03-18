@@ -81,6 +81,7 @@ struct SessionConfig
     std::optional<SingleSlice> sNssai{};
     std::optional<std::string> apn{};
     bool isEmergency{};
+    std::vector<std::string> framedRoutes{};
 };
 
 struct IntegrityMaxDataRateConfig
@@ -355,6 +356,7 @@ struct PduSession
     std::optional<nas::IESessionAmbr> sessionAmbr{};
     std::optional<nas::IEQoSFlowDescriptions> authorizedQoSFlowDescriptions{};
     std::optional<nas::IEPduAddress> pduAddress{};
+    std::vector<std::string> framedRoutes{};
 
     explicit PduSession(int psi) : psi(psi)
     {

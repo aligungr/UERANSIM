@@ -54,6 +54,11 @@ sessions:
     slice:
       sst: 1
       sd: 1
+    # Framed routes: subnets routed through this PDU session's TUN interface.
+    # The first usable IP of each subnet is assigned to the TUN as a secondary address.
+    # framedRoutes:
+    #   - '10.100.0.0/24'
+    #   - '172.16.50.0/24'
 
 # Configured NSSAI for this UE by HPLMN
 configured-nssai:

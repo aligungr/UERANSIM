@@ -9,11 +9,13 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace nr::ue::tun
 {
 
 int TunAllocate(const char *namePrefix, std::string &allocatedName, std::string &error);
 bool TunConfigure(const std::string &tunName, const std::string &ipAddress, const std::string &netmask, int mtu, bool configureRouting, std::string &error);
+bool TunConfigureFramedRoutes(const std::string &tunName, const std::vector<std::string> &routes, bool configureRouting, std::string &error);
 
 } // namespace nr::ue::tun

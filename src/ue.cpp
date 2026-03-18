@@ -216,6 +216,12 @@ static nr::ue::UeConfig *ReadConfigYaml()
 
             s.isEmergency = false;
 
+            if (yaml::HasField(sess, "framedRoutes"))
+            {
+                for (auto &route : yaml::GetSequence(sess, "framedRoutes"))
+                    s.framedRoutes.push_back(route.as<std::string>());
+            }
+
             result->defaultSessions.push_back(s);
         }
     }

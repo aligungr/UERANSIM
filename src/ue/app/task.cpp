@@ -203,6 +203,21 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
+    if (!pduSession->framedRoutes.empty())
+    {
+        std::string framedError{};
+        bool fr = tun::TunConfigureFramedRoutes(allocatedName, pduSession->framedRoutes,
+                                                 m_base->config->configureRouting, framedError);
+        if (!fr || framedError.length() > 0)
+        {
+            m_logger->err("Framed route configuration failure [%s]", framedError.c_str());
+            return;
+        }
+
+        for (const auto &route : pduSession->framedRoutes)
+            m_logger->info("Framed route configured: %s on %s", route.c_str(), allocatedName.c_str());
+    }
+
     auto *task = new TunTask(m_base, psi, fd);
     m_tunTasks[psi] = task;
     task->start();

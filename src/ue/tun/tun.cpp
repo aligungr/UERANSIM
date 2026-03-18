@@ -47,4 +47,19 @@ bool TunConfigure(const std::string &tunName, const std::string &ipAddress, cons
     return true;
 }
 
+bool TunConfigureFramedRoutes(const std::string &tunName, const std::vector<std::string> &routes, bool configureRouting, std::string &error)
+{
+    try
+    {
+        tun::ConfigureFramedRoutes(tunName.c_str(), routes, configureRouting);
+    }
+    catch (const LibError &e)
+    {
+        error = e.what();
+        return false;
+    }
+
+    return true;
+}
+
 } // namespace nr::ue::tun
