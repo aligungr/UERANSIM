@@ -112,6 +112,8 @@ struct UeConfig
     NetworkSlice configuredNssai{};
     std::optional<std::string> tunName{};
     std::optional<std::string> tunNetmask{};
+    bool useNamespace{false};
+    std::optional<std::string> nsNamePrefix{};
 
     struct
     {

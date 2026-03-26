@@ -10,6 +10,7 @@
 #include <cstring>
 #include <ue/app/task.hpp>
 #include <ue/nts.hpp>
+#include <ue/tun/tun.hpp>
 #include <unistd.h>
 #include <utils/libc_error.hpp>
 #include <utils/scoped_thread.hpp>
@@ -74,8 +75,11 @@ static void ReceiverThread(ReceiverArgs *args)
 namespace nr::ue
 {
 
-ue::TunTask::TunTask(TaskBase *base, int psi, int fd) : m_base{base}, m_psi{psi}, m_fd{fd}, m_receiver{}
+ue::TunTask::TunTask(TaskBase *base, int psi, int fd, std::string tunName, std::string nsName, bool useNamespace)
+        : m_base{base}, m_psi{psi}, m_fd{fd}, m_name{std::move(tunName)}, m_nsName{std::move(nsName)},
+            m_useNamespace{useNamespace}, m_receiver{}
 {
+    m_logger = m_base->logBase->makeUniqueLogger(m_base->config->getLoggerPrefix() + "tun");
 }
 
 void TunTask::onStart()
@@ -92,6 +96,13 @@ void TunTask::onQuit()
 {
     delete m_receiver;
     ::close(m_fd);
+
+    if (m_useNamespace && !m_nsName.empty())
+    {
+        std::string error;
+        if (!tun::TunCleanup(m_name, m_nsName, m_useNamespace, error))
+            m_logger->warn("Namespace cleanup failed for [%s]: %s", m_nsName.c_str(), error.c_str());
+    }
 }
 
 void TunTask::onLoop()

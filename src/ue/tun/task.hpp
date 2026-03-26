@@ -26,12 +26,16 @@ class TunTask : public NtsTask
     TaskBase *m_base;
     int m_psi;
     int m_fd;
+    std::string m_name;
+    std::string m_nsName;
+    bool m_useNamespace;
+    std::unique_ptr<Logger> m_logger;
     ScopedThread *m_receiver;
 
     friend class UeCmdHandler;
 
   public:
-    explicit TunTask(TaskBase *taskBase, int psi, int fd);
+    explicit TunTask(TaskBase *taskBase, int psi, int fd, std::string tunName, std::string nsName, bool useNamespace);
     ~TunTask() override = default;
 
   protected:

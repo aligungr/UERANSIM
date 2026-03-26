@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <array>
 #include <cerrno>
+#include <csignal>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -40,8 +41,12 @@
 
 #define ROUTING_TABLE_PREFIX "rt_"
 #define MAX_INTERFACE_COUNT 1024
+#define MAX_NAMESPACE_NAME_LEN 256
 
 static std::mutex configMutex;
+static char namespacesToDelete[MAX_INTERFACE_COUNT][MAX_NAMESPACE_NAME_LEN];
+static int namespacesToDeleteCount = 0;
+static int initialized = 0;
 
 static int ExecOutput(const char *cmd, std::string &output)
 {
@@ -79,6 +84,104 @@ static std::string ExecStrict(const std::string &cmd)
                        "Command execution failure");
     }
     return output;
+}
+
+static std::string ExecLoose(const std::string &cmd)
+{
+    std::string output;
+    if (ExecOutput(cmd.c_str(), output))
+        return "";
+    return output;
+}
+
+static bool IsValidNamespaceName(const std::string &nsName)
+{
+    return !nsName.empty() && nsName.size() < MAX_NAMESPACE_NAME_LEN && nsName.find('/') == std::string::npos;
+}
+
+static int NetmaskToPrefixLength(const std::string &netmask)
+{
+    in_addr addr{};
+    if (inet_pton(AF_INET, netmask.c_str(), &addr) != 1)
+        return -1;
+
+    uint32_t mask = ntohl(addr.s_addr);
+    int prefixLength = 0;
+    bool zeroSeen = false;
+    for (int bit = 31; bit >= 0; --bit)
+    {
+        bool set = (mask & (1u << bit)) != 0;
+        if (set)
+        {
+            if (zeroSeen)
+                return -1;
+            ++prefixLength;
+        }
+        else
+        {
+            zeroSeen = true;
+        }
+    }
+
+    return prefixLength;
+}
+
+static void SaveNamespaceForDeletion(const std::string &nsName)
+{
+    if (!IsValidNamespaceName(nsName) || namespacesToDeleteCount >= MAX_INTERFACE_COUNT)
+        return;
+
+    for (int i = 0; i < namespacesToDeleteCount; ++i)
+    {
+        if (std::strcmp(namespacesToDelete[i], nsName.c_str()) == 0)
+            return;
+    }
+
+    std::snprintf(namespacesToDelete[namespacesToDeleteCount++], MAX_NAMESPACE_NAME_LEN, "%s", nsName.c_str());
+}
+
+static void RemoveSavedNamespace(const std::string &nsName)
+{
+    for (int i = 0; i < namespacesToDeleteCount; ++i)
+    {
+        if (std::strcmp(namespacesToDelete[i], nsName.c_str()) == 0)
+        {
+            for (int j = i; j < namespacesToDeleteCount - 1; ++j)
+                std::snprintf(namespacesToDelete[j], MAX_NAMESPACE_NAME_LEN, "%s", namespacesToDelete[j + 1]);
+            --namespacesToDeleteCount;
+            return;
+        }
+    }
+}
+
+static void DeleteSavedNamespaces()
+{
+    for (int i = 0; i < namespacesToDeleteCount; ++i)
+        ExecLoose("ip netns delete " + std::string(namespacesToDelete[i]));
+    namespacesToDeleteCount = 0;
+}
+
+static void SigHandler(int signum)
+{
+    DeleteSavedNamespaces();
+    _exit(128 + signum);
+}
+
+static void ExitHandler()
+{
+    DeleteSavedNamespaces();
+}
+
+static void InitializeTunHandling()
+{
+    if (initialized)
+        return;
+
+    atexit(ExitHandler);
+    signal(SIGINT, SigHandler);
+    signal(SIGTERM, SigHandler);
+    signal(SIGHUP, SigHandler);
+    initialized = 1;
 }
 
 static const char *NextInterfaceName(const std::string &prefix)
@@ -323,10 +426,13 @@ static void AddIpRoutes(const std::string &if_name, const std::string &table_nam
 namespace nr::ue::tun
 {
 
-int AllocateTun(const char *ifPrefix, char **allocatedName)
+int AllocateTun(const char *ifPrefix, char **allocatedName, const char *nsName, bool useNamespace)
 {
     // acquire the configuration lock
     const std::lock_guard<std::mutex> lock(configMutex);
+
+    if (useNamespace)
+        InitializeTunHandling();
 
     const char *ifName = NextInterfaceName(ifPrefix);
     if (!ifName)
@@ -357,14 +463,49 @@ int AllocateTun(const char *ifPrefix, char **allocatedName)
     if (strcmp(tunName, ifName) != 0)
         throw LibError("TUN interface name could not be allocated.");
 
+    if (useNamespace)
+    {
+        std::string namespaceName = nsName ? nsName : "";
+        if (!IsValidNamespaceName(namespaceName))
+        {
+            close(fd);
+            throw LibError("Invalid namespace name.");
+        }
+
+        ExecStrict("ip netns add " + namespaceName);
+        SaveNamespaceForDeletion(namespaceName);
+        ExecLoose("ip netns exec " + namespaceName + " ip link set lo up");
+        ExecStrict("ip link set " + std::string(tunName) + " netns " + namespaceName);
+        ExecStrict("ip netns exec " + namespaceName + " ip link show " + std::string(tunName));
+    }
+
     *allocatedName = strdup(tunName);
     return fd;
 }
 
-void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, int mtu, bool configureRoute)
+void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, int mtu, const char *nsName,
+                  bool useNamespace, bool configureRoute)
 {
     // acquire the configuration lock
     const std::lock_guard<std::mutex> lock(configMutex);
+
+    if (useNamespace)
+    {
+        std::string namespaceName = nsName ? nsName : "";
+        int prefixLength = NetmaskToPrefixLength(netmask ? netmask : "");
+        if (!IsValidNamespaceName(namespaceName))
+            throw LibError("Invalid namespace name.");
+        if (prefixLength < 0)
+            throw LibError("Invalid netmask.");
+
+        ExecStrict("ip netns exec " + namespaceName + " ip addr add " + std::string(ipAddr) + "/" +
+                   std::to_string(prefixLength) + " dev " + tunName);
+        ExecStrict("ip netns exec " + namespaceName + " ip link set " + tunName + " mtu " + std::to_string(mtu));
+        ExecStrict("ip netns exec " + namespaceName + " ip link set " + tunName + " up");
+        if (configureRoute)
+            ExecStrict("ip netns exec " + namespaceName + " ip route replace default dev " + tunName);
+        return;
+    }
 
     TunSetIpAndUp(tunName, ipAddr, netmask, mtu);
     if (configureRoute)
@@ -377,6 +518,18 @@ void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, 
         RemoveExistingIpRoutes(tunName, table_name);
         AddIpRoutes(tunName, table_name);
     }
+}
+
+void CleanupTun(const char *tunName, const char *nsName, bool useNamespace)
+{
+    const std::lock_guard<std::mutex> lock(configMutex);
+
+    if (!useNamespace || nsName == nullptr || *nsName == '\0')
+        return;
+
+    std::string namespaceName = nsName;
+    ExecLoose("ip netns delete " + namespaceName);
+    RemoveSavedNamespace(namespaceName);
 }
 
 } // namespace nr::ue::tun

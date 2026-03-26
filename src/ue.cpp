@@ -164,6 +164,10 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->tunName = yaml::GetString(config, "tunName", 1, 12);
     if (yaml::HasField(config, "tunNetmask"))
         result->tunNetmask = yaml::GetString(config, "tunNetmask", 9, 15);
+    if (yaml::HasField(config, "useNamespace"))
+        result->useNamespace = yaml::GetBool(config, "useNamespace");
+    if (yaml::HasField(config, "nsNamePrefix"))
+        result->nsNamePrefix = yaml::GetString(config, "nsNamePrefix", 1, 64);
 
     yaml::AssertHasField(config, "integrity");
     yaml::AssertHasField(config, "ciphering");
@@ -363,6 +367,8 @@ static nr::ue::UeConfig *GetConfigByUe(int ueIndex)
     c->routingIndicator = g_refConfig->routingIndicator;
     c->tunName = g_refConfig->tunName;
     c->tunNetmask = g_refConfig->tunNetmask;
+    c->useNamespace = g_refConfig->useNamespace;
+    c->nsNamePrefix = g_refConfig->nsNamePrefix;
     c->hplmn = g_refConfig->hplmn;
     c->configuredNssai = g_refConfig->configuredNssai;
     c->defaultConfiguredNssai = g_refConfig->defaultConfiguredNssai;

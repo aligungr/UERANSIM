@@ -13,7 +13,10 @@
 namespace nr::ue::tun
 {
 
-int TunAllocate(const char *namePrefix, std::string &allocatedName, std::string &error);
-bool TunConfigure(const std::string &tunName, const std::string &ipAddress, const std::string &netmask, int mtu, bool configureRouting, std::string &error);
+int TunAllocate(const char *namePrefix, std::string &allocatedName, const std::string &nsName, bool useNamespace,
+				std::string &error);
+bool TunConfigure(const std::string &tunName, const std::string &ipAddress, const std::string &netmask, int mtu,
+				  const std::string &nsName, bool useNamespace, bool configureRouting, std::string &error);
+bool TunCleanup(const std::string &tunName, const std::string &nsName, bool useNamespace, std::string &error);
 
 } // namespace nr::ue::tun
