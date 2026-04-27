@@ -19,9 +19,13 @@
 #include <asn/ngap/ASN_NGAP_AMF-UE-NGAP-ID.h>
 #include <asn/ngap/ASN_NGAP_InitiatingMessage.h>
 #include <asn/ngap/ASN_NGAP_NGAP-PDU.h>
+#include <asn/ngap/ASN_NGAP_NRNTNTAIInformation.h>
+#include <asn/ngap/ASN_NGAP_ProtocolExtensionContainer.h>
+#include <asn/ngap/ASN_NGAP_ProtocolExtensionField.h>
 #include <asn/ngap/ASN_NGAP_ProtocolIE-Field.h>
 #include <asn/ngap/ASN_NGAP_RAN-UE-NGAP-ID.h>
 #include <asn/ngap/ASN_NGAP_SuccessfulOutcome.h>
+#include <asn/ngap/ASN_NGAP_TACListInNRNTN.h>
 #include <asn/ngap/ASN_NGAP_UnsuccessfulOutcome.h>
 #include <asn/ngap/ASN_NGAP_UserLocationInformation.h>
 #include <asn/ngap/ASN_NGAP_UserLocationInformationNR.h>
@@ -179,6 +183,37 @@ void NgapTask::sendNgapUeAssociated(int ueId, ASN_NGAP_NGAP_PDU *pdu)
                 ngap_utils::ToPlmnAsn_Ref(m_base->config->plmn, nr->tAI.pLMNIdentity);
                 asn::SetOctetString3(nr->tAI.tAC, octet3{m_base->config->tac});
                 asn::SetOctetString4(*nr->timeStamp, octet4{utils::CurrentTimeStamp().seconds32()});
+
+                // For NTN cells, attach the NR-NTN TAI Information extension (38.413 §9.3.1.16a).
+                if (IsNtn(m_base->config->cellAccessType))
+                {
+                    // iE_Extensions is generically typed; asn1c emits a specific container
+                    // type (named after its SEQUENCE position in the schema) which must be
+                    // cast to the generic pointer.
+                    auto *extContainer = asn::New<ASN_NGAP_ProtocolExtensionContainer_174P368>();
+                    nr->iE_Extensions = reinterpret_cast<ASN_NGAP_ProtocolExtensionContainer *>(extContainer);
+
+                    auto *ext = asn::New<ASN_NGAP_UserLocationInformationNR_ExtIEs>();
+                    // The schema only exports id-NRNTNTAIInformation in the ProtocolIE-ID
+                    // table; the same numeric value is used as the extension id here.
+                    ext->id = static_cast<ASN_NGAP_ProtocolExtensionID_t>(
+                        ASN_NGAP_ProtocolIE_ID_id_NRNTNTAIInformation);
+                    ext->criticality = ASN_NGAP_Criticality_ignore;
+                    ext->extensionValue.present =
+                        ASN_NGAP_UserLocationInformationNR_ExtIEs__extensionValue_PR_NRNTNTAIInformation;
+
+                    auto &ntn = ext->extensionValue.choice.NRNTNTAIInformation;
+                    ngap_utils::ToPlmnAsn_Ref(m_base->config->plmn, ntn.servingPLMN);
+
+                    auto *tac = asn::New<ASN_NGAP_TAC_t>();
+                    asn::SetOctetString3(*tac, octet3{m_base->config->tac});
+                    ASN_SEQUENCE_ADD(&ntn.tACListInNRNTN.list, tac);
+
+                    // uELocationDerivedTACInNRNTN is intentionally absent: the simulator
+                    // has no UE ephemeris/location to derive a UE-side TAC.
+
+                    ASN_SEQUENCE_ADD(&extContainer->list, ext);
+                }
             });
     }
 
