@@ -273,24 +273,28 @@ const char *EnumToString(EPduSessionType v)
 IEDnn DnnFromApn(const std::string &apn)
 {
     IEDnn dnn;
-    int index = 0;
     dnn.apn = OctetString::FromSpare(static_cast<int>(apn.length()) + 1);
-    std::stringstream ss(apn);
 
-    std::string token;
-    std::vector<std::string> tokens;
-    char delimiter = '.';
+    size_t writeIndex = 0;
+    size_t labelStart = 0;
 
-    while (getline(ss, token, delimiter)) {
-        tokens.push_back(token);
+    while (labelStart < apn.length())
+    {
+        const auto dotPos = apn.find('.', labelStart);
+        const auto labelEnd = dotPos == std::string::npos ? apn.length() : dotPos;
+        const auto labelLength = labelEnd - labelStart;
+
+        dnn.apn.data()[writeIndex] = static_cast<uint8_t>(labelLength);
+        std::memcpy(dnn.apn.data() + writeIndex + 1, apn.data() + labelStart, labelLength);
+
+        writeIndex += labelLength + 1;
+
+        if (dotPos == std::string::npos)
+            break;
+
+        labelStart = dotPos + 1;
     }
 
-    for (const auto& part : tokens) {
-        std::cout << part;
-        dnn.apn.data()[index] = static_cast<uint8_t>(part.length());
-        std::memcpy(dnn.apn.data() + index + 1, part.c_str(), part.length());
-        index = index + part.length() + 1;
-    }
     return dnn;
 }
 
