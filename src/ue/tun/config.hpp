@@ -11,9 +11,14 @@
 #include <sstream>
 #include <string>
 #include <utility>
+#include <mutex>
+
+#define ROUTING_TABLE_PREFIX "rt_"
+#define MAX_INTERFACE_COUNT 1024
 
 namespace nr::ue::tun
 {
+static std::mutex configMutex;
 
 int AllocateTun(const char *ifPrefix, char **allocatedName);
 void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, int mtu, bool configureRoute);

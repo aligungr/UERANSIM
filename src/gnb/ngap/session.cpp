@@ -215,9 +215,9 @@ void NgapTask::receiveSessionResourceSetupRequest(int amfId, ASN_NGAP_PDUSession
 
 std::optional<NgapCause> NgapTask::setupPduSessionResource(NgapUeContext *ue, PduSessionResource *resource)
 {
-    if (resource->sessionType != PduSessionType::IPv4)
+    if (resource->sessionType != PduSessionType::IPv4 && resource->sessionType != PduSessionType::ETHERNET)
     {
-        m_logger->err("PDU session resource could not setup: Only IPv4 is supported");
+        m_logger->err("PDU session resource could not setup: Only IPv4 and Ethernet are supported");
         return NgapCause::RadioNetwork_unspecified;
     }
 

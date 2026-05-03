@@ -11,8 +11,6 @@
 #include <memory>
 #include <thread>
 #include <ue/nts.hpp>
-#include <ue/tun/task.hpp>
-#include <ue/tap/task.hpp>
 #include <ue/types.hpp>
 #include <unordered_map>
 #include <utils/logger.hpp>
@@ -22,31 +20,24 @@
 namespace nr::ue
 {
 
-class UeAppTask : public NtsTask
+class TapTask : public NtsTask
 {
   private:
     TaskBase *m_base;
-    std::unique_ptr<Logger> m_logger;
-
-    std::array<TunTask *, 16> m_tunTasks{};
-    std::array<TapTask *, 16> m_tapTasks{};
-    ECmState m_cmState{};
+    int m_psi;
+    int m_fd;
+    ScopedThread *m_receiver;
 
     friend class UeCmdHandler;
 
   public:
-    explicit UeAppTask(TaskBase *base);
-    ~UeAppTask() override = default;
+    explicit TapTask(TaskBase *taskBase, int psi, int fd);
+    ~TapTask() override = default;
 
   protected:
     void onStart() override;
     void onLoop() override;
     void onQuit() override;
-
-  private:
-    void receiveStatusUpdate(NmUeStatusUpdate &msg);
-    void setupTunInterface(const PduSession *pduSession);
-    void setupTapInterface(const PduSession *pduSession);
 };
 
 } // namespace nr::ue
