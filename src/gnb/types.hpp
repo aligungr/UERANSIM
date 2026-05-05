@@ -300,6 +300,23 @@ struct GnbAmfConfig
     uint16_t port{};
 };
 
+// Cell access type, used to populate the NR-NTN TAI Information extension on
+// UserLocationInformation when the cell is on a satellite access type.
+enum class ECellAccessType
+{
+    TerrestrialNr,
+    NrLeo,
+    NrMeo,
+    NrGeo,
+    NrOthersat,
+};
+
+inline bool IsNtn(ECellAccessType type)
+{
+    return type == ECellAccessType::NrLeo || type == ECellAccessType::NrMeo ||
+           type == ECellAccessType::NrGeo || type == ECellAccessType::NrOthersat;
+}
+
 struct GnbConfig
 {
     /* Read from config file */
@@ -314,6 +331,7 @@ struct GnbConfig
     std::string gtpIp{};
     std::optional<std::string> gtpAdvertiseIp{};
     bool ignoreStreamIds{};
+    ECellAccessType cellAccessType{ECellAccessType::TerrestrialNr};
 
     /* Assigned by program */
     std::string name{};

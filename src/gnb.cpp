@@ -77,6 +77,24 @@ static nr::gnb::GnbConfig *ReadConfigYaml()
         result->nssai.slices.push_back(s);
     }
 
+    if (yaml::HasField(config, "cellAccessType"))
+    {
+        auto value = yaml::GetString(config, "cellAccessType", 1, 16);
+        if (value == "nr")
+            result->cellAccessType = nr::gnb::ECellAccessType::TerrestrialNr;
+        else if (value == "nr-leo")
+            result->cellAccessType = nr::gnb::ECellAccessType::NrLeo;
+        else if (value == "nr-meo")
+            result->cellAccessType = nr::gnb::ECellAccessType::NrMeo;
+        else if (value == "nr-geo")
+            result->cellAccessType = nr::gnb::ECellAccessType::NrGeo;
+        else if (value == "nr-othersat")
+            result->cellAccessType = nr::gnb::ECellAccessType::NrOthersat;
+        else
+            throw std::runtime_error("Invalid 'cellAccessType' value '" + value +
+                                     "'. Valid values: nr, nr-leo, nr-meo, nr-geo, nr-othersat");
+    }
+
     return result;
 }
 

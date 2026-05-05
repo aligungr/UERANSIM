@@ -21,3 +21,8 @@ slices:
 
 # Indicates whether or not SCTP stream number errors should be ignored.
 ignoreStreamIds: true
+
+# Cell access type. When set to one of the satellite types (nr-leo, nr-meo,
+# nr-geo, nr-othersat), the gNB attaches the NR-NTN TAI Information extension
+# to every UserLocationInformationNR it sends to the AMF. Defaults to "nr".
+cellAccessType: nr
