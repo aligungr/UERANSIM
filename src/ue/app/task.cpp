@@ -147,12 +147,6 @@ void UeAppTask::receiveStatusUpdate(NmUeStatusUpdate &msg)
 
 void UeAppTask::setupTunInterface(const PduSession *pduSession)
 {
-    if (!utils::IsRoot())
-    {
-        m_logger->err("TUN interface could not be setup. Permission denied. Please run the UE with 'sudo'");
-        return;
-    }
-
     if (!pduSession->pduAddress.has_value())
     {
         m_logger->err("Connection could not setup. PDU address is missing.");
