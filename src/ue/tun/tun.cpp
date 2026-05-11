@@ -13,14 +13,16 @@
 namespace nr::ue::tun
 {
 
-int TunAllocate(const char *namePrefix, std::string &allocatedName, std::string &error)
+int TunAllocate(const char *namePrefix, std::string &allocatedName, const std::string &nsName, bool useNamespace,
+                std::string &error)
 {
     int fd;
     char *name = nullptr;
     try
     {
-        fd = tun::AllocateTun(namePrefix, &name);
+        fd = tun::AllocateTun(namePrefix, &name, nsName.c_str(), useNamespace);
         allocatedName = std::string{name};
+        free(name);
     }
     catch (const LibError &e)
     {
@@ -32,11 +34,28 @@ int TunAllocate(const char *namePrefix, std::string &allocatedName, std::string 
     return fd;
 }
 
-bool TunConfigure(const std::string &tunName, const std::string &ipAddress, const std::string &netmask, int mtu, bool configureRouting, std::string &error)
+bool TunConfigure(const std::string &tunName, const std::string &ipAddress, const std::string &netmask, int mtu,
+                  const std::string &nsName, bool useNamespace, bool configureRouting, std::string &error)
 {
     try
     {
-        tun::ConfigureTun(tunName.c_str(), ipAddress.c_str(), netmask.c_str(), mtu, configureRouting);
+        tun::ConfigureTun(tunName.c_str(), ipAddress.c_str(), netmask.c_str(), mtu, nsName.c_str(), useNamespace,
+                          configureRouting);
+    }
+    catch (const LibError &e)
+    {
+        error = e.what();
+        return false;
+    }
+
+    return true;
+}
+
+bool TunCleanup(const std::string &tunName, const std::string &nsName, bool useNamespace, std::string &error)
+{
+    try
+    {
+        tun::CleanupTun(tunName.c_str(), nsName.c_str(), useNamespace);
     }
     catch (const LibError &e)
     {
