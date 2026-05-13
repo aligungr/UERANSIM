@@ -30,6 +30,9 @@
 #include <asn/ngap/ASN_NGAP_ServedGUAMIItem.h>
 #include <asn/ngap/ASN_NGAP_SliceSupportItem.h>
 #include <asn/ngap/ASN_NGAP_SupportedTAItem.h>
+#include <asn/ngap/ASN_NGAP_AMF-TNLAssociationSetupItem.h>
+#include <asn/ngap/ASN_NGAP_AMF-TNLAssociationToUpdateItem.h>
+#include <asn/ngap/ASN_NGAP_CPTransportLayerInformation.h>
 
 namespace nr::gnb
 {
@@ -273,7 +276,9 @@ void NgapTask::receiveAmfConfigurationUpdate(int amfId, ASN_NGAP_AMFConfiguratio
 
     ie = asn::ngap::GetProtocolIe(msg, ASN_NGAP_ProtocolIE_ID_id_AMF_TNLAssociationToUpdateList);
     if (ie && ie->AMF_TNLAssociationToUpdateList.list.count > 0)
-        tnlModified = true;
+        // tnlModified = true;
+        m_logger->debug("Receiving AMFConfigurationUpdate with %d update items",
+            ie->AMF_TNLAssociationToUpdateList.list.count);
 
     // TODO: AMF TNL modification is not supported
     if (tnlModified)
@@ -291,14 +296,22 @@ void NgapTask::receiveAmfConfigurationUpdate(int amfId, ASN_NGAP_AMFConfiguratio
     }
     else
     {
-        AssignDefaultAmfConfigs(amf, msg);
+        m_logger->err("WARNING: Send back a AMFConfiguration UpdateAcknowLedge message but the behaviour could be insconsistent");
+        auto *amf_TNLAssociationSetupList = asn::New<ASN_NGAP_AMFConfigurationUpdateAcknowledgeIEs>();
+        amf_TNLAssociationSetupList->id = ASN_NGAP_ProtocolIE_ID_id_AMF_TNLAssociationSetupList;
+        amf_TNLAssociationSetupList->criticality = ASN_NGAP_Criticality_ignore;
+        amf_TNLAssociationSetupList->value.present = ASN_NGAP_AMFConfigurationUpdateAcknowledgeIEs__value_PR_AMF_TNLAssociationSetupList;
 
-        auto *ieList = asn::New<ASN_NGAP_AMFConfigurationUpdateAcknowledgeIEs>();
-        ieList->id = ASN_NGAP_ProtocolIE_ID_id_AMF_TNLAssociationSetupList;
-        ieList->criticality = ASN_NGAP_Criticality_ignore;
-        ieList->value.present = ASN_NGAP_AMFConfigurationUpdateAcknowledgeIEs__value_PR_AMF_TNLAssociationSetupList;
+        asn::ForeachItem(ie->AMF_TNLAssociationToUpdateList, [amf_TNLAssociationSetupList](ASN_NGAP_AMF_TNLAssociationToUpdateItem &item) {
+	    auto *amf_TNLAssociationSetup = asn::New<ASN_NGAP_AMF_TNLAssociationSetupItem>();
+            amf_TNLAssociationSetup->aMF_TNLAssociationAddress.present = ASN_NGAP_CPTransportLayerInformation_PR_endpointIPAddress;
+            asn::SetBitString(amf_TNLAssociationSetup->aMF_TNLAssociationAddress.choice.endpointIPAddress,
+                OctetString::FromArray(item.aMF_TNLAssociationAddress.choice.endpointIPAddress.buf,
+                    item.aMF_TNLAssociationAddress.choice.endpointIPAddress.size));
+            asn::SequenceAdd(amf_TNLAssociationSetupList->value.choice.AMF_TNLAssociationSetupList, amf_TNLAssociationSetup);
+        });
 
-        auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_AMFConfigurationUpdateAcknowledge>({ieList});
+        auto *pdu = asn::ngap::NewMessagePdu<ASN_NGAP_AMFConfigurationUpdateAcknowledge>({amf_TNLAssociationSetupList});
         sendNgapNonUe(amfId, pdu);
     }
 }
