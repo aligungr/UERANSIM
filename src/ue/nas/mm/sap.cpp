@@ -64,6 +64,10 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
         handleRrcFallbackIndication();
         break;
     }
+    case NmUeRrcToNas::RRC_HANDOVER_COMMAND: {
+        handleRrcHandoverCommand();
+        break;
+    }
     }
 }
 

@@ -97,7 +97,7 @@ void GnbRrcTask::receiveRrcSetupComplete(int ueId, const ASN_RRC_RRCSetupComplet
     auto *ue = findUe(ueId);
     if (!ue)
         return;
-
+    m_logger->debug("> ReceiveRrcSetupComplete ueId=%d", ueId);
     auto setupComplete = msg.criticalExtensions.choice.rrcSetupComplete;
 
     if (msg.criticalExtensions.choice.rrcSetupComplete)
