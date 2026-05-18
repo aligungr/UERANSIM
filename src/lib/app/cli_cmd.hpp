@@ -69,6 +69,7 @@ struct UeCliCommand
     std::optional<SingleSlice> sNssai{};
     std::optional<std::string> apn{};
     bool isEmergency{};
+    std::optional<std::string> sessionTypeStr{}; // Store the session type string for parsing
 
     explicit UeCliCommand(PR present) : present(present)
     {

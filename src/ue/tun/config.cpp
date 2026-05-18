@@ -38,10 +38,6 @@
 
 #include <utils/libc_error.hpp>
 
-#define ROUTING_TABLE_PREFIX "rt_"
-#define MAX_INTERFACE_COUNT 1024
-
-static std::mutex configMutex;
 
 static int ExecOutput(const char *cmd, std::string &output)
 {
@@ -378,5 +374,6 @@ void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, 
         AddIpRoutes(tunName, table_name);
     }
 }
+
 
 } // namespace nr::ue::tun
