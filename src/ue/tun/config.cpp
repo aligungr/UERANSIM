@@ -11,7 +11,6 @@
 #include <arpa/inet.h>
 #include <array>
 #include <cerrno>
-#include <csignal>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -37,6 +36,7 @@
 #include <unistd.h>
 #include <vector>
 
+#include <lib/app/base_app.hpp>
 #include <utils/libc_error.hpp>
 
 #define ROUTING_TABLE_PREFIX "rt_"
@@ -44,6 +44,9 @@
 #define MAX_NAMESPACE_NAME_LEN 256
 
 static std::mutex configMutex;
+// Guards the namespace deletion registry only. Kept separate from configMutex (which is held across
+// blocking 'ip' executions) so the at-exit cleanup never blocks on a long-running command.
+static std::mutex namespaceRegistryMutex;
 static char namespacesToDelete[MAX_INTERFACE_COUNT][MAX_NAMESPACE_NAME_LEN];
 static int namespacesToDeleteCount = 0;
 static int initialized = 0;
@@ -128,6 +131,8 @@ static int NetmaskToPrefixLength(const std::string &netmask)
 
 static void SaveNamespaceForDeletion(const std::string &nsName)
 {
+    const std::lock_guard<std::mutex> lock(namespaceRegistryMutex);
+
     if (!IsValidNamespaceName(nsName) || namespacesToDeleteCount >= MAX_INTERFACE_COUNT)
         return;
 
@@ -142,6 +147,8 @@ static void SaveNamespaceForDeletion(const std::string &nsName)
 
 static void RemoveSavedNamespace(const std::string &nsName)
 {
+    const std::lock_guard<std::mutex> lock(namespaceRegistryMutex);
+
     for (int i = 0; i < namespacesToDeleteCount; ++i)
     {
         if (std::strcmp(namespacesToDelete[i], nsName.c_str()) == 0)
@@ -156,20 +163,18 @@ static void RemoveSavedNamespace(const std::string &nsName)
 
 static void DeleteSavedNamespaces()
 {
-    for (int i = 0; i < namespacesToDeleteCount; ++i)
-        ExecLoose("ip netns delete " + std::string(namespacesToDelete[i]));
-    namespacesToDeleteCount = 0;
-}
+    // Snapshot the registry under the lock, then run the deletions outside it so we never hold a
+    // mutex while a blocking 'ip' command executes.
+    std::vector<std::string> namespaces;
+    {
+        const std::lock_guard<std::mutex> lock(namespaceRegistryMutex);
+        for (int i = 0; i < namespacesToDeleteCount; ++i)
+            namespaces.emplace_back(namespacesToDelete[i]);
+        namespacesToDeleteCount = 0;
+    }
 
-static void SigHandler(int signum)
-{
-    DeleteSavedNamespaces();
-    _exit(128 + signum);
-}
-
-static void ExitHandler()
-{
-    DeleteSavedNamespaces();
+    for (const auto &ns : namespaces)
+        ExecLoose("ip netns delete " + ns);
 }
 
 static void InitializeTunHandling()
@@ -177,10 +182,9 @@ static void InitializeTunHandling()
     if (initialized)
         return;
 
-    atexit(ExitHandler);
-    signal(SIGINT, SigHandler);
-    signal(SIGTERM, SigHandler);
-    signal(SIGHUP, SigHandler);
+    // Reuse the framework's signal/exit handling instead of installing our own handlers, which would
+    // otherwise override app::BaseSignalHandler. RunAtExit is the same mechanism proc_table uses.
+    app::RunAtExit(DeleteSavedNamespaces);
     initialized = 1;
 }
 
@@ -472,11 +476,24 @@ int AllocateTun(const char *ifPrefix, char **allocatedName, const char *nsName, 
             throw LibError("Invalid namespace name.");
         }
 
-        ExecStrict("ip netns add " + namespaceName);
-        SaveNamespaceForDeletion(namespaceName);
-        ExecLoose("ip netns exec " + namespaceName + " ip link set lo up");
-        ExecStrict("ip link set " + std::string(tunName) + " netns " + namespaceName);
-        ExecStrict("ip netns exec " + namespaceName + " ip link show " + std::string(tunName));
+        try
+        {
+            // Remove any stale namespace left over from a previous crash so 'ip netns add' succeeds.
+            ExecLoose("ip netns delete " + namespaceName);
+            ExecStrict("ip netns add " + namespaceName);
+            SaveNamespaceForDeletion(namespaceName);
+            ExecLoose("ip netns exec " + namespaceName + " ip link set lo up");
+            ExecStrict("ip link set " + std::string(tunName) + " netns " + namespaceName);
+            ExecStrict("ip netns exec " + namespaceName + " ip link show " + std::string(tunName));
+        }
+        catch (...)
+        {
+            // Roll back the partially created state before propagating the failure.
+            close(fd);
+            ExecLoose("ip netns delete " + namespaceName);
+            RemoveSavedNamespace(namespaceName);
+            throw;
+        }
     }
 
     *allocatedName = strdup(tunName);

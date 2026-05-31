@@ -9,6 +9,7 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <cctype>
+#include <unistd.h>
 #include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
@@ -240,6 +241,12 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
     if (!r || error.length() > 0)
     {
         m_logger->err("TUN configuration failure [%s]", error.c_str());
+        close(fd);
+        if (m_base->config->useNamespace)
+        {
+            std::string cleanupError{};
+            tun::TunCleanup(allocatedName, nsName, m_base->config->useNamespace, cleanupError);
+        }
         return;
     }
 
