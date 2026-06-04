@@ -476,11 +476,13 @@ int AllocateTun(const char *ifPrefix, char **allocatedName, const char *nsName, 
             throw LibError("Invalid namespace name.");
         }
 
+        bool namespaceCreated = false;
         try
         {
-            // Remove any stale namespace left over from a previous crash so 'ip netns add' succeeds.
-            ExecLoose("ip netns delete " + namespaceName);
+            // Do not delete a pre-existing namespace: the name is unique per UE/APN/PSI, so it may
+            // belong to another running UE rather than being a stale leftover.
             ExecStrict("ip netns add " + namespaceName);
+            namespaceCreated = true;
             SaveNamespaceForDeletion(namespaceName);
             ExecLoose("ip netns exec " + namespaceName + " ip link set lo up");
             ExecStrict("ip link set " + std::string(tunName) + " netns " + namespaceName);
@@ -488,10 +490,13 @@ int AllocateTun(const char *ifPrefix, char **allocatedName, const char *nsName, 
         }
         catch (...)
         {
-            // Roll back the partially created state before propagating the failure.
+            // Roll back only what we created: close the fd and, if we added the namespace, remove it.
             close(fd);
-            ExecLoose("ip netns delete " + namespaceName);
-            RemoveSavedNamespace(namespaceName);
+            if (namespaceCreated)
+            {
+                ExecLoose("ip netns delete " + namespaceName);
+                RemoveSavedNamespace(namespaceName);
+            }
             throw;
         }
     }

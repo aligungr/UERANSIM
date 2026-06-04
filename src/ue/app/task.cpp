@@ -9,11 +9,11 @@
 #include "task.hpp"
 #include "cmd_handler.hpp"
 #include <cctype>
-#include <unistd.h>
 #include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
 #include <ue/tun/tun.hpp>
+#include <unistd.h>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
@@ -44,8 +44,9 @@ static std::string BuildNamespaceName(const nr::ue::UeConfig &config, const nr::
     std::string prefix = config.nsNamePrefix.value_or(cons::TunNamePrefix);
     std::string identity = config.supi.has_value() ? config.supi->value : config.getNodeName();
     std::string apn = pduSession.apn.value_or("default");
-    return SanitizeNamespaceToken(prefix) + "-" + SanitizeNamespaceToken(identity) + "-" +
-           SanitizeNamespaceToken(apn);
+    // Include the PSI so each PDU session gets a distinct namespace, even on the same APN.
+    return SanitizeNamespaceToken(prefix) + "-" + SanitizeNamespaceToken(identity) + "-" + SanitizeNamespaceToken(apn) +
+           "-psi" + std::to_string(pduSession.psi);
 }
 
 namespace nr::ue
@@ -228,7 +229,7 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
     }
 
     int fd = tun::TunAllocate(requestedName.c_str(), allocatedName, nsName, m_base->config->useNamespace, error);
-    if (fd == 0 || error.length() > 0)
+    if (fd < 0 || error.length() > 0)
     {
         m_logger->err("TUN allocation failure [%s]", error.c_str());
         return;
@@ -255,11 +256,12 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
     task->start();
 
     if (m_base->config->useNamespace)
-        m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up in namespace[%s].",
-                       pduSession->psi, allocatedName.c_str(), ipAddress.c_str(), nsName.c_str());
+        m_logger->info(
+            "Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up in namespace[%s].",
+            pduSession->psi, allocatedName.c_str(), ipAddress.c_str(), nsName.c_str());
     else
-        m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
-                       allocatedName.c_str(), ipAddress.c_str());
+        m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.",
+                       pduSession->psi, allocatedName.c_str(), ipAddress.c_str());
 }
 
 } // namespace nr::ue

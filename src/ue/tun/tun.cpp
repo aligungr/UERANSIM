@@ -28,7 +28,7 @@ int TunAllocate(const char *namePrefix, std::string &allocatedName, const std::s
     {
         error = e.what();
         allocatedName = "";
-        return 0;
+        return -1;
     }
 
     return fd;
