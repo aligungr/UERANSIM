@@ -129,6 +129,22 @@ static int NetmaskToPrefixLength(const std::string &netmask)
     return prefixLength;
 }
 
+static bool LinksHaveNonLoopback(const std::string &linkOutput)
+{
+    // 'ip -o link show' prints one interface per line as "<index>: <name>: ...".
+    std::stringstream ss(linkOutput);
+    std::string line;
+    while (std::getline(ss, line))
+    {
+        std::string index, name;
+        std::stringstream ls(line);
+        ls >> index >> name;
+        if (!name.empty() && name != "lo:")
+            return true;
+    }
+    return false;
+}
+
 static void SaveNamespaceForDeletion(const std::string &nsName)
 {
     const std::lock_guard<std::mutex> lock(namespaceRegistryMutex);
@@ -476,11 +492,23 @@ int AllocateTun(const char *ifPrefix, char **allocatedName, const char *nsName, 
             throw LibError("Invalid namespace name.");
         }
 
+        // If the namespace already exists, reclaim it only when stale. A UE's TUN device is
+        // non-persistent and dies with the process, so a crashed UE leaves a namespace with only 'lo';
+        // one that still holds a device belongs to a live UE and must not be touched.
+        std::string existingLinks = ExecLoose("ip netns exec " + namespaceName + " ip -o link show");
+        if (!existingLinks.empty())
+        {
+            if (LinksHaveNonLoopback(existingLinks))
+            {
+                close(fd);
+                throw LibError("Network namespace already in use: " + namespaceName);
+            }
+            ExecLoose("ip netns delete " + namespaceName);
+        }
+
         bool namespaceCreated = false;
         try
         {
-            // Do not delete a pre-existing namespace: the name is unique per UE/APN/PSI, so it may
-            // belong to another running UE rather than being a stale leftover.
             ExecStrict("ip netns add " + namespaceName);
             namespaceCreated = true;
             SaveNamespaceForDeletion(namespaceName);
