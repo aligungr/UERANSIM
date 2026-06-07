@@ -8,15 +8,46 @@
 
 #include "task.hpp"
 #include "cmd_handler.hpp"
+#include <cctype>
 #include <lib/nas/utils.hpp>
 #include <ue/nas/task.hpp>
 #include <ue/rls/task.hpp>
 #include <ue/tun/tun.hpp>
+#include <unistd.h>
 #include <utils/common.hpp>
 #include <utils/constants.hpp>
 
 static constexpr const int SWITCH_OFF_TIMER_ID = 1;
 static constexpr const int SWITCH_OFF_DELAY = 500;
+
+static std::string SanitizeNamespaceToken(const std::string &value)
+{
+    std::string sanitized;
+    sanitized.reserve(value.size());
+
+    for (char ch : value)
+    {
+        if (std::isalnum(static_cast<unsigned char>(ch)) || ch == '-' || ch == '_' || ch == '.')
+            sanitized.push_back(ch);
+        else
+            sanitized.push_back('-');
+    }
+
+    if (sanitized.empty())
+        return "default";
+
+    return sanitized;
+}
+
+static std::string BuildNamespaceName(const nr::ue::UeConfig &config, const nr::ue::PduSession &pduSession)
+{
+    std::string prefix = config.nsNamePrefix.value_or(cons::TunNamePrefix);
+    std::string identity = config.supi.has_value() ? config.supi->value : config.getNodeName();
+    std::string apn = pduSession.apn.value_or("default");
+    // Include the PSI so each PDU session gets a distinct namespace, even on the same APN.
+    return SanitizeNamespaceToken(prefix) + "-" + SanitizeNamespaceToken(identity) + "-" + SanitizeNamespaceToken(apn) +
+           "-psi" + std::to_string(pduSession.psi);
+}
 
 namespace nr::ue
 {
@@ -182,13 +213,23 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
     std::string error{}, allocatedName{};
     std::string requestedName = cons::TunNamePrefix;
     std::string requestedNetmask = cons::TunNetmask;
+    std::string nsName{};
     if (m_base->config->tunName.has_value())
         requestedName = *m_base->config->tunName;
     if (m_base->config->tunNetmask.has_value())
         requestedNetmask = *m_base->config->tunNetmask;
-    
-    int fd = tun::TunAllocate(requestedName.c_str(), allocatedName, error);
-    if (fd == 0 || error.length() > 0)
+    if (m_base->config->useNamespace)
+    {
+        nsName = BuildNamespaceName(*m_base->config, *pduSession);
+        if (nsName.size() > 255)
+        {
+            m_logger->err("Connection could not setup. Namespace name is too long [%s].", nsName.c_str());
+            return;
+        }
+    }
+
+    int fd = tun::TunAllocate(requestedName.c_str(), allocatedName, nsName, m_base->config->useNamespace, error);
+    if (fd < 0 || error.length() > 0)
     {
         m_logger->err("TUN allocation failure [%s]", error.c_str());
         return;
@@ -196,19 +237,31 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
 
     std::string ipAddress = utils::OctetStringToIp(pduSession->pduAddress->pduAddressInformation);
 
-    bool r = tun::TunConfigure(allocatedName, ipAddress, requestedNetmask, cons::TunMtu, m_base->config->configureRouting, error);
+    bool r = tun::TunConfigure(allocatedName, ipAddress, requestedNetmask, cons::TunMtu, nsName,
+                               m_base->config->useNamespace, m_base->config->configureRouting, error);
     if (!r || error.length() > 0)
     {
         m_logger->err("TUN configuration failure [%s]", error.c_str());
+        close(fd);
+        if (m_base->config->useNamespace)
+        {
+            std::string cleanupError{};
+            tun::TunCleanup(allocatedName, nsName, m_base->config->useNamespace, cleanupError);
+        }
         return;
     }
 
-    auto *task = new TunTask(m_base, psi, fd);
+    auto *task = new TunTask(m_base, psi, fd, allocatedName, nsName, m_base->config->useNamespace);
     m_tunTasks[psi] = task;
     task->start();
 
-    m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.", pduSession->psi,
-                   allocatedName.c_str(), ipAddress.c_str());
+    if (m_base->config->useNamespace)
+        m_logger->info(
+            "Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up in namespace[%s].",
+            pduSession->psi, allocatedName.c_str(), ipAddress.c_str(), nsName.c_str());
+    else
+        m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.",
+                       pduSession->psi, allocatedName.c_str(), ipAddress.c_str());
 }
 
 } // namespace nr::ue
