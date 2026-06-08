@@ -8,6 +8,7 @@
 
 #include "task.hpp"
 
+#include <gnb/app/cmd_handler.hpp>
 #include <gnb/ngap/task.hpp>
 #include <lib/rrc/encode.hpp>
 
@@ -23,6 +24,8 @@
 #include <asn/rrc/ASN_RRC_Paging.h>
 #include <asn/rrc/ASN_RRC_PagingRecord.h>
 #include <asn/rrc/ASN_RRC_PagingRecordList.h>
+#include <asn/rrc/ASN_RRC_RRCReconfiguration-IEs.h>
+#include <asn/rrc/ASN_RRC_RRCReconfiguration.h>
 #include <asn/rrc/ASN_RRC_RRCRelease-IEs.h>
 #include <asn/rrc/ASN_RRC_RRCRelease.h>
 #include <asn/rrc/ASN_RRC_RRCSetup-IEs.h>
@@ -132,6 +135,41 @@ void GnbRrcTask::handlePaging(const asn::Unique<ASN_NGAP_FiveG_S_TMSI> &tmsi,
 
     sendRrcMessage(pdu);
     asn::Free(asn_DEF_ASN_RRC_PCCH_Message, pdu);
+}
+
+void GnbRrcTask::handleHandoverCommand(int ueId, const OctetString &cellIdOctets)
+{
+
+    m_logger->debug("Sending RRC Handover Command for UE[%d]", ueId);
+
+    auto *pdu = asn::New<ASN_RRC_DL_DCCH_Message>();
+    pdu->message.present = ASN_RRC_DL_DCCH_MessageType_PR_c1;
+    pdu->message.choice.c1 = asn::NewFor(pdu->message.choice.c1);
+    pdu->message.choice.c1->present = ASN_RRC_DL_DCCH_MessageType__c1_PR_rrcReconfiguration;
+
+    auto &rrc = pdu->message.choice.c1->choice.rrcReconfiguration = asn::New<ASN_RRC_RRCReconfiguration>();
+    rrc->rrc_TransactionIdentifier = getNextTid();
+    rrc->criticalExtensions.present = ASN_RRC_RRCReconfiguration__criticalExtensions_PR_rrcReconfiguration;
+    rrc->criticalExtensions.choice.rrcReconfiguration = asn::New<ASN_RRC_RRCReconfiguration_IEs>();
+    rrc->criticalExtensions.choice.rrcReconfiguration->secondaryCellGroup = asn::New<OCTET_STRING>();
+
+    asn::SetOctetString(*(rrc->criticalExtensions.choice.rrcReconfiguration->secondaryCellGroup), cellIdOctets);
+
+    if (cellIdOctets.length() == 0)
+    {
+        m_logger->warn("secondaryCellGroup is empty! CellIdOctets length = 0");
+    }
+
+    sendRrcMessage(ueId, pdu);
+    asn::Free(asn_DEF_ASN_RRC_DL_DCCH_Message, pdu);
+}
+
+void GnbRrcTask::receiveRrcHandoverConfirm(int ueId, const ASN_RRC_RRCReconfigurationComplete &msg)
+{
+    m_logger->debug("Handover Confirm message received from UE[%d]", ueId);
+    auto w = std::make_unique<NmGnbRrcToNgap>(NmGnbRrcToNgap::HANDOVER_CONFIRM);
+    w->ueId = ueId;
+    m_base->ngapTask->push(std::move(w));
 }
 
 } // namespace nr::gnb

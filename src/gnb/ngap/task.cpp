@@ -47,7 +47,6 @@ void NgapTask::onLoop()
     auto msg = take();
     if (!msg)
         return;
-
     switch (msg->msgType)
     {
     case NtsMessageType::GNB_RRC_TO_NGAP: {
@@ -62,6 +61,12 @@ void NgapTask::onLoop()
             handleUplinkNasTransport(w.ueId, w.pdu);
             break;
         }
+
+        case NmGnbRrcToNgap::HANDOVER_CONFIRM: {
+            handleHandoverConfirm(w.ueId);
+            break;
+        }
+
         case NmGnbRrcToNgap::RADIO_LINK_FAILURE: {
             handleRadioLinkFailure(w.ueId);
             break;
