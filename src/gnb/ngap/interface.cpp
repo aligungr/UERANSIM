@@ -26,13 +26,40 @@
 #include <asn/ngap/ASN_NGAP_NGSetupRequest.h>
 #include <asn/ngap/ASN_NGAP_OverloadStartNSSAIItem.h>
 #include <asn/ngap/ASN_NGAP_PLMNSupportItem.h>
+#include <asn/ngap/ASN_NGAP_ProtocolExtensionContainer.h>
+#include <asn/ngap/ASN_NGAP_ProtocolExtensionField.h>
 #include <asn/ngap/ASN_NGAP_ProtocolIE-Field.h>
+#include <asn/ngap/ASN_NGAP_RAT-Information.h>
 #include <asn/ngap/ASN_NGAP_ServedGUAMIItem.h>
 #include <asn/ngap/ASN_NGAP_SliceSupportItem.h>
 #include <asn/ngap/ASN_NGAP_SupportedTAItem.h>
 
 namespace nr::gnb
 {
+
+// Maps the configured cell access type to the NGAP RAT-Information value
+// (3GPP TS 38.413). Returns true and sets 'out' for NTN access types;
+// returns false for terrestrial NR, where RAT-Information is not signalled.
+static bool CellAccessTypeToRatInformation(ECellAccessType type, ASN_NGAP_RAT_Information_t &out)
+{
+    switch (type)
+    {
+    case ECellAccessType::NrLeo:
+        out = ASN_NGAP_RAT_Information_nR_LEO;
+        return true;
+    case ECellAccessType::NrMeo:
+        out = ASN_NGAP_RAT_Information_nR_MEO;
+        return true;
+    case ECellAccessType::NrGeo:
+        out = ASN_NGAP_RAT_Information_nR_GEO;
+        return true;
+    case ECellAccessType::NrOthersat:
+        out = ASN_NGAP_RAT_Information_nR_OTHERSAT;
+        return true;
+    default:
+        return false;
+    }
+}
 
 template <typename T>
 static void AssignDefaultAmfConfigs(NgapAmfContext *amf, T *msg)
@@ -158,6 +185,28 @@ void NgapTask::sendNgSetupRequest(int amfId)
     auto *supportedTa = asn::New<ASN_NGAP_SupportedTAItem>();
     asn::SetOctetString3(supportedTa->tAC, octet3{m_base->config->tac});
     asn::SequenceAdd(supportedTa->broadcastPLMNList, broadcastPlmn);
+
+    // For NTN cells, advertise the RAT-Information (orbit class) of this TAC
+    // via the SupportedTAItem extension (38.413). This is the per-TAC signal
+    // an AMF uses to classify NR-NTN access; it complements the per-UE
+    // NRNTN-TAI-Information extension carried in UserLocationInformation.
+    ASN_NGAP_RAT_Information_t ratInformation;
+    if (CellAccessTypeToRatInformation(m_base->config->cellAccessType, ratInformation))
+    {
+        // iE_Extensions is generically typed; asn1c emits a specific container
+        // type (named after its SEQUENCE position in the schema) which must be
+        // cast to the generic pointer.
+        auto *extContainer = asn::New<ASN_NGAP_ProtocolExtensionContainer_174P317>();
+        supportedTa->iE_Extensions = reinterpret_cast<ASN_NGAP_ProtocolExtensionContainer *>(extContainer);
+
+        auto *ext = asn::New<ASN_NGAP_SupportedTAItem_ExtIEs>();
+        ext->id = ASN_NGAP_ProtocolIE_ID_id_RAT_Information;
+        ext->criticality = ASN_NGAP_Criticality_ignore;
+        ext->extensionValue.present = ASN_NGAP_SupportedTAItem_ExtIEs__extensionValue_PR_RAT_Information;
+        ext->extensionValue.choice.RAT_Information = ratInformation;
+
+        ASN_SEQUENCE_ADD(&extContainer->list, ext);
+    }
 
     auto *ieSupportedTaList = asn::New<ASN_NGAP_NGSetupRequestIEs>();
     ieSupportedTaList->id = ASN_NGAP_ProtocolIE_ID_id_SupportedTAList;
