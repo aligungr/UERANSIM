@@ -8,10 +8,14 @@
 
 #include "test_util.hpp"
 
+extern void run_micro_ecc_tests();
+
 int main()
 {
     TEST_ASSERT_EQ(1 + 1, 2);
     TEST_ASSERT(true, "trivial assertion");
+
+    run_micro_ecc_tests();
 
     return test_summary();
 }
