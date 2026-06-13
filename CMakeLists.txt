@@ -51,3 +51,12 @@ target_link_libraries(nr-cli pthread)
 target_compile_options(nr-cli PRIVATE -Wall -Wextra -pedantic)
 
 target_link_libraries(nr-cli common-lib)
+
+#################### TEST EXECUTABLE ####################
+file(GLOB_RECURSE TEST_SRC_FILES src/test/*.cpp)
+add_executable(nr-tests ${TEST_SRC_FILES})
+target_link_libraries(nr-tests pthread)
+target_compile_options(nr-tests PRIVATE -Wall -Wextra -pedantic)
+target_link_libraries(nr-tests common-lib)
+target_link_libraries(nr-tests ue)
+target_link_libraries(nr-tests ext)
