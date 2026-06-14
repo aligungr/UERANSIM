@@ -37,10 +37,12 @@ struct NmGnbRlsToRrc : NtsMessage
     enum PR
     {
         SIGNAL_DETECTED,
+        SIGNAL_LOST,
         UPLINK_RRC,
     } present;
 
     // SIGNAL_DETECTED
+    // SIGNAL_LOST
     // UPLINK_RRC
     int ueId{};
 

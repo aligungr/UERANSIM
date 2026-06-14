@@ -23,6 +23,10 @@ void GnbRrcTask::handleRlsSapMessage(NmGnbRlsToRrc &msg)
         triggerSysInfoBroadcast();
         break;
     }
+    case NmGnbRlsToRrc::SIGNAL_LOST: {
+        handleRadioLinkFailure(msg.ueId);
+        break;
+    }
     case NmGnbRlsToRrc::UPLINK_RRC: {
         handleUplinkRrc(msg.ueId, msg.rrcChannel, msg.data);
         break;
