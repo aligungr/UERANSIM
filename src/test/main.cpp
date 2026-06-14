@@ -9,6 +9,7 @@
 #include "test_util.hpp"
 
 extern void run_micro_ecc_tests();
+extern void run_ecies_profile_b_tests();
 
 int main()
 {
@@ -16,6 +17,7 @@ int main()
     TEST_ASSERT(true, "trivial assertion");
 
     run_micro_ecc_tests();
+    run_ecies_profile_b_tests();
 
     return test_summary();
 }
