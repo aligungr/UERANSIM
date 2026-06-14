@@ -11,6 +11,7 @@
 extern void run_micro_ecc_tests();
 extern void run_ecies_profile_b_tests();
 extern void run_ecies_profile_b_vector_test();
+extern void run_ecies_profile_b_structural_test();
 
 int main()
 {
@@ -20,6 +21,7 @@ int main()
     run_micro_ecc_tests();
     run_ecies_profile_b_tests();
     run_ecies_profile_b_vector_test();
+    run_ecies_profile_b_structural_test();
 
     return test_summary();
 }
