@@ -1,6 +1,6 @@
 //
 // This file is a part of UERANSIM project.
-// Copyright (c) 2023 ALİ GÜNGÖR.
+// Copyright (c) 2023 ALÄ° GÃNGÃR.
 //
 // https://github.com/aligungr/UERANSIM/
 // See README, LICENSE, and CONTRIBUTING files for licensing details.
@@ -54,6 +54,9 @@ void GnbRlsTask::onLoop()
         }
         case NmGnbRlsToRls::SIGNAL_LOST: {
             m_logger->debug("UE[%d] signal lost", w.ueId);
+            auto m = std::make_unique<NmGnbRlsToRrc>(NmGnbRlsToRrc::SIGNAL_LOST);
+            m->ueId = w.ueId;
+            m_base->rrcTask->push(std::move(m));
             break;
         }
         case NmGnbRlsToRls::UPLINK_DATA: {
