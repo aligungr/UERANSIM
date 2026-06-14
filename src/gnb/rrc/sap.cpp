@@ -1,6 +1,6 @@
 //
 // This file is a part of UERANSIM project.
-// Copyright (c) 2023 ALİ GÜNGÖR.
+// Copyright (c) 2023 ALÄ° GÃNGÃR.
 //
 // https://github.com/aligungr/UERANSIM/
 // See README, LICENSE, and CONTRIBUTING files for licensing details.
@@ -21,6 +21,10 @@ void GnbRrcTask::handleRlsSapMessage(NmGnbRlsToRrc &msg)
     case NmGnbRlsToRrc::SIGNAL_DETECTED: {
         m_logger->debug("UE[%d] new signal detected", msg.ueId);
         triggerSysInfoBroadcast();
+        break;
+    }
+    case NmGnbRlsToRrc::SIGNAL_LOST: {
+        handleRadioLinkFailure(msg.ueId);
         break;
     }
     case NmGnbRlsToRrc::UPLINK_RRC: {
