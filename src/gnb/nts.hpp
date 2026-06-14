@@ -1,6 +1,6 @@
 //
 // This file is a part of UERANSIM project.
-// Copyright (c) 2023 ALİ GÜNGÖR.
+// Copyright (c) 2023 ALÄ° GÃNGÃR.
 //
 // https://github.com/aligungr/UERANSIM/
 // See README, LICENSE, and CONTRIBUTING files for licensing details.
@@ -37,10 +37,12 @@ struct NmGnbRlsToRrc : NtsMessage
     enum PR
     {
         SIGNAL_DETECTED,
+        SIGNAL_LOST,
         UPLINK_RRC,
     } present;
 
     // SIGNAL_DETECTED
+    // SIGNAL_LOST
     // UPLINK_RRC
     int ueId{};
 
