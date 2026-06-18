@@ -168,6 +168,7 @@ struct NmGnbNgapToRrc : NtsMessage
         NAS_DELIVERY,
         AN_RELEASE,
         PAGING,
+        HANDOVER,
     } present;
 
     // NAS_DELIVERY
@@ -181,6 +182,9 @@ struct NmGnbNgapToRrc : NtsMessage
     asn::Unique<ASN_NGAP_FiveG_S_TMSI> uePagingTmsi{};
     asn::Unique<ASN_NGAP_TAIListForPaging> taiListForPaging{};
 
+    // HANDOVER
+    OctetString rrcContainer{};
+
     explicit NmGnbNgapToRrc(PR present) : NtsMessage(NtsMessageType::GNB_NGAP_TO_RRC), present(present)
     {
     }
@@ -192,7 +196,8 @@ struct NmGnbRrcToNgap : NtsMessage
     {
         INITIAL_NAS_DELIVERY,
         UPLINK_NAS_DELIVERY,
-        RADIO_LINK_FAILURE
+        HANDOVER_CONFIRM,
+        RADIO_LINK_FAILURE,
     } present;
 
     // INITIAL_NAS_DELIVERY

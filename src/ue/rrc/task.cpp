@@ -67,6 +67,9 @@ void UeRrcTask::onLoop()
         case NmUeRrcToRrc::TRIGGER_CYCLE:
             performCycle();
             break;
+        case NmUeRrcToRrc::HANDOVER_CONFIRM:
+            sendHandoverConfirmMessage();
+            break;
         }
         break;
     }
