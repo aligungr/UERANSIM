@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include "ext/compact25519/compact_x25519.hpp"
+#include "ext/crypt-ext/aes.hpp"
+#include "ext/crypt-ext/hmac-sha256.h"
+#include "ext/crypt-ext/x963kdf.h"
 #include <lib/crypt/milenage.hpp>
 #include <lib/nas/nas.hpp>
 #include <ue/nas/storage.hpp>
@@ -17,11 +21,6 @@
 #include <utils/nts.hpp>
 #include <utils/octet_string.hpp>
 #include <utils/random.hpp>
-#include "ext/compact25519/compact_x25519.hpp"
-#include "ext/crypt-ext/x963kdf.h"
-#include "ext/crypt-ext/aes.hpp"
-#include "ext/crypt-ext/hmac-sha256.h"
-
 
 namespace nr::ue
 {
@@ -154,6 +153,7 @@ class NasMm
     nas::IE5gsMobileIdentity getOrGenerateSuci();
     nas::IE5gsMobileIdentity generateSuci();
     std::string generateSUCIProfileA(const std::string &imsi, const OctetString &hnPublicKey);
+    std::string generateSUCIProfileB(const std::string &imsiPart, const OctetString &hnPublicKey);
     nas::IE5gsMobileIdentity getOrGeneratePreferredId();
 
   private: /* Service */

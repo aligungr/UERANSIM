@@ -6,6 +6,7 @@
 // See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
+#include "ecies_profile_b.hpp"
 #include "mm.hpp"
 #include <lib/nas/base.hpp>
 #include <utils/common.hpp>
@@ -104,7 +105,8 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
     {
         ret.imsi.routingIndicator = "0000";
     }
-    if (protectionScheme == 0) {
+    if (protectionScheme == 0)
+    {
         ret.imsi.protectionSchemaId = 0;
         ret.imsi.homeNetworkPublicKeyIdentifier = 0;
         ret.imsi.schemeOutput = imsi.substr(plmn.isLongMnc ? 6 : 5);
@@ -115,6 +117,18 @@ nas::IE5gsMobileIdentity NasMm::generateSuci()
         ret.imsi.protectionSchemaId = 1;
         ret.imsi.homeNetworkPublicKeyIdentifier = homeNetworkPublicKeyId;
         ret.imsi.schemeOutput = generateSUCIProfileA(imsi.substr(plmn.isLongMnc ? 6 : 5), homeNetworkPublicKey);
+        return ret;
+    }
+    else if (protectionScheme == 2)
+    {
+        ret.imsi.protectionSchemaId = 2;
+        ret.imsi.homeNetworkPublicKeyIdentifier = homeNetworkPublicKeyId;
+        ret.imsi.schemeOutput = generateSUCIProfileB(imsi.substr(plmn.isLongMnc ? 6 : 5), homeNetworkPublicKey);
+        if (ret.imsi.schemeOutput.empty())
+        {
+            m_logger->err("SUCI Profile B generation failed");
+            return {};
+        }
         return ret;
     }
     else
@@ -131,15 +145,15 @@ std::string NasMm::generateSUCIProfileA(const std::string &imsi, const OctetStri
     Random rnd = Random::Mixed(name);
     int intLength = sizeof(int32_t);
 
-    for (int i=0; i < (X25519_KEY_SIZE/intLength); i++)
+    for (int i = 0; i < (X25519_KEY_SIZE / intLength); i++)
     {
         seed = seed + utils::IntToHex(rnd.nextI());
     }
 
     OctetString randomSeed = OctetString::FromHex(seed);
     uint8_t privateKey[X25519_KEY_SIZE];
-    uint8_t publicKey[X25519_KEY_SIZE];    
-    compact_x25519_keygen(privateKey,publicKey, randomSeed.data());
+    uint8_t publicKey[X25519_KEY_SIZE];
+    compact_x25519_keygen(privateKey, publicKey, randomSeed.data());
 
     OctetString uePrivateKey = OctetString::FromArray(privateKey, X25519_KEY_SIZE);
     OctetString uePublicKey = OctetString::FromArray(publicKey, X25519_KEY_SIZE);
@@ -163,13 +177,36 @@ std::string NasMm::generateSUCIProfileA(const std::string &imsi, const OctetStri
 
     uint8_t suciHMAC[HMAC_SHA256_DIGEST_SIZE];
     hmac_sha256(suciHMAC, msin.data(), msin.length(), macKey.data(), HMAC_SHA256_DIGEST_SIZE);
-    
+
     OctetString macTag = OctetString::FromArray(suciHMAC, 8);
     OctetString schemeOutput;
     schemeOutput.append(uePublicKey);
     schemeOutput.append(msin);
     schemeOutput.append(macTag);
     return schemeOutput.toHexString();
+}
+
+std::string NasMm::generateSUCIProfileB(const std::string &imsiPart, const OctetString &hnPublicKey)
+{
+    // Generate 32-byte ephemeral private key locally (mirror Profile A seeding)
+    std::string name("Seed for secp256r1 generation");
+    std::string seed;
+    Random rnd = Random::Mixed(name);
+    int intLength = sizeof(int32_t);
+
+    for (int i = 0; i < (32 / intLength); i++)
+    {
+        seed = seed + utils::IntToHex(rnd.nextI());
+    }
+
+    OctetString ephemeralPrivKey = OctetString::FromHex(seed);
+
+    // BCD-encode MSIN (same as Profile A)
+    OctetString msin;
+    nas::EncodeBcdString(msin, imsiPart, ~0, false, 0);
+
+    // Call ECIES Profile B
+    return eciesProfileB(msin, hnPublicKey, ephemeralPrivKey);
 }
 
 nas::IE5gsMobileIdentity NasMm::getOrGeneratePreferredId()

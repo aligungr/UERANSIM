@@ -16,6 +16,7 @@ build: FORCE
 	cp cmake-build-release/nr-cli build/
 	cp cmake-build-release/libdevbnd.so build/
 	cp tools/nr-binder build/
+	-cp cmake-build-release/nr-tests build/
 
 	@printf "${GREEN}UERANSIM successfully built.${NC}\n"
 

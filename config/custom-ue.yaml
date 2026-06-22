@@ -13,6 +13,15 @@ homeNetworkPublicKeyId: 1
 # Routing Indicator
 routingIndicator: '0000'
 
+# --- Profile B example (ECIES over secp256r1) ---
+# To enable Profile B, uncomment and replace the key with your network's secp256r1 public key.
+# Both compressed (33 bytes / 66 hex, prefix 02 or 03) and uncompressed (65 bytes / 130 hex,
+# prefix 04) forms are accepted.
+# protectionScheme: 2
+# homeNetworkPublicKey: '0272da71976234ce833a6907425867b82e074d44ef907dfb4b3e21c1c2256ebcd1'
+# homeNetworkPublicKeyId: 1
+# routingIndicator: '0000'
+
 # Permanent subscription key
 key: '465B5CE8B199B49FAA5F0A2EE238A6BC'
 # Operator code (OP or OPC) of the UE

@@ -154,8 +154,32 @@ static nr::ue::UeConfig *ReadConfigYaml()
         result->protectionScheme = yaml::GetInt32(config, "protectionScheme", 0, 255);
     if (yaml::HasField(config, "homeNetworkPublicKeyId"))
         result->homeNetworkPublicKeyId = yaml::GetInt32(config, "homeNetworkPublicKeyId", 0, 255);
-    if (yaml::HasField(config, "homeNetworkPublicKey"))        
-        result->homeNetworkPublicKey = OctetString::FromHex(yaml::GetString(config, "homeNetworkPublicKey", 64, 64)); 
+    if (yaml::HasField(config, "homeNetworkPublicKey"))
+    {
+        int scheme = result->protectionScheme;
+        if (scheme == 1)
+        {
+            result->homeNetworkPublicKey =
+                OctetString::FromHex(yaml::GetString(config, "homeNetworkPublicKey", 64, 64));
+        }
+        else if (scheme == 2)
+        {
+            std::string keyHex = yaml::GetString(config, "homeNetworkPublicKey", 66, 130);
+            size_t hexLen = keyHex.size();
+            if (hexLen != 66 && hexLen != 130)
+            {
+                throw std::runtime_error("Profile B homeNetworkPublicKey must be exactly 66 (compressed) or 130 "
+                                         "(uncompressed) hex chars, got " +
+                                         std::to_string(hexLen));
+            }
+            result->homeNetworkPublicKey = OctetString::FromHex(keyHex);
+        }
+        else
+        {
+            result->homeNetworkPublicKey =
+                OctetString::FromHex(yaml::GetString(config, "homeNetworkPublicKey", 64, 64));
+        }
+    }
     if (yaml::HasField(config, "imei"))
         result->imei = yaml::GetString(config, "imei", 15, 15);
     if (yaml::HasField(config, "imeiSv"))
