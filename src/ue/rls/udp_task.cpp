@@ -19,7 +19,9 @@
 static constexpr const int BUFFER_SIZE = 16384;
 static constexpr const int LOOP_PERIOD = 1000;
 static constexpr const int RECEIVE_TIMEOUT = 200;
-static constexpr const int HEARTBEAT_THRESHOLD = 2000; // (LOOP_PERIOD + RECEIVE_TIMEOUT)'dan büyük olmalı
+// Much higher than (LOOP_PERIOD + RECEIVE_TIMEOUT) to tolerate data bursts without false signal loss
+static constexpr const int HEARTBEAT_THRESHOLD = 10000; // (LOOP_PERIOD + RECEIVE_TIMEOUT)'dan büyük olmalı
+static constexpr const int MAX_RECEIVE_BURST = 256;
 
 static constexpr const size_t MAX_CELL_COUNT = 256;
 
@@ -46,24 +48,27 @@ void RlsUdpTask::onStart()
 
 void RlsUdpTask::onLoop()
 {
-    auto current = utils::CurrentTimeMillis();
-    if (current - m_lastLoop > LOOP_PERIOD)
-    {
-        m_lastLoop = current;
-        heartbeatCycle(current, m_simPos);
-    }
-
     uint8_t buffer[BUFFER_SIZE];
     InetAddress peerAddress;
 
-    int size = m_server->Receive(buffer, BUFFER_SIZE, RECEIVE_TIMEOUT, peerAddress);
-    if (size > 0)
+    for (int i = 0; i < MAX_RECEIVE_BURST; i++)
     {
+        int size = m_server->Receive(buffer, BUFFER_SIZE, i == 0 ? RECEIVE_TIMEOUT : 1, peerAddress);
+        if (size <= 0)
+            break;
+
         auto rlsMsg = rls::DecodeRlsMessage(OctetView{buffer, static_cast<size_t>(size)});
         if (rlsMsg == nullptr)
             m_logger->err("Unable to decode RLS message");
         else
             receiveRlsPdu(peerAddress, std::move(rlsMsg));
+    }
+
+    auto current = utils::CurrentTimeMillis();
+    if (current - m_lastLoop > LOOP_PERIOD)
+    {
+        m_lastLoop = current;
+        heartbeatCycle(current, m_simPos);
     }
 }
 
@@ -125,6 +130,9 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         // if no HB-ACK received yet, and the message is not HB-ACK, then ignore the message
         return;
     }
+
+    m_cells[msg->sti].address = addr;
+    m_cells[msg->sti].lastSeen = utils::CurrentTimeMillis();
 
     auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
     w->cellId = m_cells[msg->sti].cellId;
