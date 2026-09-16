@@ -27,6 +27,7 @@ std::string VectorToHexString(const std::vector<uint8_t> &hex);
 int GetIpVersion(const std::string &address);
 OctetString IpToOctetString(const std::string &address);
 std::string OctetStringToIp(const OctetString &address);
+std::string Ipv6InterfaceIdToLinkLocalAddress(const OctetString &interfaceId);
 int64_t CurrentTimeMillis();
 TimeStamp CurrentTimeStamp();
 int NextId();

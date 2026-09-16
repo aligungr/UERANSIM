@@ -14,7 +14,8 @@ namespace nr::ue
 
 int NasSm::allocatePduSessionId(const SessionConfig &config)
 {
-    if (config.type != nas::EPduSessionType::IPV4)
+    if (config.type != nas::EPduSessionType::IPV4 && config.type != nas::EPduSessionType::IPV6 &&
+        config.type != nas::EPduSessionType::IPV4V6)
     {
         m_logger->debug("PDU session type [%s] is not supported", nas::utils::EnumToString(config.type));
         return 0;
