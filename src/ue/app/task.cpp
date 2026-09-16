@@ -190,10 +190,16 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
-    if (pduSession->pduAddress->sessionType != nas::EPduSessionType::IPV4 ||
-        pduSession->sessionType != nas::EPduSessionType::IPV4)
+    if (pduSession->pduAddress->sessionType != nas::EPduSessionType::IPV4 &&
+        pduSession->pduAddress->sessionType != nas::EPduSessionType::IPV6 &&
+        pduSession->pduAddress->sessionType != nas::EPduSessionType::IPV4V6)
     {
         m_logger->err("Connection could not setup. PDU session type is not supported.");
+        return;
+    }
+    if (pduSession->pduAddress->sessionType != pduSession->sessionType)
+    {
+        m_logger->err("Connection could not setup. PDU session type mismatch.");
         return;
     }
 
@@ -235,10 +241,37 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
         return;
     }
 
-    std::string ipAddress = utils::OctetStringToIp(pduSession->pduAddress->pduAddressInformation);
+    std::string ipv4Address{}, ipv6Address{};
+    const auto &addressInformation = pduSession->pduAddress->pduAddressInformation;
 
-    bool r = tun::TunConfigure(allocatedName, ipAddress, requestedNetmask, cons::TunMtu, nsName,
-                               m_base->config->useNamespace, m_base->config->configureRouting, error);
+    switch (pduSession->pduAddress->sessionType)
+    {
+    case nas::EPduSessionType::IPV4:
+        ipv4Address = utils::OctetStringToIp(addressInformation);
+        break;
+    case nas::EPduSessionType::IPV6:
+        ipv6Address = utils::Ipv6InterfaceIdToLinkLocalAddress(addressInformation);
+        break;
+    case nas::EPduSessionType::IPV4V6:
+        if (addressInformation.length() == 12)
+        {
+            ipv6Address = utils::Ipv6InterfaceIdToLinkLocalAddress(addressInformation.subCopy(0, 8));
+            ipv4Address = utils::OctetStringToIp(addressInformation.subCopy(8, 4));
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (ipv4Address.empty() && ipv6Address.empty())
+    {
+        m_logger->err("Connection could not setup. PDU address could not be parsed.");
+        return;
+    }
+
+    bool r = tun::TunConfigure(allocatedName, ipv4Address, requestedNetmask, ipv6Address, cons::TunIpv6PrefixLength,
+                               cons::TunMtu, nsName, m_base->config->useNamespace, m_base->config->configureRouting,
+                               error);
     if (!r || error.length() > 0)
     {
         m_logger->err("TUN configuration failure [%s]", error.c_str());
@@ -255,13 +288,17 @@ void UeAppTask::setupTunInterface(const PduSession *pduSession)
     m_tunTasks[psi] = task;
     task->start();
 
+    std::string addressLog = ipv4Address;
+    if (!ipv6Address.empty())
+        addressLog = addressLog.empty() ? ipv6Address : (addressLog + ", " + ipv6Address);
+
     if (m_base->config->useNamespace)
         m_logger->info(
             "Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up in namespace[%s].",
-            pduSession->psi, allocatedName.c_str(), ipAddress.c_str(), nsName.c_str());
+            pduSession->psi, allocatedName.c_str(), addressLog.c_str(), nsName.c_str());
     else
         m_logger->info("Connection setup for PDU session[%d] is successful, TUN interface[%s, %s] is up.",
-                       pduSession->psi, allocatedName.c_str(), ipAddress.c_str());
+                       pduSession->psi, allocatedName.c_str(), addressLog.c_str());
 }
 
 } // namespace nr::ue

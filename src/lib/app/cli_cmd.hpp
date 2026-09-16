@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include <lib/nas/enums.hpp>
 #include <utils/common_types.hpp>
 
 namespace app
@@ -66,6 +67,7 @@ struct UeCliCommand
     int psCount{};
 
     // PS_ESTABLISH
+    nas::EPduSessionType sessionType{};
     std::optional<SingleSlice> sNssai{};
     std::optional<std::string> apn{};
     bool isEmergency{};
