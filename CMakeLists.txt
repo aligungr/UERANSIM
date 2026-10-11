@@ -58,7 +58,7 @@ option(BUILD_TESTS "Build the nr-tests executable" ON)
 
 if (BUILD_TESTS)
     # CONFIGURE_DEPENDS so that adding a test file re-runs cmake instead of silently skipping it.
-    file(GLOB_RECURSE TEST_SRC_FILES CONFIGURE_DEPENDS src/test/*.cpp)
+    file(GLOB_RECURSE TEST_SRC_FILES CONFIGURE_DEPENDS test/*.cpp)
     add_executable(nr-tests ${TEST_SRC_FILES})
     target_link_libraries(nr-tests pthread)
     target_compile_options(nr-tests PRIVATE -Wall -Wextra -pedantic)
@@ -67,5 +67,8 @@ if (BUILD_TESTS)
     target_link_libraries(nr-tests ext)
 
     enable_testing()
-    add_test(NAME nr-tests COMMAND nr-tests)
+    # Registers each doctest test case as its own ctest test, as listed by the built binary, so a failure or a crash
+    # is reported against the test case that caused it instead of the whole suite.
+    include(src/ext/doctest/doctest.cmake)
+    doctest_discover_tests(nr-tests)
 endif ()

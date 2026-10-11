@@ -23,7 +23,7 @@ test: FORCE
 	cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" . -B cmake-build-release
 	cmake --build cmake-build-release --target nr-tests
 	
-	cd cmake-build-release && ctest --output-on-failure
+	cd cmake-build-release && ctest --output-on-failure --no-tests=error
 
 	@printf "${GREEN}All tests passed.${NC}\n"
 
