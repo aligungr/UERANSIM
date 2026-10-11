@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include <optional>
+#include <stdexcept>
+
 #include <utils/octet_string.hpp>
 #include <utils/octet_view.hpp>
 
@@ -137,12 +140,17 @@ static inline void EncodeIe4(const T &ie, OctetString &stream)
     stream.data()[index] = length;
 }
 
+// The contents of a TLV or TLV-E IE are decoded within their own length: octets the decoder leaves unread (spare octets
+// added by a later release, for one) are skipped, and a decoder that reads too far throws instead of running into the
+// next IE.
 template <typename T>
 static inline T DecodeIe4(const OctetView &stream)
 {
     static_assert(std::is_base_of<InformationElement4, T>::value);
 
-    return T::Decode(stream, stream.readI());
+    int length = stream.readI();
+    OctetView contents = stream.subView(static_cast<size_t>(length));
+    return T::Decode(contents, length);
 }
 
 //======================================================================================================
@@ -166,7 +174,10 @@ template <typename T>
 static inline T DecodeIe6(const OctetView &stream)
 {
     static_assert(std::is_base_of<InformationElement6, T>::value);
-    return T::Decode(stream, stream.read2I());
+
+    int length = stream.read2I();
+    OctetView contents = stream.subView(static_cast<size_t>(length));
+    return T::Decode(contents, length);
 }
 
 //======================================================================================================
@@ -189,6 +200,50 @@ static inline T DecodeIe2346(const OctetView &stream)
     return {};
 }
 
+// Decodes an optional IE whose IEI has been read. TS 24.501 §7.7.1: a syntactically incorrect optional IE is treated as
+// not present. A TLV or TLV-E IE is stepped over by its length whatever its contents hold, and when that length runs
+// past the end of the message, there is nothing left after it to decode either.
+template <typename T>
+static inline std::optional<T> DecodeOptionalIe2346(const OctetView &stream)
+{
+    static_assert(std::is_base_of<InformationElement2, T>::value || std::is_base_of<InformationElement3, T>::value ||
+                  std::is_base_of<InformationElement4, T>::value || std::is_base_of<InformationElement6, T>::value);
+
+    if constexpr (std::is_base_of<InformationElement4, T>::value || std::is_base_of<InformationElement6, T>::value)
+    {
+        size_t lengthSize = std::is_base_of<InformationElement4, T>::value ? 1 : 2;
+        if (stream.remainingSize() < lengthSize)
+        {
+            stream.subView(stream.remainingSize());
+            return std::nullopt;
+        }
+        size_t length = lengthSize == 1 ? stream.readI() : stream.read2US();
+        if (length > stream.remainingSize())
+        {
+            stream.subView(stream.remainingSize());
+            return std::nullopt;
+        }
+
+        OctetView contents = stream.subView(length);
+        try
+        {
+            return T::Decode(contents, static_cast<int>(length));
+        }
+        catch (const std::out_of_range &)
+        {
+            return std::nullopt;
+        }
+        catch (const std::runtime_error &)
+        {
+            return std::nullopt;
+        }
+    }
+    else
+    {
+        return DecodeIe2346<T>(stream);
+    }
+}
+
 template <typename T>
 static inline void Encode2346(const T &ie, OctetString &stream)
 {
@@ -208,34 +263,37 @@ static inline void Encode2346(const T &ie, OctetString &stream)
 //                                           OTHERS
 //======================================================================================================
 
-template <typename T>
-static inline bool DecodeListIe(const OctetView &stream, int length, std::vector<T> &output)
+// Decodes `length` octets of list elements. Lists are decoded within the contents of their IE (see DecodeIe4 and
+// DecodeIe6), so an element that runs past them throws there. An element that consumes no octets would never bring the
+// list to its end, so it throws too, as does one that runs past `length`.
+template <typename T, typename Decoder>
+static inline void DecodeList(const OctetView &stream, int length, std::vector<T> &output, Decoder decode)
 {
-    size_t readLen = 0;
-    while (readLen < static_cast<size_t>(length))
+    if (length < 0)
+        throw std::runtime_error("NAS list has a negative length");
+
+    size_t end = stream.currentIndex() + static_cast<size_t>(length);
+    while (stream.currentIndex() < end)
     {
-        size_t streamIndex = stream.currentIndex();
-        output.push_back(DecodeIe2346<T>(stream));
-        readLen += stream.currentIndex() - streamIndex;
+        size_t start = stream.currentIndex();
+        output.push_back(decode(stream));
+        if (stream.currentIndex() == start)
+            throw std::runtime_error("NAS list element consumed no octets");
     }
-    if (readLen > static_cast<size_t>(length))
-        return false; // Failure: Value length exceeds total length
-    return true;
+    if (stream.currentIndex() != end)
+        throw std::runtime_error("NAS list element runs past the end of the list");
 }
 
 template <typename T>
-static inline bool DecodeListVal(const OctetView &stream, int length, std::vector<T> &output)
+static inline void DecodeListIe(const OctetView &stream, int length, std::vector<T> &output)
 {
-    size_t readLen = 0;
-    while (readLen < static_cast<size_t>(length))
-    {
-        size_t streamIndex = stream.currentIndex();
-        output.push_back(T::Decode(stream));
-        readLen += stream.currentIndex() - streamIndex;
-    }
-    if (readLen > static_cast<size_t>(length))
-        return false; // Failure: Value length exceeds total length
-    return true;
+    DecodeList(stream, length, output, [](const OctetView &s) { return DecodeIe2346<T>(s); });
+}
+
+template <typename T>
+static inline void DecodeListVal(const OctetView &stream, int length, std::vector<T> &output)
+{
+    DecodeList(stream, length, output, [](const OctetView &s) { return T::Decode(s); });
 }
 
 size_t EncodeBcdString(OctetString &stream, const std::string &bcd, size_t octetLength, bool skipFirst,

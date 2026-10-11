@@ -62,7 +62,10 @@ struct NasMessageBuilder
         });
         optionalDecoders[iei] = [ptr](const OctetView &stream) {
             stream.readI();
-            *ptr = DecodeIe2346<T>(stream);
+            auto ie = DecodeOptionalIe2346<T>(stream);
+            // TS 24.501 §7.6.3: only the first occurrence of a repeated IE is handled.
+            if (!ptr->has_value())
+                *ptr = std::move(ie);
         };
     }
 
@@ -73,7 +76,11 @@ struct NasMessageBuilder
             if (ptr->has_value())
                 EncodeIe1(iei, ptr->value(), stream);
         });
-        optionalDecoders[iei] = [ptr](const OctetView &stream) { *ptr = DecodeIe1<T>(stream); };
+        optionalDecoders[iei] = [ptr](const OctetView &stream) {
+            auto ie = DecodeIe1<T>(stream);
+            if (!ptr->has_value())
+                *ptr = ie;
+        };
     }
 };
 

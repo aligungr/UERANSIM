@@ -89,9 +89,10 @@ if (BUILD_TESTS)
 
     enable_testing()
     # Registers each doctest test case as its own ctest test, as listed by the built binary, so a failure or a crash
-    # is reported against the test case that caused it instead of the whole suite.
+    # is reported against the test case that caused it instead of the whole suite. A test that hangs fails after a
+    # minute rather than holding the run up for ctest's default of 25.
     include(src/ext/doctest/doctest.cmake)
-    doctest_discover_tests(nr-tests)
+    doctest_discover_tests(nr-tests PROPERTIES TIMEOUT 60)
 endif ()
 
 #################### COVERAGE ####################

@@ -8,6 +8,8 @@
 
 #include "encode.hpp"
 
+#include <algorithm>
+#include <memory>
 #include <stdexcept>
 
 namespace nas
@@ -207,17 +209,40 @@ void EncodeNasMessage(const NasMessage &msg, OctetString &stream)
 
 static SecuredMmMessage *DecodeSecuredMmMessage(const OctetView &stream, ESecurityHeaderType sht)
 {
-    auto *p = new SecuredMmMessage();
+    auto p = std::make_unique<SecuredMmMessage>();
     p->messageAuthenticationCode = stream.read4();
     p->sequenceNumber = stream.read();
     p->plainNasMessage = stream.readOctetString();
-    return p;
+    return p.release();
+}
+
+// TS 24.501 §7.6.1: an IE the message does not define is ignored, unless it is encoded as comprehension required. Its
+// format follows from the IEI alone (TS 24.007 §11.2.4): with bit 8 set it is a type 1 or type 2 IE of a single octet,
+// with 0000 in bits 8 to 5 it is comprehension required, with 0111 a TLV-E IE, and otherwise a TLV IE.
+static void SkipUnknownIe(const OctetView &stream)
+{
+    int iei = stream.readI();
+    if (iei & 0x80)
+        return;
+    if ((iei & 0xF0) == 0x00)
+        throw std::runtime_error("NAS message contains an unknown comprehension required IE");
+
+    size_t lengthSize = (iei & 0xF0) == 0x70 ? 2 : 1;
+    if (stream.remainingSize() < lengthSize)
+    {
+        stream.subView(stream.remainingSize());
+        return;
+    }
+    size_t length = lengthSize == 1 ? stream.readI() : stream.read2US();
+    // An IE that claims more octets than are left is the last one in the message.
+    stream.subView(std::min(length, stream.remainingSize()));
 }
 
 template <typename T>
 static T *DecodeViaBuilder(const OctetView &stream)
 {
-    T *p = new T();
+    // Owned until it is complete, so that a decoder that throws does not leak it.
+    auto p = std::make_unique<T>();
 
     NasMessageBuilder builder{};
     p->onBuild(builder);
@@ -228,15 +253,16 @@ static T *DecodeViaBuilder(const OctetView &stream)
     while (stream.hasNext())
     {
         int iei = stream.peekI();
-        if (builder.optionalDecoders.count(iei))
+        // Type 1 IEs are identified by the upper half of their octet alone, and those are the only keys below 0x10.
+        if (iei >= 0x10 && builder.optionalDecoders.count(iei))
             builder.optionalDecoders[iei](stream);
-        else if (builder.optionalDecoders.count((iei >> 4) & 0xF))
+        else if ((iei & 0x80) && builder.optionalDecoders.count((iei >> 4) & 0xF))
             builder.optionalDecoders[(iei >> 4) & 0xF](stream);
         else
-            throw std::runtime_error("Bad constructed NAS message");
+            SkipUnknownIe(stream);
     }
 
-    return p;
+    return p.release();
 }
 
 static PlainMmMessage *DecodePlainMmMessage(const OctetView &stream, EMessageType messageType)
