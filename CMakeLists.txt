@@ -6,6 +6,22 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories(src)
 
+#################### BUILD OPTIONS ####################
+
+# Builds every target with the given sanitizers, e.g. -DUERANSIM_SANITIZE=address,undefined. UBSan findings abort
+# instead of only being printed, so that they fail the test that triggered them.
+set(UERANSIM_SANITIZE "" CACHE STRING "Comma separated sanitizers to build with, e.g. address,undefined")
+if (UERANSIM_SANITIZE)
+    add_compile_options(-fsanitize=${UERANSIM_SANITIZE} -fno-sanitize-recover=all -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=${UERANSIM_SANITIZE})
+    # Bounds checks in the standard containers as well: ASan cannot see an index past the size of a vector as long as
+    # it is still within its capacity.
+    add_compile_definitions(_GLIBCXX_ASSERTIONS)
+endif ()
+
+# Instruments the first-party libraries for gcov; meant for a Debug build. Applied once the targets exist, below.
+option(UERANSIM_COVERAGE "Instrument the first-party code for coverage reports" OFF)
+
 #################### SUB DIRECTORIES ####################
 
 add_subdirectory(src/ext)
@@ -44,6 +60,11 @@ add_library(devbnd SHARED src/binder.cpp)
 target_compile_options(devbnd PRIVATE -D_GNU_SOURCE -Wall -Wextra)
 target_link_options(devbnd PRIVATE -nostartfiles)
 target_link_libraries(devbnd dl)
+if (UERANSIM_SANITIZE)
+    # devbnd is LD_PRELOADed into arbitrary programs, which cannot pull in a sanitizer runtime that way.
+    target_compile_options(devbnd PRIVATE -fno-sanitize=all)
+    target_link_options(devbnd PRIVATE -fno-sanitize=all)
+endif ()
 
 #################### CLI EXECUTABLE ####################
 add_executable(nr-cli src/cli.cpp)
@@ -71,4 +92,14 @@ if (BUILD_TESTS)
     # is reported against the test case that caused it instead of the whole suite.
     include(src/ext/doctest/doctest.cmake)
     doctest_discover_tests(nr-tests)
+endif ()
+
+#################### COVERAGE ####################
+# Only the first-party libraries are instrumented. The generated ASN.1 code and the vendored libraries would dominate
+# the report and slow the build down, and they are not what the tests are written for.
+if (UERANSIM_COVERAGE)
+    foreach (target utils common-lib gnb ue)
+        target_compile_options(${target} PRIVATE --coverage)
+        target_link_options(${target} INTERFACE --coverage)
+    endforeach ()
 endif ()
