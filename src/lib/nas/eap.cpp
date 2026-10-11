@@ -198,6 +198,8 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetView &stream)
 
     if (length == 4)
         return std::make_unique<Eap>(code, id, EEapType::NO_TYPE);
+    if (length < 5)
+        return nullptr;
 
     auto type = static_cast<EEapType>(stream.readI());
 
@@ -221,7 +223,7 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetView &stream)
 
         readBytes += 1;
 
-        auto *akaPrime = new EapAkaPrime(code, id, subType);
+        auto akaPrime = std::make_unique<EapAkaPrime>(code, id, subType);
 
         // consume reserved 2 octets
         stream.read2I();
@@ -233,31 +235,27 @@ std::unique_ptr<eap::Eap> eap::DecodeEapPdu(const OctetView &stream)
             auto t = static_cast<EAttributeType>(stream.readI());
             readBytes += 1;
 
-            if (t < EAttributeType::AT_RAND || t > EAttributeType::AT_TRUST_IND)
-                return nullptr;
-
-            // decode attribute length
+            // decode attribute length, in units of 4 octets that include the type and the length octets
             auto attributeLength = stream.readI();
             readBytes += 1;
 
-            // Valid length must be at least 2 octets
-            if (attributeLength < 2)
+            if (t < EAttributeType::AT_RAND || attributeLength < 1)
                 return nullptr;
 
             // decode attribute value
             auto attributeVal = stream.readOctetString(4 * attributeLength - 2);
             readBytes += 4 * attributeLength - 2;
 
-            akaPrime->attributes.putRawAttribute(t, std::move(attributeVal));
+            // RFC 4187 §8.1: the attributes from 128 up are skippable, and the peer ignores one it does not know.
+            if (t <= EAttributeType::AT_TRUST_IND)
+                akaPrime->attributes.putRawAttribute(t, std::move(attributeVal));
         }
 
+        // The attributes ran past the EAP length.
         if (readBytes != innerLength)
-        {
-            // Error: "readBytes exceeds the element length"
-            throw std::runtime_error("EAP decoding failure: readBytes exceeds the element length");
-        }
+            return nullptr;
 
-        return std::unique_ptr<Eap>(akaPrime);
+        return akaPrime;
     }
     else if (type == EEapType::NOTIFICATION)
         return std::unique_ptr<Eap>(new EapNotification(code, id, stream.readOctetString(innerLength)));
