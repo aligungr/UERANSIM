@@ -46,7 +46,7 @@ You can support UERANSIM by:
 
 ## License
 
-Copyright (c) 2026 ALİ GÜNGÖR.
+Copyright (c) 2027 ALİ GÜNGÖR.
 
 All source code and related files including documentation and wiki pages are
 dual licensed with [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.en.html) and a commercial license.
