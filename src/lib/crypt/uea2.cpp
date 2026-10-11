@@ -27,13 +27,11 @@ void crypto::uea2::F8(const u8 *pKey, u32 count, u32 bearer, u32 dir, u8 *pData,
     crypto::snow3g::Initialize(K, IV);
     KS = new u32[n];
     crypto::snow3g::GenerateKeyStream((u32 *)KS, n);
-    for (int i = 0; i < n; i++)
-    {
-        pData[4 * i + 0] ^= (u8)(KS[i] >> 24) & 0xff;
-        pData[4 * i + 1] ^= (u8)(KS[i] >> 16) & 0xff;
-        pData[4 * i + 2] ^= (u8)(KS[i] >> 8) & 0xff;
-        pData[4 * i + 3] ^= (u8)(KS[i]) & 0xff;
-    }
+
+    // The keystream comes in 32-bit words, but the message is XORed byte by byte so that nothing past its last byte is
+    // read or written: a message whose length is not a multiple of 4 bytes ends inside the last word.
+    for (u32 i = 0; i < (length + 7) / 8; i++)
+        pData[i] ^= (u8)(KS[i / 4] >> (24 - 8 * (i % 4)));
     delete[] KS;
 }
 

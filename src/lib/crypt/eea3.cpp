@@ -9,7 +9,6 @@
 #include "eea3.hpp"
 #include "zuc.hpp"
 
-#include <endian.h>
 #include <vector>
 
 namespace crypto::eea3
@@ -21,7 +20,7 @@ static void ZUC(const uint8_t *pKey, uint8_t *pIv, uint32_t *pKeyStream, uint32_
     zuc::GenerateKeyStream(pKeyStream, nKeyStream);
 }
 
-static uint32_t GetWord(uint32_t *pData, uint32_t index)
+static uint32_t GetWord(const uint32_t *pData, uint32_t index)
 {
     uint32_t ti = index % 32;
     if (ti == 0)
@@ -30,15 +29,16 @@ static uint32_t GetWord(uint32_t *pData, uint32_t index)
         return (pData[index / 32] << ti) | (pData[index / 32 + 1] >> (32 - ti));
 }
 
-static uint8_t GetBit(const uint32_t *pData, uint32_t index)
+// Bit `index` of the message, counting from the most significant bit of its first byte.
+static uint8_t GetBit(const uint8_t *pData, uint32_t index)
 {
-    return (pData[index / 32] & (1 << (31 - (index % 32)))) ? 1 : 0;
+    return (pData[index / 8] >> (7 - index % 8)) & 1;
 }
 
 uint32_t EIA3(const uint8_t *pKey, uint32_t count, uint32_t direction, uint32_t bearer, uint32_t length,
-              const uint32_t *pData)
+              const uint8_t *pData)
 {
-    uint32_t *z, N, L, T, i;
+    uint32_t N, L, T, i;
     uint8_t IV[16];
 
     IV[0] = (count >> 24) & 0xFF;
@@ -61,34 +61,27 @@ uint32_t EIA3(const uint8_t *pKey, uint32_t count, uint32_t direction, uint32_t 
 
     N = length + 64;
     L = (N + 31) / 32;
-    z = new uint32_t[L];
-    ZUC(pKey, IV, z, L);
-
-    std::vector<uint32_t> data_htobe32(length / 32 + 1);
-    for (uint32_t j = 0; j < (length + 31) / 32; j++)
-        data_htobe32[j] = htobe32(pData[j]);
+    std::vector<uint32_t> z(L);
+    ZUC(pKey, IV, z.data(), L);
 
     T = 0;
     for (i = 0; i < length; i++)
     {
-        if (GetBit(data_htobe32.data(), i))
-            T ^= GetWord(z, i);
+        if (GetBit(pData, i))
+            T ^= GetWord(z.data(), i);
     }
 
-    T ^= GetWord(z, length);
-    uint32_t MAC = T ^ z[L - 1];
-    delete[] z;
-
-    return MAC;
+    T ^= GetWord(z.data(), length);
+    return T ^ z[L - 1];
 }
 
-void EEA3(const uint8_t *pKey, uint32_t count, uint32_t bearer, uint32_t direction, uint32_t length, uint32_t *pData)
+void EEA3(const uint8_t *pKey, uint32_t count, uint32_t bearer, uint32_t direction, uint32_t length, uint8_t *pData)
 {
-    uint32_t *z, L, i;
+    uint32_t L, i;
     uint8_t iv[16];
 
     L = (length + 31) / 32;
-    z = new uint32_t[L];
+    std::vector<uint32_t> z(L);
 
     iv[0] = (count >> 24) & 0xFF;
     iv[1] = (count >> 16) & 0xFF;
@@ -110,10 +103,12 @@ void EEA3(const uint8_t *pKey, uint32_t count, uint32_t bearer, uint32_t directi
     iv[14] = iv[6];
     iv[15] = iv[7];
 
-    ZUC(pKey, iv, z, L);
-    for (i = 0; i < L; i++)
-        pData[i] = be32toh(htobe32(pData[i]) ^ z[i]);
-    delete[] z;
+    ZUC(pKey, iv, z.data(), L);
+
+    // The keystream comes in 32-bit words, but the message is XORed byte by byte so that nothing past its last byte is
+    // read or written: a message whose length is not a multiple of 4 bytes ends inside the last word.
+    for (i = 0; i < (length + 7) / 8; i++)
+        pData[i] ^= static_cast<uint8_t>(z[i / 4] >> (24 - 8 * (i % 4)));
 }
 
 } // namespace crypto::eea3
