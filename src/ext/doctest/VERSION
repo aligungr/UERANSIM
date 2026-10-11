@@ -1,0 +1,11 @@
+doctest — vendored for the UERANSIM unit tests (nr-tests)
+
+Upstream: https://github.com/doctest/doctest
+Version:  v2.5.3 (commit 2d0a9359a60c51affe2a9bebb1be1dca47868151, 2026-07-06)
+License:  MIT (see LICENSE.txt); the two CMake scripts are BSD-3-Clause (see their headers)
+
+Unmodified copies of these files from the v2.5.3 tag:
+  doctest.h              <- doctest/doctest.h
+  doctest.cmake          <- scripts/cmake/doctest.cmake
+  doctestAddTests.cmake  <- scripts/cmake/doctestAddTests.cmake
+  LICENSE.txt            <- LICENSE.txt
