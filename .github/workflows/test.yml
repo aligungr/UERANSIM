@@ -1,0 +1,84 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# An explicit bash runs the steps with pipefail, so a failing command is not hidden by a pipe.
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build and test (${{ matrix.cc }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libsctp-dev
+      - name: Build
+        run: make build
+      - name: Test
+        run: make test
+
+  sanitizers:
+    name: Test (ASan + UBSan)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libsctp-dev
+      # The ASan runtime of GCC 13 fails at startup under the 32-bit mmap randomisation of newer kernels.
+      - name: Reduce mmap randomisation
+        run: sudo sysctl -w vm.mmap_rnd_bits=28
+      - name: Configure
+        run: cmake -S . -B cmake-build-asan -DCMAKE_BUILD_TYPE=Debug -DUERANSIM_SANITIZE=address,undefined
+      - name: Build
+        run: cmake --build cmake-build-asan --target nr-tests --parallel "$(nproc)"
+      - name: Test
+        run: ctest --test-dir cmake-build-asan --output-on-failure --no-tests=error
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libsctp-dev gcovr
+      - name: Configure
+        run: cmake -S . -B cmake-build-coverage -DCMAKE_BUILD_TYPE=Debug -DUERANSIM_COVERAGE=ON
+      - name: Build
+        run: cmake --build cmake-build-coverage --target nr-tests --parallel "$(nproc)"
+      - name: Test
+        run: ctest --test-dir cmake-build-coverage --output-on-failure --no-tests=error
+      - name: Report
+        run: |
+          report=cmake-build-coverage/report
+          mkdir -p "$report"
+          gcovr --root . --filter src/ --exclude 'src/(asn|ext)/' --print-summary \
+                --html-details "$report/index.html" cmake-build-coverage | tee "$report/summary.txt"
+          { echo '```'; cat "$report/summary.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: cmake-build-coverage/report/
