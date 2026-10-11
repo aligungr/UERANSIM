@@ -8,6 +8,8 @@
 
 #include "values.hpp"
 
+#include <stdexcept>
+
 #include <utils/octet_string.hpp>
 
 namespace nas
@@ -465,7 +467,8 @@ VPartialTrackingAreaIdentityList VPartialTrackingAreaIdentityList::Decode(const 
         res.list10 = VPartialTrackingAreaIdentityList10::Decode(stream);
         break;
     default:
-        break;
+        // 0b11 is reserved (TS 24.501 §9.11.3.9), and there is no telling how long such a list is.
+        throw std::runtime_error("Partial tracking area identity list of the reserved type of list");
     }
     return res;
 }

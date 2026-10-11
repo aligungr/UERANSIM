@@ -60,3 +60,12 @@ std::string OctetView::readUtf8String(size_t length) const
         throw std::out_of_range("readUtf8String: length exceeds INT32_MAX");
     return readUtf8String(static_cast<int>(length));
 }
+
+OctetView OctetView::subView(size_t length) const
+{
+    if (length > size - index)
+        throw std::out_of_range("subView: out of bounds");
+    OctetView view{data + index, length};
+    index += length;
+    return view;
+}

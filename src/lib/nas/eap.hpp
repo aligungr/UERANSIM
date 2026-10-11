@@ -167,6 +167,9 @@ class Eap
     const EEapType eapType;
 
     Eap(ECode code, octet id, EEapType eapType);
+
+    // The subclasses are owned and deleted through std::unique_ptr<Eap>.
+    virtual ~Eap() = default;
 };
 
 class EapAkaPrime : public Eap
