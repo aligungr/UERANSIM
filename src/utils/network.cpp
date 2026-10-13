@@ -112,6 +112,53 @@ uint16_t InetAddress::getPort() const
     return 0;
 }
 
+std::string InetAddress::toString() const
+{
+    char str[INET6_ADDRSTRLEN] = {0};
+
+    if (storage.ss_family == AF_INET)
+    {
+        auto &sin = reinterpret_cast<const sockaddr_in &>(storage);
+        if (inet_ntop(AF_INET, &sin.sin_addr, str, sizeof(str)) != nullptr)
+            return std::string{str} + ":" + std::to_string(getPort());
+    }
+    else if (storage.ss_family == AF_INET6)
+    {
+        auto &sin6 = reinterpret_cast<const sockaddr_in6 &>(storage);
+        if (inet_ntop(AF_INET6, &sin6.sin6_addr, str, sizeof(str)) != nullptr)
+            return "[" + std::string{str} + "]:" + std::to_string(getPort());
+    }
+    return "";
+}
+
+// Only what identifies the endpoint is compared. The rest of the sockaddr, such as the padding of a sockaddr_in, depends
+// on where the address came from.
+bool InetAddress::operator==(const InetAddress &other) const
+{
+    if (storage.ss_family != other.storage.ss_family)
+        return false;
+
+    if (storage.ss_family == AF_INET)
+    {
+        auto &a = reinterpret_cast<const sockaddr_in &>(storage);
+        auto &b = reinterpret_cast<const sockaddr_in &>(other.storage);
+        return a.sin_port == b.sin_port && a.sin_addr.s_addr == b.sin_addr.s_addr;
+    }
+    if (storage.ss_family == AF_INET6)
+    {
+        auto &a = reinterpret_cast<const sockaddr_in6 &>(storage);
+        auto &b = reinterpret_cast<const sockaddr_in6 &>(other.storage);
+        return a.sin6_port == b.sin6_port && a.sin6_scope_id == b.sin6_scope_id &&
+               std::memcmp(&a.sin6_addr, &b.sin6_addr, sizeof(a.sin6_addr)) == 0;
+    }
+    return len == other.len && std::memcmp(&storage, &other.storage, len) == 0;
+}
+
+bool InetAddress::operator!=(const InetAddress &other) const
+{
+    return !(*this == other);
+}
+
 Socket::Socket(int domain, int type, int protocol)
 {
     int sd = socket(domain, type, protocol);

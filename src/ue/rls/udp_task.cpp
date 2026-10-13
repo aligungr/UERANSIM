@@ -8,6 +8,7 @@
 
 #include "udp_task.hpp"
 
+#include <algorithm>
 #include <cstdint>
 #include <cstring>
 #include <set>
@@ -32,7 +33,7 @@ RlsUdpTask::RlsUdpTask(TaskBase *base, RlsSharedContext *shCtx, const std::vecto
 {
     m_logger = base->logBase->makeUniqueLogger(base->config->getLoggerPrefix() + "rls-udp");
 
-    m_server = new udp::UdpServer();
+    m_server = std::make_unique<udp::UdpServer>();
 
     for (auto &ip : searchSpace)
         m_searchSpace.emplace_back(ip, cons::RadioLinkPort);
@@ -69,7 +70,7 @@ void RlsUdpTask::onLoop()
 
 void RlsUdpTask::onQuit()
 {
-    delete m_server;
+    m_server.reset();
 }
 
 void RlsUdpTask::sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg)
@@ -93,6 +94,14 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
 {
     if (msg->msgType == rls::EMessageType::HEARTBEAT_ACK)
     {
+        // Only a gNB in gnbSearchList can become a cell. Anyone else who can reach this socket could otherwise pose as
+        // the strongest cell, and talk RRC and NAS to the UE.
+        if (std::find(m_searchSpace.begin(), m_searchSpace.end(), addr) == m_searchSpace.end())
+        {
+            m_logger->warn("Ignoring a heartbeat ack from %s, which is not in gnbSearchList", addr.toString().c_str());
+            return;
+        }
+
         if (!m_cells.count(msg->sti))
         {
             if (m_cells.size() >= MAX_CELL_COUNT)
@@ -120,11 +129,9 @@ void RlsUdpTask::receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::Rls
         return;
     }
 
-    if (!m_cells.count(msg->sti))
-    {
-        // if no HB-ACK received yet, and the message is not HB-ACK, then ignore the message
+    // Anything else is taken only from a cell, and only from the address the cell answers heartbeats from.
+    if (!m_cells.count(msg->sti) || m_cells[msg->sti].address != addr)
         return;
-    }
 
     auto w = std::make_unique<NmUeRlsToRls>(NmUeRlsToRls::RECEIVE_RLS_MESSAGE);
     w->cellId = m_cells[msg->sti].cellId;
