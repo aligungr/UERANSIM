@@ -40,6 +40,10 @@ struct InetAddress
 
     [[nodiscard]] int getIpVersion() const;
     [[nodiscard]] uint16_t getPort() const;
+    [[nodiscard]] std::string toString() const;
+
+    bool operator==(const InetAddress &other) const;
+    bool operator!=(const InetAddress &other) const;
 };
 
 class Socket

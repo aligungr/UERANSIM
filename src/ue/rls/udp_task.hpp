@@ -33,7 +33,7 @@ class RlsUdpTask : public NtsTask
 
   private:
     std::unique_ptr<Logger> m_logger;
-    udp::UdpServer *m_server;
+    std::unique_ptr<udp::UdpServer> m_server;
     NtsTask *m_ctlTask;
     RlsSharedContext* m_shCtx;
     std::vector<InetAddress> m_searchSpace;
@@ -56,13 +56,16 @@ class RlsUdpTask : public NtsTask
 
   private:
     void sendRlsPdu(const InetAddress &addr, const rls::RlsMessage &msg);
-    void receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg);
     void onSignalChangeOrLost(int cellId);
     void heartbeatCycle(uint64_t time, const Vector3 &simPos);
 
   public:
     void initialize(NtsTask *ctlTask);
     void send(int cellId, const rls::RlsMessage &msg);
+
+    // Handles a message that arrived from addr. onLoop() calls it for what the socket receives, and the tests call it
+    // directly.
+    void receiveRlsPdu(const InetAddress &addr, std::unique_ptr<rls::RlsMessage> &&msg);
 };
 
 } // namespace nr::ue
