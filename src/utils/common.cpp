@@ -276,7 +276,34 @@ std::string utils::OctetStringToIp(const OctetString &address)
         sprintf(buffer, "%d.%d.%d.%d", address.getI(0), address.getI(1), address.getI(2), address.getI(3));
         return std::string{buffer};
     }
+    if (address.length() == 16)
+    {
+        char buffer[INET6_ADDRSTRLEN] = {0};
+        if (inet_ntop(AF_INET6, address.data(), buffer, sizeof(buffer)) != nullptr)
+            return std::string{buffer};
+    }
+    if (address.length() == 8)
+        return Ipv6InterfaceIdToLinkLocalAddress(address);
     return address.toHexString();
+}
+
+std::string utils::Ipv6InterfaceIdToLinkLocalAddress(const OctetString &interfaceId)
+{
+    // As per TS 24.501, the network provides an 8 octet IPv6 interface identifier for PDU session
+    // types IPv6 and IPv4v6. The UE builds its link-local address from it (RFC 4291), and then
+    // performs IPv6 stateless address autoconfiguration (RFC 4862) to obtain the global address.
+    if (interfaceId.length() != 8)
+        return {};
+
+    uint8_t full[16] = {0};
+    full[0] = 0xFE;
+    full[1] = 0x80;
+    std::memcpy(full + 8, interfaceId.data(), 8);
+
+    char buffer[INET6_ADDRSTRLEN] = {0};
+    if (inet_ntop(AF_INET6, full, buffer, sizeof(buffer)) == nullptr)
+        return {};
+    return std::string{buffer};
 }
 
 bool utils::IsRoot()

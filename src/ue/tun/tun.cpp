@@ -34,13 +34,15 @@ int TunAllocate(const char *namePrefix, std::string &allocatedName, const std::s
     return fd;
 }
 
-bool TunConfigure(const std::string &tunName, const std::string &ipAddress, const std::string &netmask, int mtu,
-                  const std::string &nsName, bool useNamespace, bool configureRouting, std::string &error)
+bool TunConfigure(const std::string &tunName, const std::string &ipv4Address, const std::string &netmask,
+                  const std::string &ipv6Address, int ipv6PrefixLength, int mtu, const std::string &nsName,
+                  bool useNamespace, bool configureRouting, std::string &error)
 {
     try
     {
-        tun::ConfigureTun(tunName.c_str(), ipAddress.c_str(), netmask.c_str(), mtu, nsName.c_str(), useNamespace,
-                          configureRouting);
+        tun::ConfigureTun(tunName.c_str(), ipv4Address.empty() ? nullptr : ipv4Address.c_str(), netmask.c_str(),
+                          ipv6Address.empty() ? nullptr : ipv6Address.c_str(), ipv6PrefixLength, mtu, nsName.c_str(),
+                          useNamespace, configureRouting);
     }
     catch (const LibError &e)
     {

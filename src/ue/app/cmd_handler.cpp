@@ -186,7 +186,7 @@ void UeCmdHandler::handleCmdImpl(NmUeCliCommand &msg)
     }
     case app::UeCliCommand::PS_ESTABLISH: {
         SessionConfig config;
-        config.type = nas::EPduSessionType::IPV4;
+        config.type = msg.cmd->sessionType;
         config.isEmergency = msg.cmd->isEmergency;
         config.apn = msg.cmd->apn;
         config.sNssai = msg.cmd->sNssai;

@@ -282,6 +282,48 @@ static void TunSetIpAndUp(const char *ifName, const char *ipAddr, const char *ne
     close(sockFd);
 }
 
+// Brings the interface up and sets its MTU without assigning an IPv4 address. Used for IPv6-only PDU
+// sessions where no IPv4 address is available.
+static void TunSetMtuAndUp(const char *ifName, int mtu)
+{
+    ifreq ifr{};
+    memset(&ifr, 0, sizeof(struct ifreq));
+
+    int sockFd = socket(AF_INET, SOCK_DGRAM, 0);
+    strcpy(ifr.ifr_name, ifName);
+
+    if (ioctl(sockFd, SIOCGIFFLAGS, &ifr) < 0)
+        throw LibError("ioctl(SIOCGIFFLAGS)", errno);
+
+    ifr.ifr_mtu = mtu;
+    if (ioctl(sockFd, SIOCSIFMTU, &ifr) < 0)
+        throw LibError("ioctl(SIOCSIFMTU)", errno);
+
+    ifr.ifr_flags |= IFF_UP | IFF_RUNNING;
+    if (ioctl(sockFd, SIOCSIFFLAGS, &ifr) < 0)
+        throw LibError("ioctl(SIOCSIFFLAGS)", errno);
+
+    close(sockFd);
+}
+
+// Assigns the link-local IPv6 address derived from the network-provided interface identifier. The
+// global address is later obtained by the kernel itself via stateless address autoconfiguration
+// (RFC 4862) once a Router Advertisement arrives over the PDU session.
+static void TunSetIpv6Address(const std::string &ifName, const std::string &ipv6Addr, int prefixLength)
+{
+    ExecStrict("ip -6 addr add " + ipv6Addr + "/" + std::to_string(prefixLength) + " dev " + ifName + " scope link");
+}
+
+// Best-effort sysctl write; not fatal since the kernel defaults (accept_ra=1, autoconf=1) are already
+// sufficient for autoconfiguration on a non-forwarding host in most cases.
+static void SetIpv6SysctlParam(const std::string &ifName, const std::string &param, const std::string &value,
+                                const std::string &nsName, bool useNamespace)
+{
+    std::string inner = "echo " + value + " > /proc/sys/net/ipv6/conf/" + ifName + "/" + param;
+    std::string cmd = useNamespace ? ("ip netns exec " + nsName + " sh -c \"" + inner + "\"") : inner;
+    ExecLoose(cmd);
+}
+
 static void ConfigureRtTables(const std::string &table_name)
 {
     std::ifstream ifs;
@@ -533,40 +575,84 @@ int AllocateTun(const char *ifPrefix, char **allocatedName, const char *nsName, 
     return fd;
 }
 
-void ConfigureTun(const char *tunName, const char *ipAddr, const char *netmask, int mtu, const char *nsName,
-                  bool useNamespace, bool configureRoute)
+void ConfigureTun(const char *tunName, const char *ipv4Addr, const char *netmask, const char *ipv6Addr,
+                  int ipv6PrefixLength, int mtu, const char *nsName, bool useNamespace, bool configureRoute)
 {
     // acquire the configuration lock
     const std::lock_guard<std::mutex> lock(configMutex);
 
+    bool hasIpv4 = ipv4Addr != nullptr && *ipv4Addr != '\0';
+    bool hasIpv6 = ipv6Addr != nullptr && *ipv6Addr != '\0';
+    if (!hasIpv4 && !hasIpv6)
+        throw LibError("No IPv4 or IPv6 address to configure on the TUN interface.");
+
     if (useNamespace)
     {
         std::string namespaceName = nsName ? nsName : "";
-        int prefixLength = NetmaskToPrefixLength(netmask ? netmask : "");
         if (!IsValidNamespaceName(namespaceName))
             throw LibError("Invalid namespace name.");
-        if (prefixLength < 0)
-            throw LibError("Invalid netmask.");
 
-        ExecStrict("ip netns exec " + namespaceName + " ip addr add " + std::string(ipAddr) + "/" +
-                   std::to_string(prefixLength) + " dev " + tunName);
+        if (hasIpv4)
+        {
+            int prefixLength = NetmaskToPrefixLength(netmask ? netmask : "");
+            if (prefixLength < 0)
+                throw LibError("Invalid netmask.");
+            ExecStrict("ip netns exec " + namespaceName + " ip addr add " + std::string(ipv4Addr) + "/" +
+                       std::to_string(prefixLength) + " dev " + tunName);
+        }
+        if (hasIpv6)
+        {
+            ExecStrict("ip netns exec " + namespaceName + " ip -6 addr add " + std::string(ipv6Addr) + "/" +
+                       std::to_string(ipv6PrefixLength) + " dev " + tunName + " scope link");
+            SetIpv6SysctlParam(tunName, "accept_ra", "2", namespaceName, true);
+            SetIpv6SysctlParam(tunName, "autoconf", "1", namespaceName, true);
+        }
+
         ExecStrict("ip netns exec " + namespaceName + " ip link set " + tunName + " mtu " + std::to_string(mtu));
         ExecStrict("ip netns exec " + namespaceName + " ip link set " + tunName + " up");
         if (configureRoute)
-            ExecStrict("ip netns exec " + namespaceName + " ip route replace default dev " + tunName);
+        {
+            if (hasIpv4)
+                ExecStrict("ip netns exec " + namespaceName + " ip route replace default dev " + tunName);
+            if (hasIpv6)
+                ExecStrict("ip netns exec " + namespaceName + " ip -6 route replace default dev " + tunName);
+        }
         return;
     }
 
-    TunSetIpAndUp(tunName, ipAddr, netmask, mtu);
+    if (hasIpv4)
+        TunSetIpAndUp(tunName, ipv4Addr, netmask, mtu);
+    else
+        TunSetMtuAndUp(tunName, mtu);
+
+    if (hasIpv6)
+    {
+        TunSetIpv6Address(tunName, ipv6Addr, ipv6PrefixLength);
+        SetIpv6SysctlParam(tunName, "accept_ra", "2", "", false);
+        SetIpv6SysctlParam(tunName, "autoconf", "1", "", false);
+    }
+
     if (configureRoute)
     {
-        std::string table_name = ROUTING_TABLE_PREFIX + std::string(tunName);
+        if (hasIpv4)
+        {
+            std::string table_name = ROUTING_TABLE_PREFIX + std::string(tunName);
 
-        ConfigureRtTables(table_name);
-        RemoveExistingIpRules(ipAddr);
-        AddNewIpRules(ipAddr, table_name);
-        RemoveExistingIpRoutes(tunName, table_name);
-        AddIpRoutes(tunName, table_name);
+            ConfigureRtTables(table_name);
+            RemoveExistingIpRules(ipv4Addr);
+            AddNewIpRules(ipv4Addr, table_name);
+            RemoveExistingIpRoutes(tunName, table_name);
+            AddIpRoutes(tunName, table_name);
+        }
+        if (hasIpv6)
+        {
+            // Unlike IPv4, the UE's global IPv6 address is not known until stateless address
+            // autoconfiguration completes, so it cannot be used up front for source based policy
+            // routing (as is done for IPv4 above via 'rt_tables'). A plain default route is installed
+            // instead, which is sufficient for a single TUN interface. Multiple concurrent IPv6 PDU
+            // sessions without namespaces should use 'useNamespace' for proper isolation.
+            ExecLoose("ip -6 route replace default dev " + std::string(tunName));
+        }
     }
 }
 

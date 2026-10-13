@@ -1083,8 +1083,16 @@ Json ToJson(const IEPduAddress &v)
     {
     case EPduSessionType::IPV4:
     case EPduSessionType::IPV6:
-    case EPduSessionType::IPV4V6:
         return utils::OctetStringToIp(v.pduAddressInformation);
+    case EPduSessionType::IPV4V6: {
+        // For IPv4v6, the address information is the 8 octet IPv6 interface identifier followed by
+        // the 4 octet IPv4 address (TS 24.501 9.11.4.10).
+        if (v.pduAddressInformation.length() != 12)
+            return v.pduAddressInformation.toHexString();
+        OctetString iid = v.pduAddressInformation.subCopy(0, 8);
+        OctetString ipv4 = v.pduAddressInformation.subCopy(8, 4);
+        return utils::OctetStringToIp(iid) + " / " + utils::OctetStringToIp(ipv4);
+    }
     case EPduSessionType::UNSTRUCTURED:
     case EPduSessionType::ETHERNET:
         return v.pduAddressInformation.toHexString();

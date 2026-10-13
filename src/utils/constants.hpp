@@ -29,6 +29,7 @@ struct cons
     static constexpr const char *TunNamePrefix = "uesimtun";
     static constexpr const char *TunNetmask = "255.255.0.0";
     static constexpr const int TunMtu = 1400;
+    static constexpr const int TunIpv6PrefixLength = 64;
 
     // Constraints
     static constexpr const int MinNodeName = 3;
