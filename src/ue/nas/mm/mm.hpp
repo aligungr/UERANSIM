@@ -100,6 +100,7 @@ class NasMm
   private: /* Messaging */
     EProcRc sendNasMessage(const nas::PlainMmMessage &msg);
     void receiveNasMessage(const nas::NasMessage &msg);
+    void receiveUndecodableMessage(const nas::NasDecodeError &error);
     void receiveMmMessage(const nas::PlainMmMessage &msg);
     void receiveMmStatus(const nas::FiveGMmStatus &msg);
     void sendMmStatus(nas::EMmCause cause);

@@ -231,7 +231,16 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
 
     if (mmMsg.sht == nas::ESecurityHeaderType::INTEGRITY_PROTECTED_WITH_NEW_SECURITY_CONTEXT)
     {
-        auto smcMsg = nas::DecodeNasMessage(OctetView{securedMm.plainNasMessage});
+        std::unique_ptr<nas::NasMessage> smcMsg;
+        try
+        {
+            smcMsg = nas::DecodeNasMessage(OctetView{securedMm.plainNasMessage});
+        }
+        catch (const nas::NasDecodeError &e)
+        {
+            receiveUndecodableMessage(e);
+            return;
+        }
 
         if (smcMsg->epd != nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES ||
             (((const nas::MmMessage &)(*smcMsg)).sht != nas::ESecurityHeaderType::NOT_PROTECTED) ||
@@ -272,7 +281,17 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
         }
     }
 
-    auto decrypted = nas_enc::Decrypt(*m_usim->m_currentNsCtx, securedMm);
+    std::unique_ptr<nas::NasMessage> decrypted;
+    try
+    {
+        decrypted = nas_enc::Decrypt(*m_usim->m_currentNsCtx, securedMm);
+    }
+    catch (const nas::NasDecodeError &e)
+    {
+        // The message passed the integrity check, but what it protects does not decode.
+        receiveUndecodableMessage(e);
+        return;
+    }
     if (decrypted == nullptr)
     {
         m_logger->err("MAC mismatch in NAS encryption. Ignoring received NAS Message.");
@@ -301,6 +320,22 @@ void NasMm::receiveNasMessage(const nas::NasMessage &msg)
         m_logger->warn("Bad constructed message received (EPD)");
         sendMmStatus(nas::EMmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED);
     }
+}
+
+// TS 24.501 §7: a message that does not decode is ignored, or answered with a status message that says why.
+void NasMm::receiveUndecodableMessage(const nas::NasDecodeError &error)
+{
+    m_logger->err("NAS message could not be decoded: %s", error.what());
+
+    if (error.failure == nas::EDecodeFailure::TOO_SHORT || error.failure == nas::EDecodeFailure::UNKNOWN_PROTOCOL)
+        return;
+
+    if (error.epd == nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
+        m_sm->receiveUndecodableMessage(error);
+    else if (error.failure == nas::EDecodeFailure::UNKNOWN_MESSAGE_TYPE)
+        sendMmStatus(nas::EMmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED);
+    else
+        sendMmStatus(nas::EMmCause::INVALID_MANDATORY_INFORMATION);
 }
 
 void NasMm::receiveMmMessage(const nas::PlainMmMessage &msg)
@@ -350,7 +385,9 @@ void NasMm::receiveMmMessage(const nas::PlainMmMessage &msg)
         receiveDlNasTransport((const nas::DlNasTransport &)msg);
         break;
     default:
+        // TS 24.501 §7.4: a message type the UE does not implement, such as one only the UE sends.
         m_logger->err("Unhandled NAS MM message received [%d]", (int)msg.messageType);
+        sendMmStatus(nas::EMmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED);
         break;
     }
 }

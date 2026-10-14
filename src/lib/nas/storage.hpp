@@ -6,6 +6,7 @@
 // See README, LICENSE, and CONTRIBUTING files for licensing details.
 //
 
+#include <algorithm>
 #include <array>
 #include <functional>
 #include <optional>
@@ -44,7 +45,7 @@ class NasList
   public:
     NasList(size_t sizeLimit, int64_t autoClearingPeriod, std::optional<backup_functor_type> backupFunctor)
         : m_sizeLimit{sizeLimit}, m_autoClearingPeriod{autoClearingPeriod},
-          m_backupFunctor{backupFunctor}, m_data{sizeLimit}, m_size{}, m_lastAutoCleared{::utils::CurrentTimeMillis()}
+          m_backupFunctor{backupFunctor}, m_data(sizeLimit), m_size{}, m_lastAutoCleared{::utils::CurrentTimeMillis()}
     {
     }
 
@@ -130,17 +131,18 @@ class NasList
         if (currentTime - m_lastAutoCleared >= m_autoClearingPeriod)
             m_lastAutoCleared = currentTime;
 
-        m_data.clear();
+        // The items live in the m_sizeLimit slots of m_data, which stay.
+        std::fill(m_data.begin(), m_data.begin() + m_size, T{});
         m_size = 0;
 
         touch();
     }
 
-    [[nodiscard]] size_t size() const
+    [[nodiscard]] size_t size()
     {
         autoClearIfNecessary();
 
-        return m_data.size();
+        return m_size;
     }
 
   private:

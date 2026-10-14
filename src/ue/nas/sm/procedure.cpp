@@ -35,8 +35,24 @@ bool NasSm::checkPtiAndPsi(const nas::SmMessage &msg)
     return true;
 }
 
+// Whether the UE awaits the answer to the request for establishing PDU session psi that it sent with the given PTI.
+bool NasSm::isEstablishing(int pti, int psi)
+{
+    if (pti < ProcedureTransaction::MIN_ID || pti > ProcedureTransaction::MAX_ID)
+        return false;
+
+    auto &pt = m_procedureTransactions[pti];
+    return pt.state == EPtState::PENDING && pt.psi == psi && pt.message != nullptr &&
+           pt.message->messageType == nas::EMessageType::PDU_SESSION_ESTABLISHMENT_REQUEST &&
+           m_pduSessions[psi]->psState == EPsState::ACTIVE_PENDING;
+}
+
 void NasSm::abortProcedureByPti(int pti)
 {
+    // The PTI can come from the network, as that of a 5GSM STATUS.
+    if (pti < ProcedureTransaction::MIN_ID || pti > ProcedureTransaction::MAX_ID)
+        return;
+
     auto &pt = m_procedureTransactions[pti];
     if (pt.state != EPtState::PENDING)
         return;

@@ -54,7 +54,22 @@ void NasMm::receiveDlNasTransport(const nas::DlNasTransport &msg)
     }
 
     OctetView buff{msg.payloadContainer.data.data(), static_cast<size_t>(msg.payloadContainer.data.length())};
-    auto nasMessage = nas::DecodeNasMessage(buff);
+    std::unique_ptr<nas::NasMessage> nasMessage;
+    try
+    {
+        nasMessage = nas::DecodeNasMessage(buff);
+    }
+    catch (const nas::NasDecodeError &e)
+    {
+        // As for one that decodes below, only a 5GSM message for the PDU session of the transport is taken, and only one
+        // from the network: with a 5GMM cause, the container holds a message of the UE that was not forwarded.
+        if (e.epd == nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES && !msg.mmCause &&
+            (!msg.pduSessionId || (int)msg.pduSessionId->value == e.pduSessionId))
+            m_sm->receiveUndecodableMessage(e);
+        else
+            m_logger->err("Bad payload container in DL NAS Transport, ignoring received message");
+        return;
+    }
 
     if (nasMessage->epd != nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
     {

@@ -7,6 +7,7 @@
 //
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 #include <ext/doctest/doctest.h>
@@ -103,9 +104,61 @@ TEST_CASE("lib/nas/encode: an optional IE cut short by the end of the message is
     CHECK_FALSE(registrationAccept.t3512Value.has_value());
 }
 
-// The mandatory 5GS registration result claims one octet of contents and the message ends there.
-TEST_CASE("lib/nas/encode: a message cut short in its mandatory part does not decode")
+// What DecodeNasMessage() throws for a message that must not decode.
+static nas::NasDecodeError DecodeFailure(const std::string &hex)
 {
-    OctetString pdu = OctetString::FromHex("7e004201");
-    CHECK_THROWS(nas::DecodeNasMessage(OctetView{pdu}));
+    OctetString pdu = OctetString::FromHex(hex);
+    try
+    {
+        nas::DecodeNasMessage(OctetView{pdu});
+    }
+    catch (const nas::NasDecodeError &e)
+    {
+        return e;
+    }
+    throw std::logic_error("the message decoded");
+}
+
+// TS 24.501 §7.2.1, and for a security protected message its MAC and sequence number.
+TEST_CASE("lib/nas/encode: a message too short to hold its message type does not decode, as too short")
+{
+    CHECK_EQ(DecodeFailure("").failure, nas::EDecodeFailure::TOO_SHORT);
+    CHECK_EQ(DecodeFailure("7e00").failure, nas::EDecodeFailure::TOO_SHORT);
+    CHECK_EQ(DecodeFailure("2e0507").failure, nas::EDecodeFailure::TOO_SHORT);
+    CHECK_EQ(DecodeFailure("7e0201020304").failure, nas::EDecodeFailure::TOO_SHORT);
+}
+
+TEST_CASE("lib/nas/encode: a message of neither 5GMM nor 5GSM does not decode, as of an unknown protocol")
+{
+    CHECK_EQ(DecodeFailure("0f0040").failure, nas::EDecodeFailure::UNKNOWN_PROTOCOL);
+}
+
+TEST_CASE("lib/nas/encode: a message of an undefined type does not decode, and says what its header holds")
+{
+    auto mm = DecodeFailure("7e0040");
+    CHECK_EQ(mm.failure, nas::EDecodeFailure::UNKNOWN_MESSAGE_TYPE);
+    CHECK_EQ(mm.epd, nas::EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES);
+    CHECK_EQ(static_cast<int>(mm.messageType), 0x40);
+
+    auto sm = DecodeFailure("2e0507c0");
+    CHECK_EQ(sm.failure, nas::EDecodeFailure::UNKNOWN_MESSAGE_TYPE);
+    CHECK_EQ(sm.epd, nas::EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES);
+    CHECK_EQ(sm.pduSessionId, 5);
+    CHECK_EQ(sm.pti, 7);
+    CHECK_EQ(static_cast<int>(sm.messageType), 0xc0);
+}
+
+// The mandatory 5GS registration result claims one octet of contents and the message ends there.
+TEST_CASE("lib/nas/encode: a message cut short in its mandatory part does not decode, as invalid mandatory information")
+{
+    auto error = DecodeFailure("7e004201");
+    CHECK_EQ(error.failure, nas::EDecodeFailure::INVALID_MANDATORY_INFORMATION);
+    CHECK_EQ(error.messageType, nas::EMessageType::REGISTRATION_ACCEPT);
+}
+
+// TS 24.501 §7.5.1: an IE the message does not define, encoded as comprehension required (IEI 0000xxxx).
+TEST_CASE("lib/nas/encode: an unknown IE encoded as comprehension required does not decode, as invalid mandatory "
+          "information")
+{
+    CHECK_EQ(DecodeFailure("7e00420101050100").failure, nas::EDecodeFailure::INVALID_MANDATORY_INFORMATION);
 }
