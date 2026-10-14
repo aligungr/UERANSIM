@@ -37,6 +37,10 @@ bool NasSm::checkPtiAndPsi(const nas::SmMessage &msg)
 
 void NasSm::abortProcedureByPti(int pti)
 {
+    // The PTI can come from the network, as that of a 5GSM STATUS.
+    if (pti < ProcedureTransaction::MIN_ID || pti > ProcedureTransaction::MAX_ID)
+        return;
+
     auto &pt = m_procedureTransactions[pti];
     if (pt.state != EPtState::PENDING)
         return;

@@ -89,6 +89,13 @@ void NasSm::sendSmMessage(int psi, const nas::SmMessage &msg)
 
 void NasSm::receiveSmMessage(const nas::SmMessage &msg)
 {
+    // TS 24.501 §7.3.2: a message for a PDU session identity that is unassigned or reserved is ignored.
+    if (msg.pduSessionId < PduSession::MIN_ID || msg.pduSessionId > PduSession::MAX_ID)
+    {
+        m_logger->err("SM message received for an invalid PSI[%d], ignoring it", msg.pduSessionId);
+        return;
+    }
+
     switch (msg.messageType)
     {
     case nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT:
