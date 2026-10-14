@@ -247,9 +247,9 @@ void NasMm::switchMmState(EMmSubState subState)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM,
-                                       ToJson(oldSubState).str(), ToJson(subState).str());
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM_SUB,
                                        ToJson(oldState).str(), ToJson(state).str());
+        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM_SUB,
+                                       ToJson(oldSubState).str(), ToJson(subState).str());
     }
 
     if (state != oldState || subState != oldSubState)
