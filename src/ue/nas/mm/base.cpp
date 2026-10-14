@@ -63,7 +63,7 @@ NasMm::NasMm(TaskBase *base, NasTimers *timers) : m_base{base}, m_timers{timers}
     m_mmState = EMmState::MM_DEREGISTERED;
     m_mmSubState = EMmSubState::MM_DEREGISTERED_PS;
 
-    m_storage = new MmStorage(m_base);
+    m_storage = std::make_unique<MmStorage>(m_base);
 }
 
 void NasMm::onStart(NasSm *sm, Usim *usim)
@@ -247,9 +247,9 @@ void NasMm::switchMmState(EMmSubState subState)
     if (m_base->nodeListener)
     {
         m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM,
-                                       ToJson(oldSubState).str(), ToJson(subState).str());
-        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM_SUB,
                                        ToJson(oldState).str(), ToJson(state).str());
+        m_base->nodeListener->onSwitch(app::NodeType::UE, m_base->config->getNodeName(), app::StateType::MM_SUB,
+                                       ToJson(oldSubState).str(), ToJson(subState).str());
     }
 
     if (state != oldState || subState != oldSubState)

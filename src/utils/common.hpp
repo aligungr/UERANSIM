@@ -27,7 +27,15 @@ std::string VectorToHexString(const std::vector<uint8_t> &hex);
 int GetIpVersion(const std::string &address);
 OctetString IpToOctetString(const std::string &address);
 std::string OctetStringToIp(const OctetString &address);
+
+// Milliseconds for timers and for measuring time. They read like the time since the epoch, but never go back or jump
+// when the system time is set; CurrentTimeStamp() is the time of day.
 int64_t CurrentTimeMillis();
+
+// Makes CurrentTimeMillis() return what clock does, or follow the real clock again if clock is null. For tests that move
+// time on by hand.
+void OverrideCurrentTimeMillis(int64_t (*clock)());
+
 TimeStamp CurrentTimeStamp();
 int NextId();
 int ParseInt(const std::string &str);

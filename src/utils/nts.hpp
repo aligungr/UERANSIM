@@ -124,6 +124,9 @@ class NtsTask
     std::atomic_bool pauseConfirmed{};
     std::thread thread;
 
+    // Runs a task on the calling thread instead of its own, in the tests (test/support/nts_driver.hpp).
+    friend class NtsTaskDriver;
+
   public:
     NtsTask() = default;
 

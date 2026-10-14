@@ -81,6 +81,7 @@ if (BUILD_TESTS)
     # CONFIGURE_DEPENDS so that adding a test file re-runs cmake instead of silently skipping it.
     file(GLOB_RECURSE TEST_SRC_FILES CONFIGURE_DEPENDS test/*.cpp)
     add_executable(nr-tests ${TEST_SRC_FILES})
+    target_include_directories(nr-tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(nr-tests pthread)
     target_compile_options(nr-tests PRIVATE -Wall -Wextra -pedantic)
     target_link_libraries(nr-tests common-lib)

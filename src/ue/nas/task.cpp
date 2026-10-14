@@ -37,15 +37,20 @@ void NasTask::onStart()
     setTimer(NTS_TIMER_ID_MM_CYCLE, NTS_TIMER_INTERVAL_MM_CYCLE);
 }
 
-void NasTask::onQuit()
+NasTask::~NasTask()
 {
-    mm->onQuit();
-    sm->onQuit();
-
+    // Not in onQuit(): the other tasks of the UE quit after this one, and until then the app task can still read a PDU
+    // session that NasSm handed it.
     delete mm;
     delete sm;
 
     delete usim;
+}
+
+void NasTask::onQuit()
+{
+    mm->onQuit();
+    sm->onQuit();
 }
 
 void NasTask::onLoop()
