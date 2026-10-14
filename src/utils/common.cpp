@@ -147,18 +147,34 @@ int utils::NextId()
     return res;
 }
 
+template <typename Clock>
+static int64_t MillisOf()
+{
+    auto sinceEpoch = Clock::now().time_since_epoch();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(sinceEpoch).count();
+}
+
+static std::atomic<int64_t (*)()> g_currentTimeMillisOverride{};
+
 int64_t utils::CurrentTimeMillis()
 {
-    auto time = std::chrono::system_clock::now();
-    auto sinceEpoch = time.time_since_epoch();
-    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(sinceEpoch);
-    int64_t now = millis.count();
-    return now;
+    if (auto clock = g_currentTimeMillisOverride.load())
+        return clock();
+
+    // The steady clock counts from an arbitrary point. Set to the time of day once, it reads as the system clock did,
+    // and the timers keep running at the same pace whatever happens to the system time afterwards.
+    static const int64_t offset = MillisOf<std::chrono::system_clock>() - MillisOf<std::chrono::steady_clock>();
+    return MillisOf<std::chrono::steady_clock>() + offset;
+}
+
+void utils::OverrideCurrentTimeMillis(int64_t (*clock)())
+{
+    g_currentTimeMillisOverride = clock;
 }
 
 TimeStamp utils::CurrentTimeStamp()
 {
-    int64_t tms = CurrentTimeMillis();
+    int64_t tms = MillisOf<std::chrono::system_clock>();
 
     int64_t baseTime;
     if (tms < 2085978496000LL)
