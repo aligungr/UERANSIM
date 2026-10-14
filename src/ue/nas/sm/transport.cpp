@@ -114,9 +114,57 @@ void NasSm::receiveSmMessage(const nas::SmMessage &msg)
         receiveSmStatus((const nas::FiveGSmStatus &)msg);
         break;
     default:
+        // TS 24.501 §7.4: a message type the UE does not implement, such as one only the UE sends.
         m_logger->err("Unhandled NAS SM message received: %d", (int)msg.messageType);
+        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED, msg.pti, msg.pduSessionId);
         break;
     }
+}
+
+// TS 24.501 §7: a message that does not decode is ignored, or answered with a 5GSM STATUS that says why, except for the
+// one that §7.5.3 has the UE answer otherwise.
+void NasSm::receiveUndecodableMessage(const nas::NasDecodeError &error)
+{
+    int psi = error.pduSessionId;
+
+    // §7.2.1, and §7.3.2 for a PDU session identity that is unassigned or reserved.
+    if (error.failure == nas::EDecodeFailure::TOO_SHORT || psi < PduSession::MIN_ID || psi > PduSession::MAX_ID)
+        return;
+
+    if (error.failure == nas::EDecodeFailure::UNKNOWN_MESSAGE_TYPE)
+    {
+        sendSmCause(nas::ESmCause::MESSAGE_TYPE_NON_EXISTENT_OR_NOT_IMPLEMENTED, error.pti, psi);
+        return;
+    }
+
+    if (error.messageType == nas::EMessageType::PDU_SESSION_ESTABLISHMENT_ACCEPT && isEstablishing(error.pti, psi))
+    {
+        // §7.5.3 a): the network has established the PDU session, so the UE has it released, and takes it as active
+        // until then, as the network does.
+        freeProcedureTransactionId(error.pti);
+        m_pduSessions[psi]->psState = EPsState::ACTIVE;
+        sendReleaseRequest(psi, nas::ESmCause::INVALID_MANDATORY_INFORMATION);
+        return;
+    }
+
+    if (error.messageType == nas::EMessageType::PDU_SESSION_RELEASE_COMMAND)
+    {
+        // §7.5.3 c): the network takes the PDU session as released either way. Released here too, as for a command that
+        // decodes, unless it is not established yet or no more.
+        auto state = m_pduSessions[psi]->psState;
+        if (state != EPsState::INACTIVE && state != EPsState::ACTIVE_PENDING)
+            localReleaseSession(psi);
+
+        nas::PduSessionReleaseComplete resp;
+        resp.pduSessionId = psi;
+        resp.pti = error.pti;
+        resp.smCause = nas::IE5gSmCause{};
+        resp.smCause->value = nas::ESmCause::INVALID_MANDATORY_INFORMATION;
+        sendSmMessage(psi, resp);
+        return;
+    }
+
+    sendSmCause(nas::ESmCause::INVALID_MANDATORY_INFORMATION, error.pti, psi);
 }
 
 void NasSm::receiveSmStatus(const nas::FiveGSmStatus &msg)

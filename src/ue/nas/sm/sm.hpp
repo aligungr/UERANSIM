@@ -57,6 +57,7 @@ class NasSm
 
   private: /* Transport */
     void receiveSmMessage(const nas::SmMessage &msg);
+    void receiveUndecodableMessage(const nas::NasDecodeError &error);
     void sendSmMessage(int psi, const nas::SmMessage &msg);
     void receiveSmStatus(const nas::FiveGSmStatus &msg);
     void sendSmCause(const nas::ESmCause &cause, int pti, int psi);
@@ -75,7 +76,7 @@ class NasSm
     void receiveEstablishmentReject(const nas::PduSessionEstablishmentReject &msg);
 
   private: /* Session Release */
-    void sendReleaseRequest(int psi);
+    void sendReleaseRequest(int psi, nas::ESmCause cause = nas::ESmCause::REGULAR_DEACTIVATION);
     void sendReleaseRequestForAll();
     void receiveReleaseReject(const nas::PduSessionReleaseReject &msg);
     void receiveReleaseCommand(const nas::PduSessionReleaseCommand &msg);
@@ -87,6 +88,7 @@ class NasSm
 
   private: /* Procedure */
     bool checkPtiAndPsi(const nas::SmMessage &msg);
+    bool isEstablishing(int pti, int psi);
     void abortProcedureByPti(int pti);
     void abortProcedureByPtiOrPsi(int pti, int psi);
 

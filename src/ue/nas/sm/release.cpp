@@ -16,7 +16,7 @@
 namespace nr::ue
 {
 
-void NasSm::sendReleaseRequest(int psi)
+void NasSm::sendReleaseRequest(int psi, nas::ESmCause cause)
 {
     /* Control the protocol state */
     if (m_mm->m_mmSubState == EMmSubState::MM_REGISTERED_NON_ALLOWED_SERVICE && !m_mm->hasEmergency() && !m_mm->isHighPriority())
@@ -45,7 +45,7 @@ void NasSm::sendReleaseRequest(int psi)
     req->pti = pti;
     req->pduSessionId = psi;
     req->smCause = nas::IE5gSmCause{};
-    req->smCause->value = nas::ESmCause::REGULAR_DEACTIVATION;
+    req->smCause->value = cause;
 
     /* Set relevant fields of the PT, and start T3582 */
     auto &pt = m_procedureTransactions[pti];

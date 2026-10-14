@@ -326,7 +326,7 @@ static PlainMmMessage *DecodePlainMmMessage(const OctetView &stream, EMessageTyp
     case EMessageType::DL_NAS_TRANSPORT:
         return DecodeViaBuilder<DlNasTransport>(stream);
     default:
-        throw std::runtime_error("invalid NAS message type");
+        return nullptr;
     }
 }
 
@@ -367,47 +367,98 @@ static SmMessage *DecodeSmMessage(const OctetView &stream, EMessageType messageT
     case EMessageType::FIVEG_SM_STATUS:
         return DecodeViaBuilder<FiveGSmStatus>(stream);
     default:
-        throw std::runtime_error("invalid NAS message type");
+        return nullptr;
     }
+}
+
+NasDecodeError::NasDecodeError(EDecodeFailure failure, const std::string &what)
+    : std::runtime_error(what), failure(failure)
+{
+}
+
+[[noreturn]] static void Fail(EDecodeFailure failure, const NasDecodeError &header, const std::string &what)
+{
+    NasDecodeError error{failure, what};
+    error.epd = header.epd;
+    error.messageType = header.messageType;
+    error.pduSessionId = header.pduSessionId;
+    error.pti = header.pti;
+    throw error;
+}
+
+// The body of a message whose header decoded. An optional IE that does not decode counts as absent (§7.7.1), so what
+// fails here is the message type or a mandatory IE.
+template <typename T>
+static std::unique_ptr<T> DecodeBody(T *(*decode)(const OctetView &, EMessageType), const OctetView &stream,
+                                     const NasDecodeError &header)
+{
+    std::unique_ptr<T> message;
+    try
+    {
+        message.reset(decode(stream, header.messageType));
+    }
+    catch (const std::exception &e)
+    {
+        Fail(EDecodeFailure::INVALID_MANDATORY_INFORMATION, header, e.what());
+    }
+    if (message == nullptr)
+        Fail(EDecodeFailure::UNKNOWN_MESSAGE_TYPE, header, "NAS message type not defined");
+    return message;
 }
 
 std::unique_ptr<NasMessage> DecodeNasMessage(const OctetView &stream)
 {
-    auto epd = static_cast<EExtendedProtocolDiscriminator>(stream.readI());
-    if (epd == EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES)
+    // The header of the message as it decodes, for the error if the rest does not.
+    NasDecodeError header{EDecodeFailure::TOO_SHORT, ""};
+
+    auto requireOctets = [&stream, &header](size_t count) {
+        if (stream.remainingSize() < count)
+            Fail(EDecodeFailure::TOO_SHORT, header, "NAS message too short");
+    };
+
+    requireOctets(1);
+    header.epd = static_cast<EExtendedProtocolDiscriminator>(stream.readI());
+
+    if (header.epd == EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES)
     {
+        requireOctets(1);
         auto sht = static_cast<ESecurityHeaderType>(stream.readI());
-        if (sht == ESecurityHeaderType::NOT_PROTECTED)
+        if (sht != ESecurityHeaderType::NOT_PROTECTED)
         {
-            auto messageType = static_cast<EMessageType>(stream.readI());
-            PlainMmMessage *p = DecodePlainMmMessage(stream, messageType);
-            p->epd = EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES;
-            p->sht = ESecurityHeaderType::NOT_PROTECTED;
-            p->messageType = messageType;
-            return std::unique_ptr<NasMessage>(p);
-        }
-        else
-        {
+            // The message authentication code and the sequence number.
+            requireOctets(5);
             SecuredMmMessage *p = DecodeSecuredMmMessage(stream, sht);
-            p->epd = EExtendedProtocolDiscriminator::MOBILITY_MANAGEMENT_MESSAGES;
+            p->epd = header.epd;
             p->sht = sht;
             return std::unique_ptr<NasMessage>(p);
         }
+
+        requireOctets(1);
+        header.messageType = static_cast<EMessageType>(stream.readI());
+
+        auto p = DecodeBody(DecodePlainMmMessage, stream, header);
+        p->epd = header.epd;
+        p->sht = sht;
+        p->messageType = header.messageType;
+        return p;
     }
-    else
+
+    if (header.epd == EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES)
     {
-        auto pduSessionId = stream.readI();
-        uint8_t pti = stream.read();
-        auto messageType = static_cast<EMessageType>(stream.readI());
+        requireOctets(3);
+        header.pduSessionId = stream.readI();
+        header.pti = stream.readI();
+        header.messageType = static_cast<EMessageType>(stream.readI());
 
-        SmMessage *p = DecodeSmMessage(stream, messageType);
-        p->epd = EExtendedProtocolDiscriminator::SESSION_MANAGEMENT_MESSAGES;
-        p->pduSessionId = pduSessionId;
-        p->pti = pti;
-        p->messageType = messageType;
-
-        return std::unique_ptr<NasMessage>(p);
+        auto p = DecodeBody(DecodeSmMessage, stream, header);
+        p->epd = header.epd;
+        p->pduSessionId = header.pduSessionId;
+        p->pti = header.pti;
+        p->messageType = header.messageType;
+        return p;
     }
+
+    Fail(EDecodeFailure::UNKNOWN_PROTOCOL, header, "NAS message of an unknown protocol");
 }
 
 } // namespace nas

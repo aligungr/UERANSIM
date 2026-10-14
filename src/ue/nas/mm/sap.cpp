@@ -30,10 +30,17 @@ void NasMm::handleRrcEvent(const NmUeRrcToNas &msg)
             m_logger->err("Empty NAS PDU received, ignore it");
             break;
         }
-        OctetView buffer{msg.nasPdu};
-        auto nasMessage = nas::DecodeNasMessage(buffer);
-        if (nasMessage != nullptr)
-            receiveNasMessage(*nasMessage);
+        std::unique_ptr<nas::NasMessage> nasMessage;
+        try
+        {
+            nasMessage = nas::DecodeNasMessage(OctetView{msg.nasPdu});
+        }
+        catch (const nas::NasDecodeError &e)
+        {
+            receiveUndecodableMessage(e);
+            break;
+        }
+        receiveNasMessage(*nasMessage);
         break;
     }
     case NmUeRrcToNas::RRC_CONNECTION_RELEASE: {
