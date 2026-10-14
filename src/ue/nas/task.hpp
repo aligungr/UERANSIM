@@ -35,7 +35,7 @@ class NasTask : public NtsTask
 
   public:
     explicit NasTask(TaskBase *base);
-    ~NasTask() override = default;
+    ~NasTask() override;
 
   protected:
     void onStart() override;

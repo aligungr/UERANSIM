@@ -19,6 +19,12 @@ NasSm::NasSm(TaskBase *base, NasTimers *timers) : m_base(base), m_timers(timers)
         m_pduSessions[i] = new PduSession(i);
 }
 
+NasSm::~NasSm()
+{
+    for (auto *pduSession : m_pduSessions)
+        delete pduSession;
+}
+
 void NasSm::onStart(NasMm *mm)
 {
     m_mm = mm;
