@@ -220,7 +220,8 @@ void NasMm::switchMmState(EMmSubState subState)
     EMmState state = GetMmStateFromSubState(subState);
 
     ERmState oldRmState = m_rmState;
-    if (state == EMmState::MM_DEREGISTERED || state == EMmState::MM_REGISTERED_INITIATED)
+    if (state == EMmState::MM_NULL || state == EMmState::MM_DEREGISTERED ||
+        state == EMmState::MM_REGISTERED_INITIATED)
         m_rmState = ERmState::RM_DEREGISTERED;
     else if (state == EMmState::MM_REGISTERED || state == EMmState::MM_SERVICE_REQUEST_INITIATED ||
              state == EMmState::MM_DEREGISTERED_INITIATED)
