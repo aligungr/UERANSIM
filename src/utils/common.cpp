@@ -20,7 +20,6 @@
 #include <thread>
 
 #include <arpa/inet.h>
-#include <unistd.h>
 
 static_assert(sizeof(char) == sizeof(uint8_t));
 static_assert(sizeof(int) == sizeof(uint32_t));
@@ -293,11 +292,6 @@ std::string utils::OctetStringToIp(const OctetString &address)
         return std::string{buffer};
     }
     return address.toHexString();
-}
-
-bool utils::IsRoot()
-{
-    return geteuid() == 0;
 }
 
 void utils::AssertNodeName(const std::string &str)
