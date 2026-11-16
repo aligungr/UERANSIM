@@ -13,6 +13,8 @@
 #include <utils/constants.hpp>
 #include <utils/libc_error.hpp>
 
+#include <stdexcept>
+
 #include <asn/ngap/ASN_NGAP_QosFlowSetupRequestItem.h>
 
 namespace nr::gnb
@@ -222,7 +224,23 @@ void GtpTask::handleUplinkData(int ueId, int psi, OctetString &&pdu)
 void GtpTask::handleUdpReceive(const udp::NwUdpServerReceive &msg)
 {
     OctetView buffer{msg.packet};
-    auto gtp = gtp::DecodeGtpMessage(buffer);
+    std::unique_ptr<gtp::GtpMessage> gtp;
+    try
+    {
+        gtp = gtp::DecodeGtpMessage(buffer);
+    }
+    catch (const std::out_of_range &)
+    {
+        // Malformed message (e.g. GTP length > datagram); an uncaught exception would abort the gNB.
+        gtp = nullptr;
+    }
+
+    if (gtp == nullptr)
+    {
+        m_logger->err("Unable to decode GTP-U message from %s, %d octets dropped", msg.fromAddress.toString().c_str(),
+                      msg.packet.length());
+        return;
+    }
 
     switch (gtp->msgType)
     {
