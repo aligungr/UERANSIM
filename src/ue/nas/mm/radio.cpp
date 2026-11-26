@@ -95,6 +95,9 @@ void NasMm::performPlmnSelection()
 
     Plmn selected = candidates.empty() ? Plmn{} : candidates[0];
 
+    // Publish the selected PLMN before waking the RRC task.
+    m_base->shCtx.selectedPlmn.set(selected);
+
     if (!selected.hasValue())
     {
         if (logFailures)
@@ -111,7 +114,6 @@ void NasMm::performPlmnSelection()
         resetRegAttemptCounter();
     }
 
-    m_base->shCtx.selectedPlmn.set(selected);
 }
 
 void NasMm::handleActiveCellChange(const Tai &prevTai)
